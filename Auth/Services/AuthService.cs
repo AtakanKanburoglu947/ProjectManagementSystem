@@ -34,7 +34,13 @@ namespace Auth.Services
             (string, string) hashedPassword = PasswordService.HashPassword(registerDto.Password);
             string passwordHash = hashedPassword.Item1;
             string passwordSalt = hashedPassword.Item2;
-            UserIdentity userIdentity = GetUserIdentity(registerDto, passwordHash, passwordSalt);
+            UserIdentity userIdentity = new UserIdentity()
+            {
+                Email = registerDto.Email,
+                PasswordHash = passwordHash,
+                PasswordSalt = passwordSalt,
+                UserName = registerDto.UserName
+            };
             bool userExists = await UserExistsAsync(registerDto.Email);
             if (!userExists)
             {
@@ -75,15 +81,5 @@ namespace Auth.Services
           
 
         }
-        private UserIdentity GetUserIdentity(RegisterDto registerDto, string passwordHash, string passwordSalt)
-        {
-            return new UserIdentity()
-            {
-                Email = registerDto.Email,
-                PasswordHash = passwordHash,
-                PasswordSalt = passwordSalt,
-                UserName = registerDto.UserName
-            };
-        }
-    }
+     
 }
