@@ -8,6 +8,8 @@ using ProjectManagementSystemCore;
 using ProjectManagementSystemRepository;
 using System;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,6 +52,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseStatusCodePages(async context => {
+    HttpResponse response = context.HttpContext.Response;
+    if (response.StatusCode == StatusCodes.Status401Unauthorized)
+    {
+        response.ContentType = "application/json";
+        var error = new { Message = "Geçersiz token" };
+        await response.WriteAsync(JsonSerializer.Serialize(error));
+    }
+});
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
