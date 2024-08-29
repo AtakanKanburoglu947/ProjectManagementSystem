@@ -57,7 +57,7 @@ app.UseStatusCodePages(async context => {
     if (response.StatusCode == StatusCodes.Status401Unauthorized)
     {
         response.ContentType = "application/json";
-        var error = new { Message = "Geçersiz token" };
+        var error = new { Message = "Eriþim izni yok" };
         await response.WriteAsync(JsonSerializer.Serialize(error));
     }
 });
