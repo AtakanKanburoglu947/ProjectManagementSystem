@@ -75,7 +75,7 @@ namespace Auth.Services
           
 
         }
-        public UserIdentity GetUserIdentity(RegisterDto registerDto, string passwordHash, string passwordSalt)
+        private UserIdentity GetUserIdentity(RegisterDto registerDto, string passwordHash, string passwordSalt)
         {
             return new UserIdentity()
             {
