@@ -60,21 +60,6 @@ namespace Auth.Services
                 ClockSkew = TimeSpan.Zero
             };
         }
-        public ClaimsPrincipal ValidateToken(string token)
-        {
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var validationParameters = GetTokenValidationParameters();
-            try
-            {
-                ClaimsPrincipal? principal = tokenHandler.ValidateToken(token, validationParameters, out var securityToken);
-                return principal;
-            }
-            catch (Exception)
-            {
-
-                return null;
-            }
-        }
+  
     }
 }

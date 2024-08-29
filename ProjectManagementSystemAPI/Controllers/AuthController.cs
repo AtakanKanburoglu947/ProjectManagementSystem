@@ -60,20 +60,9 @@ namespace ProjectManagementSystemAPI.Controllers
         [Authorize]
         [HttpGet("GetData")]
         public IActionResult GetData() {
-            string? authorizationHeader = Request.Headers["Authorization"].FirstOrDefault();
-            string bearer = "Bearer ";
-            if (authorizationHeader != null && authorizationHeader.StartsWith(bearer))
-            {
-                string? token = authorizationHeader.Substring(bearer.Length).Trim();
-                if (_tokenService.ValidateToken(token) == null)
-                {
-                    return BadRequest();
-                }
-                
-
-            }
             return Ok("test");
+
         }
-        
+
     }
 }
