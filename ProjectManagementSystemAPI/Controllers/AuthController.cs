@@ -1,5 +1,4 @@
-﻿using Auth.Interfaces;
-using Auth.Services;
+﻿using Auth.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,11 +14,9 @@ namespace ProjectManagementSystemAPI.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly TokenService _tokenService;
-        private readonly IAuthService _authService;
-        public AuthController(TokenService tokenService, IAuthService authService)
+        private readonly AuthService _authService;
+        public AuthController(AuthService authService)
         {
-            _tokenService = tokenService;
             _authService = authService;
         }
         [HttpPost("Register")]

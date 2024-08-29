@@ -18,6 +18,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Auth\Auth.csproj" />
     <ProjectReference Include="..\ProjectManagementSystemRepository\ProjectManagementSystemRepository.csproj" />
+    <ProjectReference Include="..\ProjectManagementSystemService\ProjectManagementSystemService.csproj" />
   </ItemGroup>
 
 </Project>

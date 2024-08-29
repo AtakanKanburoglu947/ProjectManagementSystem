@@ -1,5 +1,4 @@
-﻿using Auth.Interfaces;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ProjectManagementSystemCore.Dtos;
 using ProjectManagementSystemCore.Models;
@@ -12,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Auth.Services
 {
-    public class AuthService : IAuthService
+    public class AuthService 
     {
         private AppDbContext _appDbContext;
         private TokenService _tokenService;
@@ -24,11 +23,7 @@ namespace Auth.Services
         public async Task<bool> UserExistsAsync(string email)
         {
             UserIdentity? user = await _appDbContext.UserIdentities.FirstOrDefaultAsync(x => x.Email.ToLower() == email.ToLower());
-            if (user == null)
-            {
-                return false;
-            }
-            return true;
+            return user != null;
         }
         public bool PasswordVerified(string password, UserIdentity user)
         {
