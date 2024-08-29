@@ -25,22 +25,13 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionString"));
 });
 var secretKey = "C7CDA87C-89EF-4247-A2A6-0B9FBC49F2D0";
-builder.Services.AddSingleton(new TokenService(secretKey));
+TokenService tokenService = new TokenService(secretKey);
+builder.Services.AddSingleton(tokenService);
 builder.Services.AddScoped<IAuthService,AuthService>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
     options =>
     {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = "https://localhost:7038",
-            ValidAudience = "User",
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
-            ClockSkew = TimeSpan.Zero
-        };
+        options.TokenValidationParameters = tokenService.GetTokenValidationParameters();
     }
     );
 builder.Services.AddAuthorization();

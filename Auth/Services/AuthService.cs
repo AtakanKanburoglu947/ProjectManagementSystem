@@ -57,16 +57,28 @@ namespace Auth.Services
             string email = loginDto.Email;
             DateTime tokenExpiryDate = DateTime.UtcNow.AddHours(1);
             UserIdentity? user = await _appDbContext.UserIdentities.FirstOrDefaultAsync(x => x.Email.ToLower() == email.ToLower());
-            bool passwordVerified = PasswordService.VerifyPassword(password, user.PasswordHash, user.PasswordSalt);
-            if (user != null && passwordVerified)
+            if(user == null)
             {
-                string token = _tokenService.GenerateToken(user.UserName, user.Email, tokenExpiryDate);
-                return new TokenDto() { Token = token, ExpiryDate = tokenExpiryDate };
+                throw new Exception("Kullanıcı bulunamadı");
             }
-            else
+            else 
             {
-                throw new Exception("İşlem başarısız.");
+                bool passwordVerified = PasswordService.VerifyPassword(password, user.PasswordHash, user.PasswordSalt);
+                if (!passwordVerified)
+                {
+                    throw new Exception("Şifre geçerli değil");
+
+                }
+                else
+                {
+                    string token = _tokenService.GenerateToken(user.UserName, user.Email, tokenExpiryDate);
+                    return new TokenDto() { Token = token, ExpiryDate = tokenExpiryDate };
+                }
+
             }
+
+          
+
         }
         public UserIdentity GetUserIdentity(RegisterDto registerDto, string passwordHash, string passwordSalt)
         {

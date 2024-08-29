@@ -46,7 +46,7 @@ namespace Auth.Services
             ];
 
         }
-        private TokenValidationParameters GetTokenValidationParameters()
+        public TokenValidationParameters GetTokenValidationParameters()
         {
             return new TokenValidationParameters
             {
