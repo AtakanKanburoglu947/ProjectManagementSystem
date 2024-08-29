@@ -10,8 +10,9 @@ namespace ProjectManagementSystemService
     public interface IService<T,Dto> where T : class where Dto : class
     {
          Task Add(Dto dto);
-         Task Update(Dto dto);
-         Task Remove(Dto dto);
+         Task Update(T t);
+         Task Remove(int id);
+         Task Remove(Expression<Func<T, bool>> expression);
          Task<List<T>> GetAll();
          Task<T> Get(int id);
          Task<T> Get(Expression<Func<T,bool>> expression);    

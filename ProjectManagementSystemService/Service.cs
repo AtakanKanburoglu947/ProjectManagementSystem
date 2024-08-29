@@ -28,11 +28,7 @@ namespace ProjectManagementSystemService
 
         }
 
-        public async Task Remove(Dto dto)
-        {
-            _dbSet.Remove(_mapper.Map<T>(dto));
-            await _appDbContext.SaveChangesAsync();
-        }
+    
 
         public async Task<T> Get(int id)
         {
@@ -44,9 +40,9 @@ namespace ProjectManagementSystemService
             return await _dbSet.ToListAsync();
         }
 
-        public async Task Update(Dto dto)
+        public async Task Update(T t)
         {
-            _dbSet.Update(_mapper.Map<T>(dto));
+            _dbSet.Update(_mapper.Map<T>(t));
             await _appDbContext.SaveChangesAsync();
         }
 
@@ -58,6 +54,18 @@ namespace ProjectManagementSystemService
         public async Task<T> Get(Expression<Func<T, bool>> expression)
         {
             return await _dbSet.FirstOrDefaultAsync(expression);
+        }
+
+        public async Task Remove(int id)
+        {
+            _dbSet.Remove(await _dbSet.FindAsync(id));
+            await _appDbContext.SaveChangesAsync();
+        }
+
+        public async Task Remove(Expression<Func<T, bool>> expression)
+        {
+            _dbSet.Remove(await _dbSet.FirstOrDefaultAsync(expression));
+            await _appDbContext.SaveChangesAsync();
         }
     }
 }

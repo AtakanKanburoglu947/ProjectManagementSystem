@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Auth.Services
 {
-    public class AuthService 
+    public class AuthService
     {
         private AppDbContext _appDbContext;
         private TokenService _tokenService;
@@ -58,11 +58,11 @@ namespace Auth.Services
             string email = loginDto.Email;
             DateTime tokenExpiryDate = DateTime.UtcNow.AddHours(1);
             UserIdentity? user = await _appDbContext.UserIdentities.FirstOrDefaultAsync(x => x.Email.ToLower() == email.ToLower());
-            if(user == null)
+            if (user == null)
             {
                 throw new Exception("Kullanıcı bulunamadı");
             }
-            else 
+            else
             {
                 bool passwordVerified = PasswordService.VerifyPassword(password, user.PasswordHash, user.PasswordSalt);
                 if (!passwordVerified)
@@ -78,8 +78,9 @@ namespace Auth.Services
 
             }
 
-          
+
 
         }
-     
+
+    }
 }
