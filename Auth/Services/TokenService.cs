@@ -7,7 +7,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Auth
+namespace Auth.Services
 {
     public class TokenService
     {
@@ -19,15 +19,16 @@ namespace Auth
         public string GenerateToken(string userName, string email, DateTime expiryDate)
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
-            var creds = new SigningCredentials(key,SecurityAlgorithms.HmacSha256);
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var claims = GetClaims(userName, email);
-            var token =  GetJwtSecurityToken(claims,expiryDate, creds);
+            var token = GetJwtSecurityToken(claims, expiryDate, creds);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
 
         }
-        private JwtSecurityToken GetJwtSecurityToken(Claim[] claims, DateTime expiryDate, SigningCredentials creds) {
-            
+        private JwtSecurityToken GetJwtSecurityToken(Claim[] claims, DateTime expiryDate, SigningCredentials creds)
+        {
+
             return new JwtSecurityToken(
                 issuer: "https://localhost:7038",
                 audience: "User",
@@ -66,14 +67,14 @@ namespace Auth
             var validationParameters = GetTokenValidationParameters();
             try
             {
-                 ClaimsPrincipal? principal = tokenHandler.ValidateToken(token, validationParameters, out var securityToken);
-                 return principal; 
+                ClaimsPrincipal? principal = tokenHandler.ValidateToken(token, validationParameters, out var securityToken);
+                return principal;
             }
             catch (Exception)
             {
-                
+
                 return null;
             }
         }
-        }
     }
+}

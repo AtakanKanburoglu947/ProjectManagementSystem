@@ -1,4 +1,6 @@
 using Auth;
+using Auth.Interfaces;
+using Auth.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -22,6 +24,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 });
 var secretKey = "C7CDA87C-89EF-4247-A2A6-0B9FBC49F2D0";
 builder.Services.AddSingleton(new TokenService(secretKey));
+builder.Services.AddScoped<IAuthService,AuthService>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
     options =>
     {

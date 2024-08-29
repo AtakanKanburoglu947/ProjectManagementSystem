@@ -1,5 +1,5 @@
-﻿using Auth;
-using AuthService;
+﻿using Auth.Interfaces;
+using Auth.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,44 +16,46 @@ namespace ProjectManagementSystemAPI.Controllers
     public class AuthController : ControllerBase
     {
         private readonly TokenService _tokenService;
-        private readonly AppDbContext _appDbContext;
-        public AuthController(TokenService tokenService, AppDbContext appDbContext)
+        private readonly IAuthService _authService;
+        public AuthController(TokenService tokenService, IAuthService authService)
         {
             _tokenService = tokenService;
-            _appDbContext = appDbContext;
+            _authService = authService;
         }
         [HttpPost("Register")]
-        public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
+        public async Task<IActionResult> Register(RegisterDto registerDto)
         {
-           
-            (string,string) hashedPassword = PasswordHasher.HashPassword(registerDto.Password);
-            string passwordHash = hashedPassword.Item1;
-            string passwordSalt = hashedPassword.Item2;
-            var userIdentity = new UserIdentity()
+            if (!ModelState.IsValid)
             {
-                Email = registerDto.Email,
-                PasswordHash = passwordHash,
-                PasswordSalt = passwordSalt,
-                UserName = registerDto.UserName
-            };
-            _appDbContext.UserIdentities.Add(userIdentity);
-            await _appDbContext.SaveChangesAsync();
-            return Ok($"{userIdentity.Email} registered");
+                return BadRequest("Email, kullanıcı adı ve şifre boş bırakılamaz");
+            }
+            try
+            {
+                await _authService.Register(registerDto);
+                return Ok($"{registerDto.Email} kayıt oldu");
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(exception.Message);
+            }
+
+            
         }
         [HttpPost("Login")]
-        public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
+        public async Task<IActionResult> Login(LoginDto loginDto)
         {
-            string password = loginDto.Password;
-            string email = loginDto.Email;
-            DateTime tokenExpiryDate = DateTime.UtcNow.AddHours(1);
-            UserIdentity? user = await _appDbContext.UserIdentities.FirstOrDefaultAsync(x => x.Email.ToLower() == email.ToLower());
-            bool passwordVerified = PasswordHasher.VerifyPassword(password, user.PasswordHash, user.PasswordSalt);
-            if (user != null && passwordVerified)
+            if (!ModelState.IsValid)
             {
-               string token = _tokenService.GenerateToken(user.UserName,user.Email,tokenExpiryDate);
-               return Ok(new TokenDto() { Token = token, ExpiryDate = tokenExpiryDate });
+                return BadRequest("Email ve şifre boş bırakılamaz");
             }
-            return BadRequest();
+            try
+            {
+                return Ok(await _authService.Login(loginDto));
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(exception.Message);
+            }
         }
         [Authorize]
         [HttpGet("GetData")]

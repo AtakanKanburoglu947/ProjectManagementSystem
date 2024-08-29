@@ -12,7 +12,7 @@ namespace ProjectManagementSystemCore
     {
         protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
         {
-            string password = (string)value;
+            string password = (string)value!;
             if (string.IsNullOrWhiteSpace(password) || 
                 password.Length < 9 ||
                 !Regex.IsMatch(password,@"[A-Z]") ||
@@ -23,7 +23,8 @@ namespace ProjectManagementSystemCore
                 return new ValidationResult("Şifre büyük ve küçük harf, rakam, özel karakter içermeli ve en az 9 karakter uzunluğunda olmalı");       
             
             }
-            return base.IsValid(value, validationContext);
+            return null;
+           
         }
     }
 }

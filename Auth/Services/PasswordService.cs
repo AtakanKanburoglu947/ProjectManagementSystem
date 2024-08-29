@@ -6,9 +6,9 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AuthService
+namespace Auth.Services
 {
-    public static class PasswordHasher
+    public static class PasswordService
     {
         private static byte[] GenerateSalt()
         {
@@ -31,14 +31,14 @@ namespace AuthService
                 );
             return hash;
         }
-        public static (string,string) HashPassword(string password)
+        public static (string, string) HashPassword(string password)
         {
             byte[] salt = GenerateSalt();
             byte[] hash = GenerateHash(password, salt);
             byte[] hashBytes = new byte[48];
             Array.Copy(salt, 0, hashBytes, 0, 16);
             Array.Copy(hash, 0, hashBytes, 16, 32);
-            return (Convert.ToBase64String(hashBytes),Convert.ToBase64String(salt));
+            return (Convert.ToBase64String(hashBytes), Convert.ToBase64String(salt));
 
         }
         public static bool VerifyPassword(string password, string storedHash, string storedSalt)
@@ -46,7 +46,7 @@ namespace AuthService
             byte[] hashBytes = Convert.FromBase64String(storedHash);
             byte[] salt = Convert.FromBase64String(storedSalt);
             byte[] storedHashPart = new byte[32];
-            Array.Copy(hashBytes,16,storedHashPart, 0,32);
+            Array.Copy(hashBytes, 16, storedHashPart, 0, 32);
             byte[] hash = GenerateHash(password, salt);
             for (int i = 0; i < 32; i++)
             {
