@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using ProjectManagementSystemCore;
 using ProjectManagementSystemRepository;
-using ProjectManagementSystemService;
 using System;
 using System.Text;
 using System.Text.Json;
@@ -28,7 +27,6 @@ var secretKey = "C7CDA87C-89EF-4247-A2A6-0B9FBC49F2D0";
 TokenService tokenService = new TokenService(secretKey);
 builder.Services.AddSingleton(tokenService);
 builder.Services.AddScoped<AuthService>();
-builder.Services.AddScoped<RoleService>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
     options =>
     {
