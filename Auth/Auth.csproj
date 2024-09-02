@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ProjectManagementSystemCore\ProjectManagementSystemCore.csproj" />
     <ProjectReference Include="..\ProjectManagementSystemRepository\ProjectManagementSystemRepository.csproj" />
+    <ProjectReference Include="..\ProjectManagementSystemService\ProjectManagementSystemService.csproj" />
   </ItemGroup>
 
 </Project>

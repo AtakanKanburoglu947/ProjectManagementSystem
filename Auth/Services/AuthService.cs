@@ -131,6 +131,30 @@ namespace Auth.Services
                   throw new Exception("Kullanıcı bulunamadı");
                 }      
         }
+        public async Task<string> GetUserRole(HttpRequest request)
+        {
+            string? email = GetEmailFromAuthorizationHeader(request) as string;
+
+            UserIdentity? userIdentity = await _appDbContext.UserIdentities.FirstOrDefaultAsync(x => x.Email == email);
+            var id = userIdentity.Id;
+            User? user = await _appDbContext.Users.FirstOrDefaultAsync(x=>x.UserIdentityId == userIdentity.Id);
+            if (user != null)
+            {
+                
+                Role? userRole = await _appDbContext.Roles.FirstOrDefaultAsync(x => x.Id == user.RoleId);
+                if (userRole != null)
+                {
+                    return userRole!.Title;
+                }
+                else
+                {
+                    throw new Exception("Kullanıcı rolü bulunamadı");
+
+                }
+
+            }
+            throw new Exception("Kullanıcı bulunamadı");
+        } 
 
     }
 }

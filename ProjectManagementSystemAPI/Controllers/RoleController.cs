@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Auth;
+using Auth.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProjectManagementSystemCore.Dtos;
 using ProjectManagementSystemCore.Models;
+using ProjectManagementSystemRepository;
 using ProjectManagementSystemService;
 using System;
 using System.Linq.Expressions;
@@ -12,6 +15,8 @@ namespace ProjectManagementSystemAPI.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
+    [RoleAuthorize(["Admin"])]
+
     public class RoleController : ControllerBase
     {
         private readonly IService<Role,RoleDto> _roleService;
@@ -19,6 +24,7 @@ namespace ProjectManagementSystemAPI.Controllers
             _roleService = roleService;
         }
         [HttpPost]
+        
         public async Task<IActionResult> Add(RoleDto roleDto)
         {
             try
@@ -41,6 +47,7 @@ namespace ProjectManagementSystemAPI.Controllers
             }
         }
         [HttpGet("GetAll")]
+       
         public async Task<IActionResult> GetAll()
         {
             try
