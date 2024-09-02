@@ -13,7 +13,8 @@ namespace ProjectManagementSystemAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-
+    [Authorize]
+    [RoleAuthorize(["Admin"])]
 
     public class RoleController : ControllerBase
     {

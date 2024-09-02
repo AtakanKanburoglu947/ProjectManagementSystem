@@ -12,7 +12,8 @@ namespace ProjectManagementSystemAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-
+    [Authorize]
+    [RoleAuthorize(["Admin"])]
     public class JobController : ControllerBase
     {
         private readonly IService<Job,JobDto,JobUpdateDto> _jobService;
@@ -21,7 +22,7 @@ namespace ProjectManagementSystemAPI.Controllers
             _jobService = jobService;
         }
         [HttpPost]
-        [RoleAuthorize(["Admin"])]
+     
 
         public async Task<IActionResult> Add(JobDto jobDto)
         {
@@ -104,7 +105,6 @@ namespace ProjectManagementSystemAPI.Controllers
             }
         }
         [HttpDelete("Id")]
-        [RoleAuthorize(["Admin"])]
 
         public async Task<IActionResult> Remove(int id)
         {
@@ -121,7 +121,6 @@ namespace ProjectManagementSystemAPI.Controllers
             }
         }
         [HttpDelete("Title")]
-        [RoleAuthorize(["Admin"])]
 
         public async Task<IActionResult> Remove(string title)
         {
