@@ -11,7 +11,8 @@ namespace ProjectManagementSystemService
     {
          Task Add(Dto dto);
          Task Update(T t, Expression<Func<T, bool>> expression);
-         Task Update(UpdateDto dto,int id);
+         Task Update(UpdateDto updateDto, Expression<Func<T, bool>> expression);
+         Task Update(UpdateDto updateDto,int id);
          Task Remove(int id);
          Task Remove(Expression<Func<T, bool>> expression);
          Task<List<T>> GetAll();

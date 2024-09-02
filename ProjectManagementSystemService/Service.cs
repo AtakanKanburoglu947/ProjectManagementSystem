@@ -50,8 +50,8 @@ namespace ProjectManagementSystemService
         public async Task Update(T t, Expression<Func<T,bool>> expression)
         {
 
-            var existingEntity = Get(expression);
-            _dbSet.Update(_mapper.Map(existingEntity,t));
+            var existingEntity = await Get(expression);
+            _dbSet.Update(existingEntity);
             await _appDbContext.SaveChangesAsync();
         }
 
@@ -88,6 +88,13 @@ namespace ProjectManagementSystemService
             _mapper.Map(existingEntity,updateDto);
             await _appDbContext.SaveChangesAsync();
 
+        }
+
+        public async Task Update(UpdateDto updateDto, Expression<Func<T, bool>> expression)
+        {
+            var existingEntity = await Get(expression);
+            _mapper.Map(existingEntity, updateDto);
+            await _appDbContext.SaveChangesAsync();
         }
     }
 }
