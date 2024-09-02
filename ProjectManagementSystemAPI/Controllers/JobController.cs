@@ -1,4 +1,5 @@
 ﻿using Auth;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -7,11 +8,11 @@ using ProjectManagementSystemCore.Models;
 using ProjectManagementSystemService;
 using System.Linq.Expressions;
 
-namespace ProjectManagementSystemAPI.Contİşlers
+namespace ProjectManagementSystemAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+
     public class JobController : ControllerBase
     {
         private readonly IService<Job,JobDto> _jobService;
@@ -20,7 +21,6 @@ namespace ProjectManagementSystemAPI.Contİşlers
         {
             _jobService = jobService;
             _jobUpdateService = jobUpdateService;
-
         }
         [HttpPost]
         [RoleAuthorize(["Admin"])]
@@ -47,7 +47,6 @@ namespace ProjectManagementSystemAPI.Contİşlers
             }
         }
         [HttpGet("GetAll")]
-        [RoleAuthorize(["Admin"])]
 
         public async Task<IActionResult> GetAll()
         {
@@ -92,12 +91,11 @@ namespace ProjectManagementSystemAPI.Contİşlers
         }
         [HttpPut]
 
-        public async Task<IActionResult> Update(JobDto jobDto, int id)
+        public async Task<IActionResult> Update(JobUpdateDto jobUpdateDto)
         {
             try
             {
-                
-                await _jobUpdateService.Update(jobDto,id);
+                await _jobUpdateService.Update(jobUpdateDto);
                 return Ok("İş güncellendi");
             }
             catch (Exception exception)

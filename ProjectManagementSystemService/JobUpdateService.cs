@@ -18,16 +18,16 @@ namespace ProjectManagementSystemService
         {
             _appDbContext = appDbContext;
         }
-        public async Task Update(JobDto jobDto, int id)
+        public async Task Update(JobUpdateDto jobUpdateDto)
         {
-            Job? job = _appDbContext.Jobs.Find(id);
+            Job? job = _appDbContext.Jobs.Find(jobUpdateDto.Id);
             if (job != null) {
-                job.Id = id;
-                job.Title = jobDto.Title;
-                job.Description = jobDto.Description;
-                job.Status = jobDto.Status;
-                job.DueDate = jobDto.DueDate;
-                job.UserId = jobDto.UserId;
+                job.Id = jobUpdateDto.Id;
+                job.Title = jobUpdateDto.Title;
+                job.Description = jobUpdateDto.Description;
+                job.Status = jobUpdateDto.Status;
+                job.DueDate = jobUpdateDto.DueDate;
+                job.UserId = jobUpdateDto.UserId;
             }
             await _appDbContext.SaveChangesAsync();
         }
