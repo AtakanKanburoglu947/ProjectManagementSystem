@@ -116,7 +116,6 @@ namespace Auth.Services
                 return payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"];
             }
             throw new Exception("Email bulunamadı");
-
         }
         public async Task<string> UpdatePassword(HttpRequest request, PasswordDto passwordDto)
         {
@@ -130,11 +129,7 @@ namespace Auth.Services
             else
                 {
                   throw new Exception("Kullanıcı bulunamadı");
-                }
-                
-          
-                
-            
+                }      
         }
 
     }

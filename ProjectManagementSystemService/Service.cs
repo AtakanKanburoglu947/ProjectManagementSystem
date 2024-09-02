@@ -40,10 +40,17 @@ namespace ProjectManagementSystemService
             return await _dbSet.ToListAsync();
         }
 
-        public async Task Update(T t)
+        public async Task Update(T t, Expression<Func<T,bool>> expression)
         {
-            _dbSet.Update(_mapper.Map<T>(t));
-            await _appDbContext.SaveChangesAsync();
+            if (await Get(expression) != null)
+            {
+                _dbSet.Update(_mapper.Map<T>(t));
+                await _appDbContext.SaveChangesAsync();
+            }
+            else
+            {
+                throw new Exception("Kayıt bulunamadı");
+            }
         }
 
         public async Task<List<T>> Filter(Expression<Func<T, bool>> expression)

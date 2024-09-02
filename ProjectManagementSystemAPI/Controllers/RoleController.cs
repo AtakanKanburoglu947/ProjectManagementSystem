@@ -1,14 +1,17 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProjectManagementSystemCore.Dtos;
 using ProjectManagementSystemCore.Models;
 using ProjectManagementSystemService;
 using System;
+using System.Linq.Expressions;
 
 namespace ProjectManagementSystemAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class RoleController : ControllerBase
     {
         private readonly IService<Role,RoleDto> _roleService;
@@ -84,7 +87,8 @@ namespace ProjectManagementSystemAPI.Controllers
         {
             try
             {
-                await _roleService.Update(role);
+                Expression<Func<Role, bool>> expression = x => x.Title == role.Title;
+                await _roleService.Update(role, expression);
                 return Ok("Rol güncellendi");
             }
             catch (Exception exception)
