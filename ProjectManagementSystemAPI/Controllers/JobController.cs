@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Auth;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProjectManagementSystemCore.Dtos;
@@ -10,6 +11,7 @@ namespace ProjectManagementSystemAPI.Contİşlers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class JobController : ControllerBase
     {
         private readonly IService<Job,JobDto> _jobService;
@@ -21,6 +23,7 @@ namespace ProjectManagementSystemAPI.Contİşlers
 
         }
         [HttpPost]
+        [RoleAuthorize(["Admin"])]
 
         public async Task<IActionResult> Add(JobDto jobDto)
         {
@@ -44,6 +47,7 @@ namespace ProjectManagementSystemAPI.Contİşlers
             }
         }
         [HttpGet("GetAll")]
+        [RoleAuthorize(["Admin"])]
 
         public async Task<IActionResult> GetAll()
         {
@@ -87,6 +91,7 @@ namespace ProjectManagementSystemAPI.Contİşlers
             }
         }
         [HttpPut]
+
         public async Task<IActionResult> Update(JobDto jobDto, int id)
         {
             try
@@ -103,6 +108,8 @@ namespace ProjectManagementSystemAPI.Contİşlers
             }
         }
         [HttpDelete("Id")]
+        [RoleAuthorize(["Admin"])]
+
         public async Task<IActionResult> Remove(int id)
         {
             try
@@ -118,6 +125,8 @@ namespace ProjectManagementSystemAPI.Contİşlers
             }
         }
         [HttpDelete("Title")]
+        [RoleAuthorize(["Admin"])]
+
         public async Task<IActionResult> Remove(string title)
         {
             try

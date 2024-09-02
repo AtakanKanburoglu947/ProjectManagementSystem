@@ -9,12 +9,12 @@ using ProjectManagementSystemRepository;
 using ProjectManagementSystemService;
 using System;
 using System.Linq.Expressions;
-
 namespace ProjectManagementSystemAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-
+    [Authorize]
+    [RoleAuthorize(["Admin"])]
 
     public class RoleController : ControllerBase
     {
