@@ -1,57 +1,55 @@
-﻿using Auth;
-using Auth.Services;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProjectManagementSystemCore.Dtos;
 using ProjectManagementSystemCore.Models;
-using ProjectManagementSystemRepository;
 using ProjectManagementSystemService;
-using System;
 using System.Linq.Expressions;
 
-namespace ProjectManagementSystemAPI.Controllers
+namespace ProjectManagementSystemAPI.Contİşlers
 {
     [Route("api/[controller]")]
     [ApiController]
-
-
-    public class RoleController : ControllerBase
+    public class JobController : ControllerBase
     {
-        private readonly IService<Role,RoleDto> _roleService;
-        public RoleController(IService<Role, RoleDto> roleService) {
-            _roleService = roleService;
+        private readonly IService<Job,JobDto> _jobService;
+        private readonly JobUpdateService _jobUpdateService;
+        public JobController(IService<Job,JobDto> jobService, JobUpdateService jobUpdateService)
+        {
+            _jobService = jobService;
+            _jobUpdateService = jobUpdateService;
+
         }
         [HttpPost]
-        
-        public async Task<IActionResult> Add(RoleDto roleDto)
+
+        public async Task<IActionResult> Add(JobDto jobDto)
         {
             try
             {
-                Role roleExists = await _roleService.Get(x => x.Title == roleDto.Title) ;
-                if (roleExists != null)
+                Job jobExists = await _jobService.Get(x => x.Title == jobDto.Title);
+                if (jobExists != null)
                 {
-                    return BadRequest("Rol zaten mevcut");
+                    return BadRequest("İş zaten mevcut");
                 }
                 else
                 {
-                    await _roleService.Add(roleDto);
-                    return Ok("Rol eklendi");
+                    await _jobService.Add(jobDto);
+                    return Ok("İş eklendi");
                 }
             }
             catch (Exception exception)
             {
                 return BadRequest(exception.Message);
-                
+
             }
         }
         [HttpGet("GetAll")]
-       
+
         public async Task<IActionResult> GetAll()
         {
             try
             {
-                return Ok(await _roleService.GetAll());
+                return Ok(await _jobService.GetAll());
             }
             catch (Exception exception)
             {
@@ -65,7 +63,7 @@ namespace ProjectManagementSystemAPI.Controllers
         {
             try
             {
-                return Ok(await _roleService.Get(id));
+                return Ok(await _jobService.Get(id));
             }
             catch (Exception exception)
             {
@@ -79,7 +77,7 @@ namespace ProjectManagementSystemAPI.Controllers
         {
             try
             {
-                return Ok(await _roleService.Get(x=>x.Title == title));
+                return Ok(await _jobService.Get(x => x.Title == title));
             }
             catch (Exception exception)
             {
@@ -89,13 +87,13 @@ namespace ProjectManagementSystemAPI.Controllers
             }
         }
         [HttpPut]
-        public async Task<IActionResult> Update(Role role)
+        public async Task<IActionResult> Update(JobDto jobDto, int id)
         {
             try
             {
-                Expression<Func<Role, bool>> expression = x => x.Title == role.Title;
-               
-                return Ok("Rol güncellendi");
+                
+                await _jobUpdateService.Update(jobDto,id);
+                return Ok("İş güncellendi");
             }
             catch (Exception exception)
             {
@@ -109,8 +107,8 @@ namespace ProjectManagementSystemAPI.Controllers
         {
             try
             {
-                await _roleService.Remove(id);
-                return Ok("Rol silindi");
+                await _jobService.Remove(id);
+                return Ok("İş silindi");
             }
             catch (Exception exception)
             {
@@ -124,8 +122,8 @@ namespace ProjectManagementSystemAPI.Controllers
         {
             try
             {
-                await _roleService.Remove(x=>x.Title == title);
-                return Ok("Rol silindi");
+                await _jobService.Remove(x => x.Title == title);
+                return Ok("İş silindi");
             }
             catch (Exception exception)
             {

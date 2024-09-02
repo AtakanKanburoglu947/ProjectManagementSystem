@@ -34,11 +34,6 @@ namespace Auth
             }
             context.Result = new ForbidResult();
             return;
-
-
         }
-
-
     }
-
 }

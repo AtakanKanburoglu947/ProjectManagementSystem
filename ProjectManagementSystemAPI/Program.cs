@@ -29,6 +29,7 @@ TokenService tokenService = new TokenService(secretKey);
 builder.Services.AddSingleton(tokenService);
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped(typeof(IService<,>),typeof(Service<,>));
+builder.Services.AddScoped<JobUpdateService>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
     options =>
     {

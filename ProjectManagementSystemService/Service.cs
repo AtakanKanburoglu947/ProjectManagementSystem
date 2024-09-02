@@ -32,7 +32,13 @@ namespace ProjectManagementSystemService
 
         public async Task<T> Get(int id)
         {
-            return await _dbSet.FindAsync(id); 
+            T t = await _dbSet.FindAsync(id);
+            if (t != null)
+            {
+                return t;
+            }
+            throw new Exception("Kayıt bulunamadı");
+
         }
 
         public async Task<List<T>> GetAll()
@@ -42,8 +48,10 @@ namespace ProjectManagementSystemService
 
         public async Task Update(T t, Expression<Func<T,bool>> expression)
         {
+         
             if (await Get(expression) != null)
             {
+
                 _dbSet.Update(_mapper.Map<T>(t));
                 await _appDbContext.SaveChangesAsync();
             }
@@ -60,7 +68,12 @@ namespace ProjectManagementSystemService
 
         public async Task<T> Get(Expression<Func<T, bool>> expression)
         {
-            return await _dbSet.FirstOrDefaultAsync(expression);
+            T t = await _dbSet.FirstOrDefaultAsync(expression);
+            if (t != null)
+            {
+                return t;
+            }
+            throw new Exception("Kayıt bulunamadı");
         }
 
         public async Task Remove(int id)
