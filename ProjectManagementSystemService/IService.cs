@@ -7,10 +7,11 @@ using System.Threading.Tasks;
 
 namespace ProjectManagementSystemService
 {
-    public interface IService<T,Dto> where T : class where Dto : class
+    public interface IService<T,Dto, UpdateDto> where T : class where Dto : class where UpdateDto : class
     {
          Task Add(Dto dto);
          Task Update(T t, Expression<Func<T, bool>> expression);
+         Task Update(UpdateDto dto,int id);
          Task Remove(int id);
          Task Remove(Expression<Func<T, bool>> expression);
          Task<List<T>> GetAll();

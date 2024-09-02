@@ -15,12 +15,10 @@ namespace ProjectManagementSystemAPI.Controllers
 
     public class JobController : ControllerBase
     {
-        private readonly IService<Job,JobDto> _jobService;
-        private readonly JobUpdateService _jobUpdateService;
-        public JobController(IService<Job,JobDto> jobService, JobUpdateService jobUpdateService)
+        private readonly IService<Job,JobDto,JobUpdateDto> _jobService;
+        public JobController(IService<Job,JobDto,JobUpdateDto> jobService)
         {
             _jobService = jobService;
-            _jobUpdateService = jobUpdateService;
         }
         [HttpPost]
         [RoleAuthorize(["Admin"])]
@@ -95,7 +93,7 @@ namespace ProjectManagementSystemAPI.Controllers
         {
             try
             {
-                await _jobUpdateService.Update(jobUpdateDto);
+                await _jobService.Update(jobUpdateDto,jobUpdateDto.Id);
                 return Ok("İş güncellendi");
             }
             catch (Exception exception)

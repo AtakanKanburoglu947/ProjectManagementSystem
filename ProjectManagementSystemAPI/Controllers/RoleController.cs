@@ -17,8 +17,8 @@ namespace ProjectManagementSystemAPI.Controllers
 
     public class RoleController : ControllerBase
     {
-        private readonly IService<Role,RoleDto> _roleService;
-        public RoleController(IService<Role, RoleDto> roleService) {
+        private readonly IService<Role,RoleDto,RoleDto> _roleService;
+        public RoleController(IService<Role, RoleDto, RoleDto> roleService) {
             _roleService = roleService;
         }
         [HttpPost]

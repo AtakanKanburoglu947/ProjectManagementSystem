@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using ProjectManagementSystemRepository;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace ProjectManagementSystemService
 {
-    public class Service<T, Dto> : IService<T, Dto> where T : class where Dto : class
+    public class Service<T, Dto, UpdateDto> : IService<T, Dto, UpdateDto> where T : class where Dto : class where UpdateDto : class
     {
         private readonly IMapper _mapper;
         private readonly AppDbContext _appDbContext;
@@ -48,17 +49,10 @@ namespace ProjectManagementSystemService
 
         public async Task Update(T t, Expression<Func<T,bool>> expression)
         {
-         
-            if (await Get(expression) != null)
-            {
 
-                _dbSet.Update(_mapper.Map<T>(t));
-                await _appDbContext.SaveChangesAsync();
-            }
-            else
-            {
-                throw new Exception("Kayıt bulunamadı");
-            }
+            var existingEntity = Get(expression);
+            _dbSet.Update(_mapper.Map(existingEntity,t));
+            await _appDbContext.SaveChangesAsync();
         }
 
         public async Task<List<T>> Filter(Expression<Func<T, bool>> expression)
@@ -86,6 +80,14 @@ namespace ProjectManagementSystemService
         {
             _dbSet.Remove(await _dbSet.FirstOrDefaultAsync(expression));
             await _appDbContext.SaveChangesAsync();
+        }
+
+        public async Task Update(UpdateDto updateDto,int id)
+        {
+            var existingEntity = await Get(id);
+            _mapper.Map(existingEntity,updateDto);
+            await _appDbContext.SaveChangesAsync();
+
         }
     }
 }
