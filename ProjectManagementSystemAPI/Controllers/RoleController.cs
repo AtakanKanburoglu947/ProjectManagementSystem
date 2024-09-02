@@ -85,7 +85,7 @@ namespace ProjectManagementSystemAPI.Controllers
             try
             {
                 await _roleService.Update(role);
-                return Ok("Rol silindi");
+                return Ok("Rol güncellendi");
             }
             catch (Exception exception)
             {

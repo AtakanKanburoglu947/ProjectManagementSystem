@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
 using ProjectManagementSystemCore.Dtos;
 using ProjectManagementSystemCore.Models;
 using ProjectManagementSystemRepository;
@@ -8,6 +9,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
+using Azure.Core;
 
 namespace Auth.Services
 {
@@ -80,6 +84,57 @@ namespace Auth.Services
 
 
 
+        }
+        private async Task<string> UpdatePasswordHashAndSalt(PasswordDto passwordDto, UserIdentity userIdentity)
+        {
+            if (PasswordVerified(passwordDto.OldPassword, userIdentity))
+            {
+                (string, string) newPassword = PasswordService.HashPassword(passwordDto.NewPassword);
+                string newPasswordHash = newPassword.Item1;
+                string newPasswordSalt = newPassword.Item2;
+
+                userIdentity.PasswordSalt = newPasswordSalt;
+                userIdentity.PasswordHash = newPasswordHash;
+                await _appDbContext.SaveChangesAsync();
+                return "Şifre güncellendi";
+            }
+            else
+            {
+                throw new Exception("Eski şifre gerekli");
+            }
+        } 
+        private object GetEmailFromAuthorizationHeader(HttpRequest request)
+        {
+            string? authorizationHeader = request.Headers.Authorization.FirstOrDefault();
+            string bearer = "Bearer ";
+            if (authorizationHeader != null && authorizationHeader.StartsWith(bearer))
+            {
+                string? token = authorizationHeader.Substring(bearer.Length);
+                JwtSecurityTokenHandler jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
+                JwtSecurityToken jwtToken = jwtSecurityTokenHandler.ReadToken(token) as JwtSecurityToken;
+                JwtPayload payload = jwtToken?.Payload!;
+                return payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"];
+            }
+            throw new Exception("Email bulunamadı");
+
+        }
+        public async Task<string> UpdatePassword(HttpRequest request, PasswordDto passwordDto)
+        {
+
+            string? email = GetEmailFromAuthorizationHeader(request) as string;    
+            UserIdentity? userIdentity = await _appDbContext.UserIdentities.FirstOrDefaultAsync(x=>x.Email == email);
+            if (userIdentity != null)
+                {
+                  return await UpdatePasswordHashAndSalt(passwordDto, userIdentity);
+                }
+            else
+                {
+                  throw new Exception("Kullanıcı bulunamadı");
+                }
+                
+          
+                
+            
         }
 
     }

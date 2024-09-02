@@ -55,9 +55,21 @@ namespace ProjectManagementSystemAPI.Controllers
             }
         }
         [Authorize]
-        [HttpGet("GetData")]
-        public IActionResult GetData() {
-            return Ok("test");
+        [HttpPut("UpdatePassword")]
+        public async Task<IActionResult> UpdatePassword(PasswordDto passwordDto) {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest("Eski şifre ve yeni şifre boş bırakılamaz");
+                }
+                return Ok(await _authService.UpdatePassword(Request,passwordDto));
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(exception.Message);
+                
+            }
 
         }
 
