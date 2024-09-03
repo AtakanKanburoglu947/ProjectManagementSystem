@@ -155,6 +155,15 @@ namespace Auth.Services
             }
             throw new Exception("Kullanıcı bulunamadı");
         } 
+        public async Task<UserIdentity> GetUserById(Guid id)
+        {
+            var userIdentity = await _appDbContext.UserIdentities.FindAsync(id); 
+            if (userIdentity != null)
+            {
+                return userIdentity;
+            }
+            return null;
+        }
 
     }
 }

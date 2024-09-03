@@ -38,7 +38,7 @@ namespace ProjectManagementSystemService
             {
                 return t;
             }
-            throw new Exception("Kayıt bulunamadı");
+            return null;
 
         }
 
@@ -67,7 +67,7 @@ namespace ProjectManagementSystemService
             {
                 return t;
             }
-            throw new Exception("Kayıt bulunamadı");
+            return null;
         }
 
         public async Task Remove(int id)
