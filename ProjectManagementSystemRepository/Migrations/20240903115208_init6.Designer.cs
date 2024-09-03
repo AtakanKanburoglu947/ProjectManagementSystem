@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectManagementSystemRepository;
 
@@ -11,9 +12,11 @@ using ProjectManagementSystemRepository;
 namespace ProjectManagementSystemRepository.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240903115208_init6")]
+    partial class init6
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -122,6 +125,9 @@ namespace ProjectManagementSystemRepository.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("ManagerId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -136,22 +142,9 @@ namespace ProjectManagementSystemRepository.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ManagerId");
+
                     b.ToTable("Projects");
-                });
-
-            modelBuilder.Entity("ProjectManagementSystemCore.Models.ProjectManager", b =>
-                {
-                    b.Property<int>("ManagerId")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("ManagerId", "ProjectId");
-
-                    b.HasIndex("ProjectId");
-
-                    b.ToTable("ProjectManager");
                 });
 
             modelBuilder.Entity("ProjectManagementSystemCore.Models.Role", b =>
@@ -279,19 +272,15 @@ namespace ProjectManagementSystemRepository.Migrations
                     b.Navigation("UserIdentity");
                 });
 
-            modelBuilder.Entity("ProjectManagementSystemCore.Models.ProjectManager", b =>
+            modelBuilder.Entity("ProjectManagementSystemCore.Models.Project", b =>
                 {
-                    b.HasOne("ProjectManagementSystemCore.Models.Manager", null)
-                        .WithMany("ProjectManagers")
+                    b.HasOne("ProjectManagementSystemCore.Models.Manager", "Manager")
+                        .WithMany()
                         .HasForeignKey("ManagerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ProjectManagementSystemCore.Models.Project", null)
-                        .WithMany("ProjectManagers")
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Manager");
                 });
 
             modelBuilder.Entity("ProjectManagementSystemCore.Models.User", b =>
@@ -320,14 +309,10 @@ namespace ProjectManagementSystemRepository.Migrations
             modelBuilder.Entity("ProjectManagementSystemCore.Models.Manager", b =>
                 {
                     b.Navigation("Comments");
-
-                    b.Navigation("ProjectManagers");
                 });
 
             modelBuilder.Entity("ProjectManagementSystemCore.Models.Project", b =>
                 {
-                    b.Navigation("ProjectManagers");
-
                     b.Navigation("Users");
                 });
 

@@ -13,8 +13,8 @@ namespace ProjectManagementSystemCore.Models
         public string Description { get; set; }
         public string Version { get; set; }
         public string Status { get; set; }
-        public int ManagerId { get; set; }
-        public Manager Manager { get; set; }
+        public List<Manager> Managers { get; } = [];
+        public List<ProjectManager> ProjectManagers { get; } = [];
         public ICollection<User>? Users { get; set; }    
 
     }

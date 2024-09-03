@@ -6,6 +6,10 @@ namespace ProjectManagementSystemRepository
     public class AppDbContext : DbContext
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Project>().HasMany(x => x.Managers).WithMany(x => x.Projects).UsingEntity<ProjectManager>();
+        }
         public DbSet<User> Users { get; set; }
         public DbSet<Job> Jobs { get; set; }
         public DbSet<Role> Roles { get; set; }
