@@ -85,15 +85,22 @@ namespace ProjectManagementSystemService
         public async Task Update(UpdateDto updateDto,int id)
         {
             var existingEntity = await Get(id);
-            _mapper.Map(existingEntity,updateDto);
-            await _appDbContext.SaveChangesAsync();
+            if (existingEntity != null)
+            {
+                _mapper.Map(updateDto,existingEntity);
+                await _appDbContext.SaveChangesAsync();
+            }
+            else
+            {
+                throw new Exception("Kayıt bulunamadı");
+            }
 
         }
 
         public async Task Update(UpdateDto updateDto, Expression<Func<T, bool>> expression)
         {
             var existingEntity = await Get(expression);
-            _mapper.Map(existingEntity, updateDto);
+            _mapper.Map(updateDto, existingEntity);
             await _appDbContext.SaveChangesAsync();
         }
     }

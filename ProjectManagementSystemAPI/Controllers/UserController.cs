@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using ProjectManagementSystemCore.Dtos;
 using ProjectManagementSystemCore.Models;
 using ProjectManagementSystemService;
+using System.Linq.Expressions;
 
 namespace ProjectManagementSystemAPI.Controllers
 {
@@ -11,9 +12,9 @@ namespace ProjectManagementSystemAPI.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly IService<User,UserDto,UserDto> _userService;
+        private readonly IService<User,UserDto, UserUpdateDto> _userService;
         private AuthService _authService;
-        public UserController(IService<User,UserDto,UserDto> userService, AuthService authService)
+        public UserController(IService<User,UserDto, UserUpdateDto> userService, AuthService authService)
         {
             _userService = userService;
             _authService = authService;
@@ -48,5 +49,71 @@ namespace ProjectManagementSystemAPI.Controllers
 
             }
         }
+        [HttpGet("GetAll")]
+        public async Task<IActionResult> GetAll() {
+            try
+            {
+                return Ok(await _userService.GetAll());
+            }
+            catch (Exception exception)
+            {
+
+                return BadRequest(exception.Message);
+
+            }
+        }
+
+        [HttpGet("Id")]
+        public async Task<IActionResult> Get(int id)
+        {
+            try
+            {
+                return Ok(await _userService.Get(id));
+            }
+            catch (Exception exception)
+            {
+
+                return BadRequest(exception.Message);
+
+            }
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> Update(UserUpdateDto userUpdateDto)
+        {
+            try
+            {
+                await _userService.Update(userUpdateDto,userUpdateDto.Id);
+                return Ok("Kullanıcı güncellendi");
+            }
+            catch (Exception exception)
+            {
+
+                return BadRequest(exception.Message);
+
+            }
+        }
+
+
+
+        [HttpDelete("Id")]
+        public async Task<IActionResult> Remove(int id)
+        {
+            try
+            {
+                await _userService.Remove(id);
+                return Ok("Kullanıcı silindi");
+            }
+            catch (Exception exception)
+            {
+
+                return BadRequest(exception.Message);
+
+            }
+        }
+
+
+
+
     }
 }

@@ -94,7 +94,7 @@ namespace ProjectManagementSystemAPI.Controllers
             try
             {
                 Expression<Func<Role, bool>> expression = x => x.Title == role.Title;
-                _roleService.Update(role,expression);
+                await _roleService.Update(role,expression);
                 return Ok("Rol güncellendi");
             }
             catch (Exception exception)
