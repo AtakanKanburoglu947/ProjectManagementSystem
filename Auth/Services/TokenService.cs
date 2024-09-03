@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -46,7 +47,7 @@ namespace Auth.Services
             ];
 
         }
-        public TokenValidationParameters GetTokenValidationParameters()
+        public TokenValidationParameters GetTokenValidationParameters(IConfiguration configuration)
         {
             return new TokenValidationParameters
             {
@@ -54,8 +55,8 @@ namespace Auth.Services
                 ValidateAudience = true,
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
-                ValidIssuer = "https://localhost:7038",
-                ValidAudience = "User",
+                ValidIssuer = configuration["JWT:ValidIssuer"],
+                ValidAudience = configuration["JWT:ValidAudience"],
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey)),
                 ClockSkew = TimeSpan.Zero
             };

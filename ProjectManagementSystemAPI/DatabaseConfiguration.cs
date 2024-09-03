@@ -6,7 +6,7 @@ namespace ProjectManagementSystemAPI
 {
     public static class DatabaseConfiguration
     {
-        public async static Task Seed(AppDbContext appDbContext) 
+        public async static Task Seed(AppDbContext appDbContext, IConfiguration configuration) 
         {
             appDbContext.Database.EnsureCreated();
             if (appDbContext.UserIdentities.Any()
@@ -15,7 +15,7 @@ namespace ProjectManagementSystemAPI
             {
                 return;
             }
-            string managerPassword = "Manager123456!";
+            string managerPassword = configuration["Passwords:ManagerPassword"]!;
             Guid managerId = Guid.NewGuid();
             (string,string) hashedManagerPassword = PasswordService.HashPassword(managerPassword);
             appDbContext.UserIdentities.Add(new UserIdentity() { Id = managerId, Email = "manager@example.com",

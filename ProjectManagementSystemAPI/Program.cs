@@ -25,15 +25,14 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionString"));
 });
-var secretKey = "C7CDA87C-89EF-4247-A2A6-0B9FBC49F2D0";
-TokenService tokenService = new TokenService(secretKey);
+TokenService tokenService = new TokenService(builder.Configuration["JWT:SecretKey"]!);
 builder.Services.AddSingleton(tokenService);
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped(typeof(IService<,,>),typeof(Service<,,>));
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
     options =>
     {
-        options.TokenValidationParameters = tokenService.GetTokenValidationParameters();
+        options.TokenValidationParameters = tokenService.GetTokenValidationParameters(builder.Configuration);
     }
     );
 builder.Services.AddAuthorization();
@@ -58,7 +57,8 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<AppDbContext>();
-    await DatabaseConfiguration.Seed(context);
+    var configuration = services.GetRequiredService<IConfiguration>();
+    await DatabaseConfiguration.Seed(context,configuration);
 }
 
 app.UseHttpsRedirection();
