@@ -3,6 +3,7 @@ using Auth.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using ProjectManagementSystemAPI;
 using ProjectManagementSystemCore;
 using ProjectManagementSystemRepository;
 using ProjectManagementSystemService;
@@ -53,6 +54,12 @@ app.UseStatusCodePages(async context => {
         await response.WriteAsync(JsonSerializer.Serialize(error));
     }
 });
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<AppDbContext>();
+    await DatabaseConfiguration.Seed(context);
+}
 
 app.UseHttpsRedirection();
 app.UseAuthentication();

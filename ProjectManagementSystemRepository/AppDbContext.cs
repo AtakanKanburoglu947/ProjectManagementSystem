@@ -12,6 +12,6 @@ namespace ProjectManagementSystemRepository
         public DbSet<UserIdentity> UserIdentities { get; set; }
         public DbSet<Project> Projects { get; set; }
         public DbSet<Comment> Comments { get; set; }
-
+        public DbSet<Manager> Managers { get; set; }
     }
 }
