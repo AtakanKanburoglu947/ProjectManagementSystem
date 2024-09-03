@@ -41,6 +41,16 @@ namespace ProjectManagementSystemService
             return null;
 
         }
+        public async Task<T> Get(int id, Guid guid)
+        {
+            T t = await _dbSet.FindAsync(id, guid);
+            if (t != null)
+            {
+                return t;
+            }
+            return null;
+
+        }
         public async Task<T> Get(Guid id)
         {
             T t = await _dbSet.FindAsync(id);
@@ -63,6 +73,11 @@ namespace ProjectManagementSystemService
             var existingEntity = await Get(expression);
             _dbSet.Update(existingEntity);
             await _appDbContext.SaveChangesAsync();
+        }
+        public async Task Update(Expression<Func<T, bool>> expression, T t)
+        {
+
+                await Update(t,expression);
         }
 
         public async Task<List<T>> Filter(Expression<Func<T, bool>> expression)
