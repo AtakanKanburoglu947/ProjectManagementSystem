@@ -17,7 +17,8 @@ namespace ProjectManagementSystemCore
             CreateMap<UserDto,User>().ReverseMap();
             CreateMap<JobUpdateDto, Job>().ReverseMap();
             CreateMap<UserUpdateDto,  User>().ReverseMap();
-            
+            CreateMap<ManagerDto, Manager>().ReverseMap();
+            CreateMap<ManagerUpdateDto, Manager>().ReverseMap();
         }
     }
 }
