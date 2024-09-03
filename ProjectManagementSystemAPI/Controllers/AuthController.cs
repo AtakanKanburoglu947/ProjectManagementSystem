@@ -81,7 +81,7 @@ namespace ProjectManagementSystemAPI.Controllers
             {
                 return NotFound();
             }
-            return Ok("ID: "+id);
+            return Ok(id);
         }
     }
 }
