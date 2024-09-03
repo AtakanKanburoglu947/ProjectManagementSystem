@@ -15,7 +15,8 @@ namespace ProjectManagementSystemCore.Models
         public string Status { get; set; }
         public List<Manager> Managers { get; } = [];
         public List<ProjectManager> ProjectManagers { get; } = [];
-        public ICollection<User>? Users { get; set; }    
+        public List<User> Users { get; } = [];
+        public List<ProjectUser> ProjectUsers { get; } = [];
 
     }
 }

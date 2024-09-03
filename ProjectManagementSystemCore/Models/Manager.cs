@@ -15,6 +15,6 @@ namespace ProjectManagementSystemCore.Models
         public Role Role { get; set; }
         public List<Comment>? Comments { get; } = [];
         public List<Project> Projects { get; } = [];
-        public List<ProjectManager> ProjectManagers { get; }
+        public List<ProjectManager> ProjectManagers { get; } = [];
     }
 }

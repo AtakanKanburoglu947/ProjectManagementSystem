@@ -9,6 +9,7 @@ namespace ProjectManagementSystemRepository
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Project>().HasMany(x => x.Managers).WithMany(x => x.Projects).UsingEntity<ProjectManager>();
+            modelBuilder.Entity<Project>().HasMany(x => x.Users).WithMany(x => x.Projects).UsingEntity<ProjectUser>();
         }
         public DbSet<User> Users { get; set; }
         public DbSet<Job> Jobs { get; set; }
