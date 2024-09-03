@@ -72,6 +72,11 @@ namespace ProjectManagementSystemAPI.Controllers
             }
 
         }
-
+        [Authorize]
+        [HttpGet("GetUserIdentityId")]
+        public async Task<IActionResult> GetUserIdentityId()
+        {
+            return Ok("ID: "+await _authService.GetUserIdentityId(Request));
+        }
     }
 }

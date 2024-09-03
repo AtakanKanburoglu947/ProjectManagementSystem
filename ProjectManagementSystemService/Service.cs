@@ -41,6 +41,16 @@ namespace ProjectManagementSystemService
             return null;
 
         }
+        public async Task<T> Get(Guid id)
+        {
+            T t = await _dbSet.FindAsync(id);
+            if (t != null)
+            {
+                return t;
+            }
+            return null;
+
+        }
 
         public async Task<List<T>> GetAll()
         {
@@ -72,14 +82,24 @@ namespace ProjectManagementSystemService
 
         public async Task Remove(int id)
         {
-            _dbSet.Remove(await _dbSet.FindAsync(id));
-            await _appDbContext.SaveChangesAsync();
+            var entity = await Get(id);
+            if (entity != null)
+            {
+                _dbSet.Remove(entity);
+                await _appDbContext.SaveChangesAsync();
+
+            }
         }
 
         public async Task Remove(Expression<Func<T, bool>> expression)
         {
-            _dbSet.Remove(await _dbSet.FirstOrDefaultAsync(expression));
-            await _appDbContext.SaveChangesAsync();
+            var entity = await Get(expression);
+            if (entity != null)
+            {
+                _dbSet.Remove(entity);
+                await _appDbContext.SaveChangesAsync();
+
+            }
         }
 
         public async Task Update(UpdateDto updateDto,int id)
@@ -96,12 +116,37 @@ namespace ProjectManagementSystemService
             }
 
         }
+        public async Task Update(UpdateDto updateDto, Guid id)
+        {
+            var existingEntity = await Get(id);
+            if (existingEntity != null)
+            {
+                _mapper.Map(updateDto, existingEntity);
+                await _appDbContext.SaveChangesAsync();
+            }
+            else
+            {
+                throw new Exception("Kayıt bulunamadı");
+            }
+
+        }
 
         public async Task Update(UpdateDto updateDto, Expression<Func<T, bool>> expression)
         {
             var existingEntity = await Get(expression);
             _mapper.Map(updateDto, existingEntity);
             await _appDbContext.SaveChangesAsync();
+        }
+
+        public async Task Remove(Guid id)
+        {
+            var entity = await Get(id);
+            if (entity != null)
+            {
+                _dbSet.Remove(entity);
+                await _appDbContext.SaveChangesAsync();
+
+            }
         }
     }
 }

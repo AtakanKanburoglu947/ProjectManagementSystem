@@ -164,6 +164,20 @@ namespace Auth.Services
             }
             return null;
         }
+        public async Task<Guid> GetUserIdentityId(HttpRequest request)
+        {
+            string? email = GetEmailFromAuthorizationHeader(request) as string;
+            try
+            {
+                var userIdentity = await _appDbContext.UserIdentities.FirstOrDefaultAsync(x=>x.Email == email);
+                return userIdentity!.Id;
+            }
+            catch (Exception)
+            {
+
+                throw new Exception("Id bulunamadı");
+            }
+        }
 
     }
 }

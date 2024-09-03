@@ -13,11 +13,14 @@ namespace ProjectManagementSystemService
          Task Update(T t, Expression<Func<T, bool>> expression);
          Task Update(UpdateDto updateDto, Expression<Func<T, bool>> expression);
          Task Update(UpdateDto updateDto,int id);
+         Task Update(UpdateDto updateDto, Guid id);
          Task Remove(int id);
+         Task Remove(Guid id);
          Task Remove(Expression<Func<T, bool>> expression);
          Task<List<T>> GetAll();
          Task<T> Get(int id);
-         Task<T> Get(Expression<Func<T,bool>> expression);    
+         Task<T> Get(Guid id);
+         Task<T> Get(Expression<Func<T,bool>> expression);
          Task<List<T>> Filter(Expression<Func<T,bool>> expression);
 
     }

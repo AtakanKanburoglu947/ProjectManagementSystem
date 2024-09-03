@@ -12,8 +12,8 @@ using ProjectManagementSystemRepository;
 namespace ProjectManagementSystemRepository.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240828103412_init3")]
-    partial class init3
+    [Migration("20240903074152_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,40 @@ namespace ProjectManagementSystemRepository.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("ProjectManagementSystemCore.Models.Comment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ManagerId")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ManagerId");
+
+                    b.HasIndex("ProjectId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Comments");
+                });
 
             modelBuilder.Entity("ProjectManagementSystemCore.Models.Job", b =>
                 {
@@ -57,6 +91,53 @@ namespace ProjectManagementSystemRepository.Migrations
                     b.ToTable("Jobs");
                 });
 
+            modelBuilder.Entity("ProjectManagementSystemCore.Models.Manager", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("UserIdentityId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.HasIndex("UserIdentityId");
+
+                    b.ToTable("Manager");
+                });
+
+            modelBuilder.Entity("ProjectManagementSystemCore.Models.Project", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ManagerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ManagerId");
+
+                    b.ToTable("Projects");
+                });
+
             modelBuilder.Entity("ProjectManagementSystemCore.Models.Role", b =>
                 {
                     b.Property<int>("Id")
@@ -86,6 +167,9 @@ namespace ProjectManagementSystemRepository.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<Guid?>("ProjectId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<int>("RoleId")
                         .HasColumnType("int");
 
@@ -93,6 +177,8 @@ namespace ProjectManagementSystemRepository.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ProjectId");
 
                     b.HasIndex("RoleId");
 
@@ -128,6 +214,25 @@ namespace ProjectManagementSystemRepository.Migrations
                     b.ToTable("UserIdentities");
                 });
 
+            modelBuilder.Entity("ProjectManagementSystemCore.Models.Comment", b =>
+                {
+                    b.HasOne("ProjectManagementSystemCore.Models.Manager", null)
+                        .WithMany("Comments")
+                        .HasForeignKey("ManagerId");
+
+                    b.HasOne("ProjectManagementSystemCore.Models.Project", "Project")
+                        .WithMany()
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProjectManagementSystemCore.Models.User", null)
+                        .WithMany("Comments")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("Project");
+                });
+
             modelBuilder.Entity("ProjectManagementSystemCore.Models.Job", b =>
                 {
                     b.HasOne("ProjectManagementSystemCore.Models.User", "User")
@@ -139,7 +244,7 @@ namespace ProjectManagementSystemRepository.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ProjectManagementSystemCore.Models.User", b =>
+            modelBuilder.Entity("ProjectManagementSystemCore.Models.Manager", b =>
                 {
                     b.HasOne("ProjectManagementSystemCore.Models.Role", "Role")
                         .WithMany()
@@ -158,8 +263,54 @@ namespace ProjectManagementSystemRepository.Migrations
                     b.Navigation("UserIdentity");
                 });
 
+            modelBuilder.Entity("ProjectManagementSystemCore.Models.Project", b =>
+                {
+                    b.HasOne("ProjectManagementSystemCore.Models.Manager", "Manager")
+                        .WithMany()
+                        .HasForeignKey("ManagerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Manager");
+                });
+
             modelBuilder.Entity("ProjectManagementSystemCore.Models.User", b =>
                 {
+                    b.HasOne("ProjectManagementSystemCore.Models.Project", null)
+                        .WithMany("Users")
+                        .HasForeignKey("ProjectId");
+
+                    b.HasOne("ProjectManagementSystemCore.Models.Role", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProjectManagementSystemCore.Models.UserIdentity", "UserIdentity")
+                        .WithMany()
+                        .HasForeignKey("UserIdentityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
+
+                    b.Navigation("UserIdentity");
+                });
+
+            modelBuilder.Entity("ProjectManagementSystemCore.Models.Manager", b =>
+                {
+                    b.Navigation("Comments");
+                });
+
+            modelBuilder.Entity("ProjectManagementSystemCore.Models.Project", b =>
+                {
+                    b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("ProjectManagementSystemCore.Models.User", b =>
+                {
+                    b.Navigation("Comments");
+
                     b.Navigation("Jobs");
                 });
 #pragma warning restore 612, 618

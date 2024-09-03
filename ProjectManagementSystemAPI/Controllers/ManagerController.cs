@@ -48,6 +48,67 @@ namespace ProjectManagementSystemAPI.Controllers
 
             }
         }
+        [HttpGet("GetAll")]
+        public async Task<IActionResult> GetAll()
+        {
+            try
+            {
+                return Ok(await _managerService.GetAll());
+            }
+            catch (Exception exception)
+            {
+
+                return BadRequest(exception.Message);
+
+            }
+        }
+        [HttpGet("Id")]
+        public async Task<IActionResult> Get(int id)
+        {
+            try
+            {
+                return Ok(await _managerService.Get(id));
+            }
+            catch (Exception exception)
+            {
+
+                return BadRequest(exception.Message);
+
+            }
+        }
+        [HttpPut]
+        public async Task<IActionResult> Update(ManagerUpdateDto managerUpdateDto)
+        {
+            try
+            {
+                await _managerService.Update(managerUpdateDto, managerUpdateDto.Id);
+                return Ok("Yönetici güncellendi");
+            }
+            catch (Exception exception)
+            {
+
+                return BadRequest(exception.Message);
+
+            }
+        }
+
+
+
+        [HttpDelete("Id")]
+        public async Task<IActionResult> Remove(int id)
+        {
+            try
+            {
+                await _managerService.Remove(id);
+                return Ok("Yönetici silindi");
+            }
+            catch (Exception exception)
+            {
+
+                return BadRequest(exception.Message);
+
+            }
+        }
 
 
     }

@@ -6,16 +6,39 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ProjectManagementSystemRepository.Migrations
 {
     /// <inheritdoc />
-    public partial class init4 : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<Guid>(
-                name: "ProjectId",
-                table: "Users",
-                type: "uniqueidentifier",
-                nullable: true);
+            migrationBuilder.CreateTable(
+                name: "Roles",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Roles", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserIdentities",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PasswordSalt = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserIdentities", x => x.Id);
+                });
 
             migrationBuilder.CreateTable(
                 name: "Manager",
@@ -64,6 +87,38 @@ namespace ProjectManagementSystemRepository.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Users",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserIdentityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    RoleId = table.Column<int>(type: "int", nullable: false),
+                    ProjectId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Users", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Users_Projects_ProjectId",
+                        column: x => x.ProjectId,
+                        principalTable: "Projects",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Users_Roles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "Roles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Users_UserIdentities_UserIdentityId",
+                        column: x => x.UserIdentityId,
+                        principalTable: "UserIdentities",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Comments",
                 columns: table => new
                 {
@@ -95,10 +150,28 @@ namespace ProjectManagementSystemRepository.Migrations
                         principalColumn: "Id");
                 });
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Users_ProjectId",
-                table: "Users",
-                column: "ProjectId");
+            migrationBuilder.CreateTable(
+                name: "Jobs",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    DueDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Jobs", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Jobs_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comments_ManagerId",
@@ -116,6 +189,11 @@ namespace ProjectManagementSystemRepository.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Jobs_UserId",
+                table: "Jobs",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Manager_RoleId",
                 table: "Manager",
                 column: "RoleId");
@@ -130,23 +208,33 @@ namespace ProjectManagementSystemRepository.Migrations
                 table: "Projects",
                 column: "ManagerId");
 
-            migrationBuilder.AddForeignKey(
-                name: "FK_Users_Projects_ProjectId",
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_ProjectId",
                 table: "Users",
-                column: "ProjectId",
-                principalTable: "Projects",
-                principalColumn: "Id");
+                column: "ProjectId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_RoleId",
+                table: "Users",
+                column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_UserIdentityId",
+                table: "Users",
+                column: "UserIdentityId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Users_Projects_ProjectId",
-                table: "Users");
-
             migrationBuilder.DropTable(
                 name: "Comments");
+
+            migrationBuilder.DropTable(
+                name: "Jobs");
+
+            migrationBuilder.DropTable(
+                name: "Users");
 
             migrationBuilder.DropTable(
                 name: "Projects");
@@ -154,13 +242,11 @@ namespace ProjectManagementSystemRepository.Migrations
             migrationBuilder.DropTable(
                 name: "Manager");
 
-            migrationBuilder.DropIndex(
-                name: "IX_Users_ProjectId",
-                table: "Users");
+            migrationBuilder.DropTable(
+                name: "Roles");
 
-            migrationBuilder.DropColumn(
-                name: "ProjectId",
-                table: "Users");
+            migrationBuilder.DropTable(
+                name: "UserIdentities");
         }
     }
 }
