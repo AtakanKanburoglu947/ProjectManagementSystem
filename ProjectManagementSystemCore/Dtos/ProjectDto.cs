@@ -4,16 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProjectManagementSystemCore.Models
+namespace ProjectManagementSystemCore.Dtos
 {
-    public class Project
+    public class ProjectDto
     {
-        public Guid Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public int ManagerId { get; set; }
-        public Manager Manager { get; set; }
-        public ICollection<User>? Users { get; set; }    
-
     }
 }

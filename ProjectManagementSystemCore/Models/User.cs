@@ -13,7 +13,7 @@ namespace ProjectManagementSystemCore.Models
         public UserIdentity UserIdentity { get; set; }
         public int RoleId { get; set; }
         public Role Role { get; set; }
-        public ICollection<Job> Jobs { get; set; }
-        public ICollection<Comment> Comments { get; set; }
+        public ICollection<Job>? Jobs { get; set; }
+        public ICollection<Comment>? Comments { get; set; }
     }
 }
