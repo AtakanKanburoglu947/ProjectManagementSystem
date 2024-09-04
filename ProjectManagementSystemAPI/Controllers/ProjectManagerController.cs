@@ -44,5 +44,10 @@ namespace ProjectManagementSystemAPI.Controllers
         {
             await _projectManagerService.Update(x=>x.ProjectId == projectManager.ProjectId, projectManager);
         }
+        [HttpGet("GetManagersOfProject")]
+        public  IActionResult GetManagersOfProject(Guid projectId)
+        {
+           return Ok(_projectManagerService.Where(x => x.ProjectId == projectId));
+        }
     }
 }

@@ -163,5 +163,10 @@ namespace ProjectManagementSystemService
 
             }
         }
+
+        public List<T> Where(Expression<Func<T, bool>> expression)
+        {
+            return _dbSet.Where(expression).ToList();
+        }
     }
 }
