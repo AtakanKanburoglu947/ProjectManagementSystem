@@ -53,7 +53,7 @@ namespace ProjectManagementSystemAPI.Controllers
         {
             try
             {
-                return Ok(await _managerService.GetAll());
+                return Ok(await _managerService.GetAll("managers"));
             }
             catch (Exception exception)
             {

@@ -20,13 +20,12 @@ namespace ProjectManagementSystemService
          Task Remove(Expression<Func<T, bool>> expression);
          Task Remove(Guid guid, int id);
          Task Remove(int id, Guid guid);
-         Task<List<T>> GetAll();
+         Task<List<T>> GetAll(string cacheKey);
          Task<T> Get(int id);
          Task<T> Get(Guid id);
          Task<T> Get(int id, Guid guid);
          Task<T> Get(Guid guid, int id);
          Task<T> Get(Expression<Func<T,bool>> expression);
-         Task<List<T>> Filter(Expression<Func<T,bool>> expression);
          List<T> Where(Expression<Func<T,bool>> expression);
     }
 }

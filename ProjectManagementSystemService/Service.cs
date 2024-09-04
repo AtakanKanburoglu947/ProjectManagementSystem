@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
+using Microsoft.Extensions.Caching.Memory;
 using ProjectManagementSystemRepository;
 using System;
 using System.Collections.Generic;
@@ -15,12 +16,14 @@ namespace ProjectManagementSystemService
     {
         private readonly IMapper _mapper;
         private readonly AppDbContext _appDbContext;
-        private readonly DbSet<T> _dbSet;   
-        public Service(IMapper mapper, AppDbContext appDbContext)
+        private readonly DbSet<T> _dbSet;
+        private readonly IMemoryCache _memoryCache;
+        public Service(IMapper mapper, AppDbContext appDbContext,IMemoryCache memoryCache)
         {
             _mapper = mapper;
             _appDbContext = appDbContext;
             _dbSet = _appDbContext.Set<T>();
+            _memoryCache = memoryCache;
         }
         public async Task Add(Dto dto)
         {
@@ -72,8 +75,18 @@ namespace ProjectManagementSystemService
 
         }
 
-        public async Task<List<T>> GetAll()
+        public async Task<List<T>> GetAll(string cacheKey)
         {
+            if (_memoryCache.TryGetValue(cacheKey, out List<T> entities) == false)
+            {
+                entities = await _dbSet.ToListAsync();
+                var cacheEntryOptions = new MemoryCacheEntryOptions() { 
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(1),
+                    SlidingExpiration = TimeSpan.FromMinutes(2)
+                    
+                }; 
+                _memoryCache.Set(cacheKey, entities,cacheEntryOptions);
+            }
             return await _dbSet.ToListAsync();
         }
 
@@ -89,12 +102,6 @@ namespace ProjectManagementSystemService
 
                 await Update(t,expression);
         }
-
-        public async Task<List<T>> Filter(Expression<Func<T, bool>> expression)
-        {
-            return await _dbSet.Where(expression).ToListAsync();    
-        }
-
         public async Task<T> Get(Expression<Func<T, bool>> expression)
         {
             T t = await _dbSet.FirstOrDefaultAsync(expression);

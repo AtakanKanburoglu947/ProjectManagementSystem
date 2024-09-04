@@ -32,7 +32,7 @@ namespace ProjectManagementSystemAPI.Controllers
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll()
         {
-            return Ok(await _projectService.GetAll());
+            return Ok(await _projectService.GetAll("projects"));
         }
         [HttpGet("Id")]
         public async Task<IActionResult> Get(Guid id)

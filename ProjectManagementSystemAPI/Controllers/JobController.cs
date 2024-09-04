@@ -51,7 +51,7 @@ namespace ProjectManagementSystemAPI.Controllers
         {
             try
             {
-                return Ok(await _jobService.GetAll());
+                return Ok(await _jobService.GetAll("jobs"));
             }
             catch (Exception exception)
             {

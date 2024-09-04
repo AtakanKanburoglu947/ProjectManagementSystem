@@ -27,6 +27,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 });
 TokenService tokenService = new TokenService(builder.Configuration["JWT:SecretKey"]!);
 builder.Services.AddSingleton(tokenService);
+builder.Services.AddMemoryCache();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped(typeof(IService<,,>),typeof(Service<,,>));
 builder.Services.AddHttpContextAccessor();
