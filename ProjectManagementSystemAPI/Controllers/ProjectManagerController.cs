@@ -47,7 +47,12 @@ namespace ProjectManagementSystemAPI.Controllers
         [HttpGet("GetManagersOfProject")]
         public  IActionResult GetManagersOfProject(Guid projectId)
         {
-           return Ok(_projectManagerService.Where(x => x.ProjectId == projectId));
+            var result = _projectManagerService.Where(x => x.ProjectId == projectId);
+            if (result != null)
+            {
+                return Ok(result);
+            }
+            else { return NotFound(); }
         }
     }
 }
