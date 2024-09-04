@@ -109,26 +109,27 @@ namespace Auth.Services
                 throw new Exception("Eski şifre gerekli");
             }
         } 
-        private object GetEmailFromAuthorizationHeader(HttpRequest request)
+        private object GetEmailFromCookie()
         {
-            string? authorizationHeader = request.Headers.Authorization.FirstOrDefault();
-            string bearer = "Bearer ";
-            if (authorizationHeader != null && authorizationHeader.StartsWith(bearer))
+           
+            string? token = CookieService.GetCookie("token", _contextAccessor);
+            if (token != null)
             {
-                string? token = authorizationHeader.Substring(bearer.Length);
                 JwtSecurityTokenHandler jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
                 JwtSecurityToken jwtToken = jwtSecurityTokenHandler.ReadToken(token) as JwtSecurityToken;
                 JwtPayload payload = jwtToken?.Payload!;
                 return payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"];
             }
-            throw new Exception("Email bulunamadı");
+            throw new Exception("Token bulunamadı");
+
+            
         }
 
   
-        public async Task<string> UpdatePassword(HttpRequest request, PasswordDto passwordDto)
+        public async Task<string> UpdatePassword(PasswordDto passwordDto)
         {
 
-            string? email = GetEmailFromAuthorizationHeader(request) as string;    
+            string? email = GetEmailFromCookie() as string;    
             UserIdentity? userIdentity = await _appDbContext.UserIdentities.FirstOrDefaultAsync(x=>x.Email == email);
             if (userIdentity != null)
                 {
@@ -142,7 +143,7 @@ namespace Auth.Services
   
         public async Task<string> GetUserRole(HttpRequest request)
         {
-            string? email = GetEmailFromAuthorizationHeader(request) as string;
+            string? email = GetEmailFromCookie() as string;
 
             UserIdentity? userIdentity = await _appDbContext.UserIdentities.FirstOrDefaultAsync(x => x.Email == email);
             var id = userIdentity.Id;
@@ -176,7 +177,7 @@ namespace Auth.Services
 
         public async Task<Guid> GetUserIdentityId(HttpRequest request)
         {
-            string? email = GetEmailFromAuthorizationHeader(request) as string;
+            string? email = GetEmailFromCookie() as string;
             try
             {
                 var userIdentity = await _appDbContext.UserIdentities.FirstOrDefaultAsync(x=>x.Email == email);

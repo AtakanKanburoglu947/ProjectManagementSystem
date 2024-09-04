@@ -66,7 +66,7 @@ namespace ProjectManagementSystemAPI.Controllers
                 {
                     return BadRequest("Eski şifre ve yeni şifre boş bırakılamaz");
                 }
-                return Ok(await _authService.UpdatePassword(Request,passwordDto));
+                return Ok(await _authService.UpdatePassword(passwordDto));
             }
             catch (Exception exception)
             {
