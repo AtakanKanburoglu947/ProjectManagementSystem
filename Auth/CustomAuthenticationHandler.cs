@@ -32,13 +32,12 @@ namespace Auth
             }
             try
             {
-                var handler = new JwtSecurityTokenHandler();
-                var jwtToken = handler.ReadJwtToken(token);
-                var claims = jwtToken.Claims.ToArray();
-                var usernameClaim = claims.FirstOrDefault(x => x.Type == ClaimTypes.Name);
-                var identity = new ClaimsIdentity(claims, Scheme.Name);
-                var principal = new ClaimsPrincipal(identity);
-                var ticket = new AuthenticationTicket(principal, Scheme.Name);
+                JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
+                JwtSecurityToken jwtToken = handler.ReadJwtToken(token);
+                Claim[] claims = jwtToken.Claims.ToArray();
+                ClaimsIdentity identity = new ClaimsIdentity(claims, Scheme.Name);
+                ClaimsPrincipal principal = new ClaimsPrincipal(identity);
+                AuthenticationTicket ticket = new AuthenticationTicket(principal, Scheme.Name);
                 return AuthenticateResult.Success(ticket);
             }
             catch (Exception exception)
