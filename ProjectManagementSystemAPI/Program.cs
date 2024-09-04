@@ -1,5 +1,6 @@
 using Auth;
 using Auth.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -31,12 +32,9 @@ builder.Services.AddMemoryCache();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped(typeof(IService<,,>),typeof(Service<,,>));
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
-    options =>
-    {
-        options.TokenValidationParameters = tokenService.GetTokenValidationParameters(builder.Configuration);
-    }
-    );
+builder.Services.AddAuthentication("CustomScheme")
+                        .AddScheme<AuthenticationSchemeOptions, CustomAuthenticationHandler>("CustomScheme", options => { });
+
 builder.Services.AddAuthorization();
 var app = builder.Build();
 

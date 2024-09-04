@@ -15,7 +15,7 @@ namespace ProjectManagementSystemAPI.Controllers
         {
             _service = service;
         }
-        [HttpGet]
+        [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll() {
             var result = await _service.GetAll("comments");
             if (result != null)
@@ -30,5 +30,21 @@ namespace ProjectManagementSystemAPI.Controllers
             await _service.Add(commentDto);
             
         }
+        [HttpGet]
+        public async Task<IActionResult> Get(Guid id)
+        {
+            return Ok(await _service.Get(id));
+        }
+        [HttpGet("GetCommentsOfProject")]
+        public IActionResult GetCommentsOfProject(Guid projectId)
+        {
+            return Ok(_service.Where(p => p.ProjectId == projectId));
+        }
+        [HttpGet("GetCommentsOfUser")]
+        public IActionResult GetCommentsOfUser(Guid userIdentityId)
+        {
+            return Ok(_service.Where(p => p.UserIdentityId == userIdentityId));
+        }
+
     }
 }

@@ -86,6 +86,7 @@ namespace ProjectManagementSystemAPI.Controllers
             }
             return Ok(id);
         }
+        [Authorize]
         [HttpPost("Logout")]
         public IActionResult Logout()
         {
@@ -101,6 +102,7 @@ namespace ProjectManagementSystemAPI.Controllers
                 throw;
             }
         }
+        [Authorize]
         [HttpGet("GetToken")]
         public IActionResult GetToken()
         {

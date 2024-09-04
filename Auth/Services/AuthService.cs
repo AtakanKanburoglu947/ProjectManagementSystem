@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using Azure.Core;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Auth.Services
 {
@@ -122,6 +123,8 @@ namespace Auth.Services
             }
             throw new Exception("Email bulunamadı");
         }
+
+  
         public async Task<string> UpdatePassword(HttpRequest request, PasswordDto passwordDto)
         {
 
@@ -136,6 +139,7 @@ namespace Auth.Services
                   throw new Exception("Kullanıcı bulunamadı");
                 }      
         }
+  
         public async Task<string> GetUserRole(HttpRequest request)
         {
             string? email = GetEmailFromAuthorizationHeader(request) as string;
@@ -159,7 +163,7 @@ namespace Auth.Services
 
             }
             throw new Exception("Kullanıcı bulunamadı");
-        } 
+        }
         public async Task<UserIdentity> GetUserById(Guid id)
         {
             var userIdentity = await _appDbContext.UserIdentities.FindAsync(id); 
@@ -169,6 +173,7 @@ namespace Auth.Services
             }
             return null;
         }
+
         public async Task<Guid> GetUserIdentityId(HttpRequest request)
         {
             string? email = GetEmailFromAuthorizationHeader(request) as string;
@@ -183,10 +188,12 @@ namespace Auth.Services
                 throw new Exception("Id bulunamadı");
             }
         }
+
         public void Logout()
         {
             CookieService.RemoveCookie("token", _contextAccessor);
         }
+
         public string GetToken()
         {
             return CookieService.GetCookie("token", _contextAccessor);

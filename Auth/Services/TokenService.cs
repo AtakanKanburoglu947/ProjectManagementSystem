@@ -37,7 +37,7 @@ namespace Auth.Services
                 expires: expiryDate,
                 signingCredentials: creds);
         }
-        private Claim[] GetClaims(string userName, string email)
+        public static Claim[] GetClaims(string userName, string email)
         {
             return
             [

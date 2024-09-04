@@ -54,6 +54,16 @@ namespace ProjectManagementSystemService
             return null;
 
         }
+        public async Task<T> Get(Guid id, Guid guid)
+        {
+            T? t = await _dbSet.FindAsync(id, guid);
+            if (t != null)
+            {
+                return t;
+            }
+            return null;
+
+        }
         public async Task<T> Get(Guid guid, int id)
         {
             T? t = await _dbSet.FindAsync(guid,id);
@@ -207,6 +217,16 @@ namespace ProjectManagementSystemService
                 return result;
             }
             return null;
+        }
+
+        public async Task Remove(Guid id, Guid guid)
+        {
+            var entity = await Get(id, guid);
+            if (entity != null)
+            {
+                _dbSet.Remove(entity);
+                await _appDbContext.SaveChangesAsync();
+            }
         }
     }
 }
