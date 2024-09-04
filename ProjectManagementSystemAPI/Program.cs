@@ -29,6 +29,7 @@ TokenService tokenService = new TokenService(builder.Configuration["JWT:SecretKe
 builder.Services.AddSingleton(tokenService);
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped(typeof(IService<,,>),typeof(Service<,,>));
+builder.Services.AddScoped<CookieService>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
     options =>
     {
