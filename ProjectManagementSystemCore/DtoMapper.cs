@@ -21,6 +21,8 @@ namespace ProjectManagementSystemCore
             CreateMap<ManagerUpdateDto, Manager>().ReverseMap();
             CreateMap<Project,ProjectDto>().ReverseMap();
             CreateMap<Project,ProjectUpdateDto>().ReverseMap();
+            CreateMap<Comment,CommentDto>().ReverseMap();
+            CreateMap<Comment,CommentUpdateDto>().ReverseMap();
         }
     }
 }
