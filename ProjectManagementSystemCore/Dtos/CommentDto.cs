@@ -8,9 +8,9 @@ namespace ProjectManagementSystemCore.Dtos
 {
     public class CommentDto
     {
-        public string Title { get; set; }
-        public string Description { get; set; }
+        public string Text { get; set; }
         public Guid ProjectId { get; set; }
+        public Guid UserIdentityId { get; set; }
 
     }
 }
