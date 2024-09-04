@@ -24,7 +24,7 @@ namespace ProjectManagementSystemAPI
                     new UserIdentity()
                     {
                         Id = managerId, Email = "manager@example.com",  UserName = "Manager",
-                        PasswordHash = hashedManagerPassword.Item1, PasswordSalt = hashedAdminPassword.Item2
+                        PasswordHash = hashedManagerPassword.Item1, PasswordSalt = hashedManagerPassword.Item2
                     },
                     new UserIdentity()
                     {
