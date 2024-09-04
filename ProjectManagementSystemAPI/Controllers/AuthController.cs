@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using ProjectManagementSystemCore.Dtos;
 using ProjectManagementSystemCore.Models;
 using ProjectManagementSystemRepository;
+using ProjectManagementSystemService;
 using System;
 
 namespace ProjectManagementSystemAPI.Controllers
@@ -15,9 +16,11 @@ namespace ProjectManagementSystemAPI.Controllers
     public class AuthController : ControllerBase
     {
         private readonly AuthService _authService;
-        public AuthController(AuthService authService)
+        private readonly IHttpContextAccessor _contextAccessor;
+        public AuthController(AuthService authService, IHttpContextAccessor contextAccessor)
         {
             _authService = authService;
+            _contextAccessor = contextAccessor;
         }
         [HttpPost("Register")]
         public async Task<IActionResult> Register(RegisterDto registerDto)
@@ -82,6 +85,34 @@ namespace ProjectManagementSystemAPI.Controllers
                 return NotFound();
             }
             return Ok(id);
+        }
+        [HttpPost("Logout")]
+        public IActionResult Logout()
+        {
+            try
+            {
+                _authService.Logout();
+                return Ok("Çıkış yapıldı");
+
+            }
+            catch (Exception)
+            {
+                return BadRequest("Çıkış yapılamadı");
+                throw;
+            }
+        }
+        [HttpGet("GetToken")]
+        public IActionResult GetToken()
+        {
+            try
+            {
+                return Ok(_authService.GetToken());
+            }
+            catch (Exception)
+            {
+                return BadRequest("Token alınamadı");
+                throw;
+            }
         }
     }
 }

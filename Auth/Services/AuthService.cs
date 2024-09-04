@@ -17,18 +17,22 @@ namespace Auth.Services
 {
     public class AuthService
     {
-        private AppDbContext _appDbContext;
-        private TokenService _tokenService;
-        public AuthService(AppDbContext appDbContext, TokenService tokenService)
+        private readonly AppDbContext _appDbContext;
+        private readonly TokenService _tokenService;
+        private readonly IHttpContextAccessor _contextAccessor;
+
+        public AuthService(AppDbContext appDbContext, TokenService tokenService, IHttpContextAccessor contextAccessor)
         {
             _appDbContext = appDbContext;
             _tokenService = tokenService;
+            _contextAccessor = contextAccessor;
         }
         public async Task<bool> UserExistsAsync(string email)
         {
             UserIdentity? user = await _appDbContext.UserIdentities.FirstOrDefaultAsync(x => x.Email.ToLower() == email.ToLower());
             return user != null;
         }
+   
         public bool PasswordVerified(string password, UserIdentity user)
         {
             return PasswordService.VerifyPassword(password, user.PasswordHash, user.PasswordSalt);
@@ -77,6 +81,7 @@ namespace Auth.Services
                 else
                 {
                     string token = _tokenService.GenerateToken(user.UserName, user.Email, tokenExpiryDate);
+                    CookieService.SetCookie("token", token, DateTimeOffset.UtcNow.AddHours(1), _contextAccessor);
                     return new TokenDto() { Token = token, ExpiryDate = tokenExpiryDate };
                 }
 
@@ -177,6 +182,14 @@ namespace Auth.Services
 
                 throw new Exception("Id bulunamadı");
             }
+        }
+        public void Logout()
+        {
+            CookieService.RemoveCookie("token", _contextAccessor);
+        }
+        public string GetToken()
+        {
+            return CookieService.GetCookie("token", _contextAccessor);
         }
 
     }
