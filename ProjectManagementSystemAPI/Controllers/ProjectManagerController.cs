@@ -22,7 +22,7 @@ namespace ProjectManagementSystemAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> Get(Guid projectId, int managerId)
         {
-            var project = await _projectManagerService.Get(managerId, projectId);
+            var project = await _projectManagerService.Get(x=>x.ProjectId == projectId);
             if (project == null)
             {
                 return NotFound();
@@ -35,17 +35,12 @@ namespace ProjectManagementSystemAPI.Controllers
             await _projectManagerService.Add(projectManager);
         }
         [HttpDelete]
-        public async Task Remove(Guid projectId)
+        public async Task Remove(Guid projectId, int managerId)
         {
-            await _projectManagerService.Remove(x=>x.ProjectId == projectId);
+            await _projectManagerService.Remove(projectId,managerId);
         }
-        [HttpPut]
-        public async Task Update(ProjectManager projectManager)
-        {
-            await _projectManagerService.Update(x=>x.ProjectId == projectManager.ProjectId, projectManager);
-        }
-        [HttpGet("GetManagersOfProject")]
-        public  IActionResult GetManagersOfProject(Guid projectId)
+        [HttpGet("Where")]
+        public  IActionResult Where(Guid projectId)
         {
             var result = _projectManagerService.Where(x => x.ProjectId == projectId);
             if (result != null)
