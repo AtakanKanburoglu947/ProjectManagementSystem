@@ -12,29 +12,46 @@ namespace ProjectManagementSystemAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
-    [RoleAuthorize(["Admin"])]
     public class JobController : ControllerBase
     {
+        private readonly FileService _fileService;
         private readonly IService<Job,JobDto,JobUpdateDto> _jobService;
-        public JobController(IService<Job,JobDto,JobUpdateDto> jobService)
+        public JobController(IService<Job,JobDto,JobUpdateDto> jobService, FileService fileService)
         {
             _jobService = jobService;
+            _fileService = fileService;
         }
-        [HttpPost]
-     
 
-        public async Task<IActionResult> Add(JobDto jobDto)
+        [HttpPost]
+        public async Task<IActionResult> Add(
+                IFormFile? file,
+                string title,
+                string description,
+                string status,
+                DateTime dueDate,
+                int userId,
+                int managerId,
+                Guid projectId,
+                Guid userIdentityId
+            )
         {
             try
             {
-                Job jobExists = await _jobService.Get(x => x.Title == jobDto.Title);
+                Job jobExists = await _jobService.Get(x => x.Title == title);
                 if (jobExists != null)
                 {
                     return BadRequest("İş zaten mevcut");
                 }
                 else
                 {
+                    JobDto jobDto = new JobDto() { UserId = userId, 
+                        Description = description, DueDate = dueDate, 
+                      ManagerId = managerId, Status = status, Title = title, ProjectId = projectId,
+                     UserIdentityId = userIdentityId};
+                    if (file != null) {
+                        Guid fileUploadId =  await _fileService.Upload(file, [".txt"],null,managerId);
+                        jobDto.FileUploadId = fileUploadId; 
+                            }
                     await _jobService.Add(jobDto);
                     return Ok("İş eklendi");
                 }

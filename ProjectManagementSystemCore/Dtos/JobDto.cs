@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ProjectManagementSystemCore.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,5 +14,9 @@ namespace ProjectManagementSystemCore.Dtos
         public string Status { get; set; }
         public DateTime DueDate { get; set; }
         public int UserId { get; set; }
+        public int ManagerId { get; set; }
+        public Guid ProjectId { get; set; }
+        public Guid? FileUploadId { get; set; }
+        public Guid? UserIdentityId { get; set; }
     }
 }

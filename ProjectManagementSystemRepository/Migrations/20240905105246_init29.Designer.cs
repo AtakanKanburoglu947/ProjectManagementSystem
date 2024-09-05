@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectManagementSystemRepository;
 
@@ -11,9 +12,11 @@ using ProjectManagementSystemRepository;
 namespace ProjectManagementSystemRepository.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240905105246_init29")]
+    partial class init29
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -104,15 +107,6 @@ namespace ProjectManagementSystemRepository.Migrations
                     b.Property<DateTime>("DueDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("FileUploadId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int?>("ManagerId")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -124,20 +118,9 @@ namespace ProjectManagementSystemRepository.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("UserIdentityId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("FileUploadId");
-
-                    b.HasIndex("ManagerId");
-
-                    b.HasIndex("ProjectId");
-
                     b.HasIndex("UserId");
-
-                    b.HasIndex("UserIdentityId");
 
                     b.ToTable("Jobs");
                 });
@@ -348,37 +331,13 @@ namespace ProjectManagementSystemRepository.Migrations
 
             modelBuilder.Entity("ProjectManagementSystemCore.Models.Job", b =>
                 {
-                    b.HasOne("ProjectManagementSystemCore.Models.FileUpload", "FileUpload")
-                        .WithMany()
-                        .HasForeignKey("FileUploadId");
-
-                    b.HasOne("ProjectManagementSystemCore.Models.Manager", null)
-                        .WithMany("Jobs")
-                        .HasForeignKey("ManagerId");
-
-                    b.HasOne("ProjectManagementSystemCore.Models.Project", "Project")
-                        .WithMany()
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("ProjectManagementSystemCore.Models.User", "User")
                         .WithMany("Jobs")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ProjectManagementSystemCore.Models.UserIdentity", "UserIdentity")
-                        .WithMany()
-                        .HasForeignKey("UserIdentityId");
-
-                    b.Navigation("FileUpload");
-
-                    b.Navigation("Project");
-
                     b.Navigation("User");
-
-                    b.Navigation("UserIdentity");
                 });
 
             modelBuilder.Entity("ProjectManagementSystemCore.Models.Manager", b =>
@@ -461,8 +420,6 @@ namespace ProjectManagementSystemRepository.Migrations
             modelBuilder.Entity("ProjectManagementSystemCore.Models.Manager", b =>
                 {
                     b.Navigation("Comments");
-
-                    b.Navigation("Jobs");
 
                     b.Navigation("ProjectManagers");
                 });

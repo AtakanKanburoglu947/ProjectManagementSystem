@@ -13,6 +13,7 @@ namespace ProjectManagementSystemCore.Models
         public UserIdentity UserIdentity { get; set; }
         public int RoleId { get; set; }
         public Role Role { get; set; }
+        public List<Job>? Jobs { get; set; } = [];
         public List<Comment>? Comments { get; } = [];
         public List<Project> Projects { get; } = [];
         public List<ProjectManager> ProjectManagers { get; } = [];

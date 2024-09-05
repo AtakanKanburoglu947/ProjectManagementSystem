@@ -40,7 +40,7 @@ namespace ProjectManagementSystemAPI.Controllers
                 };
                 if (file != null)
                 {
-                    Guid fileUploadId = await _fileService.Upload(file, [".txt"], null, null, projectDto.Id, projectDto.ManagerId);
+                    Guid fileUploadId = await _fileService.Upload(file, [".txt"],null,projectDto.ManagerId);
                     projectDto.FileUploadId = fileUploadId;
                 }
                 await _projectService.Add(projectDto);

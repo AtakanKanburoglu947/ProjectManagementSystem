@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectManagementSystemRepository;
 
@@ -11,9 +12,11 @@ using ProjectManagementSystemRepository;
 namespace ProjectManagementSystemRepository.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240905111506_init30")]
+    partial class init30
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -124,9 +127,6 @@ namespace ProjectManagementSystemRepository.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("UserIdentityId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
                     b.HasIndex("FileUploadId");
@@ -136,8 +136,6 @@ namespace ProjectManagementSystemRepository.Migrations
                     b.HasIndex("ProjectId");
 
                     b.HasIndex("UserId");
-
-                    b.HasIndex("UserIdentityId");
 
                     b.ToTable("Jobs");
                 });
@@ -368,17 +366,11 @@ namespace ProjectManagementSystemRepository.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ProjectManagementSystemCore.Models.UserIdentity", "UserIdentity")
-                        .WithMany()
-                        .HasForeignKey("UserIdentityId");
-
                     b.Navigation("FileUpload");
 
                     b.Navigation("Project");
 
                     b.Navigation("User");
-
-                    b.Navigation("UserIdentity");
                 });
 
             modelBuilder.Entity("ProjectManagementSystemCore.Models.Manager", b =>

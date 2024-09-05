@@ -32,7 +32,7 @@ namespace ProjectManagementSystemService
             return string.Empty;
         }
    
-        public async Task<Guid> Upload(IFormFile file, string[] extensions,Guid? userIdentityId,Guid? commentId, Guid? projectId, int? managerId )
+        public async Task<Guid> Upload(IFormFile file, string[] extensions,Guid? userIdentityId, int? managerId )
         {
             MemoryStream memoryStream = new MemoryStream();
             if (file == null)
