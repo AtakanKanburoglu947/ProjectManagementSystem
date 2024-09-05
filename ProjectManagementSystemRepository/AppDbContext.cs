@@ -18,6 +18,6 @@ namespace ProjectManagementSystemRepository
         public DbSet<Project> Projects { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Manager> Managers { get; set; }
-        public DbSet<ProjectManagementSystemCore.Models.File> Files { get; set; }
+        public DbSet<FileUpload> Files { get; set; }
     }
 }
