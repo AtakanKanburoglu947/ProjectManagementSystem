@@ -13,10 +13,12 @@ namespace ProjectManagementSystemAPI.Controllers
     {
         private readonly IService<Manager, ManagerDto, ManagerUpdateDto> _managerService;
         private readonly AuthService _authService;
-        public ManagerController(IService<Manager,ManagerDto,ManagerUpdateDto> managerService, AuthService authService)
+        private readonly FileService _fileService;
+        public ManagerController(IService<Manager,ManagerDto,ManagerUpdateDto> managerService, AuthService authService, FileService fileService)
         {
             _managerService = managerService;
             _authService = authService;
+            _fileService = fileService;
         }
         [HttpPost]
 
@@ -108,6 +110,11 @@ namespace ProjectManagementSystemAPI.Controllers
                 return BadRequest(exception.Message);
 
             }
+        }
+        [HttpGet("Files")]
+        public IActionResult GetFiles(int id)
+        {
+            return Ok(_fileService.GetFilesOfManager(id));
         }
 
 

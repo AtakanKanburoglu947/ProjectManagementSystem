@@ -13,11 +13,13 @@ namespace ProjectManagementSystemAPI.Controllers
     public class UserController : ControllerBase
     {
         private readonly IService<User,UserDto, UserUpdateDto> _userService;
-        private AuthService _authService;
-        public UserController(IService<User,UserDto, UserUpdateDto> userService, AuthService authService)
+        private readonly AuthService _authService;
+        private readonly FileService _fileService; 
+        public UserController(IService<User,UserDto, UserUpdateDto> userService, AuthService authService, FileService fileService)
         {
             _userService = userService;
             _authService = authService;
+            _fileService = fileService;
         }
         [HttpPost]
 
@@ -110,6 +112,11 @@ namespace ProjectManagementSystemAPI.Controllers
                 return BadRequest(exception.Message);
 
             }
+        }
+        [HttpGet("Files")]
+        public IActionResult GetFiles(Guid id)
+        {
+            return Ok(_fileService.GetFilesOfUser(id));
         }
 
 

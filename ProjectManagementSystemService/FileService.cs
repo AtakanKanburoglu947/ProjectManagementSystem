@@ -84,6 +84,15 @@ namespace ProjectManagementSystemService
             }
             return true;
         }
+        public List<FileUpload> GetFilesOfUser(Guid id) {
+
+            return _appDbContext.FileUploads.Where(x=>x.UserIdentityId == id).ToList();
+        }
+        public List<FileUpload> GetFilesOfManager(int id)
+        {
+            return _appDbContext.FileUploads.Where(x=>x.ManagerId == id).ToList();
+        }
+
 
 
     }
