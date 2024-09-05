@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectManagementSystemRepository;
 
@@ -11,9 +12,11 @@ using ProjectManagementSystemRepository;
 namespace ProjectManagementSystemRepository.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240905070152_init15")]
+    partial class init15
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -28,7 +31,7 @@ namespace ProjectManagementSystemRepository.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("FileId")
+                    b.Property<Guid?>("ImageId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int?>("ManagerId")
@@ -49,7 +52,7 @@ namespace ProjectManagementSystemRepository.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FileId");
+                    b.HasIndex("ImageId");
 
                     b.HasIndex("ManagerId");
 
@@ -62,13 +65,13 @@ namespace ProjectManagementSystemRepository.Migrations
                     b.ToTable("Comments");
                 });
 
-            modelBuilder.Entity("ProjectManagementSystemCore.Models.File", b =>
+            modelBuilder.Entity("ProjectManagementSystemCore.Models.Image", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<byte[]>("Data")
+                    b.Property<byte[]>("Bytes")
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
 
@@ -83,7 +86,7 @@ namespace ProjectManagementSystemRepository.Migrations
 
                     b.HasIndex("UserIdentityId");
 
-                    b.ToTable("Files");
+                    b.ToTable("Image");
                 });
 
             modelBuilder.Entity("ProjectManagementSystemCore.Models.Job", b =>
@@ -152,7 +155,7 @@ namespace ProjectManagementSystemRepository.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("FileId")
+                    b.Property<Guid?>("ImageId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
@@ -169,7 +172,7 @@ namespace ProjectManagementSystemRepository.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FileId");
+                    b.HasIndex("ImageId");
 
                     b.ToTable("Projects");
                 });
@@ -277,9 +280,9 @@ namespace ProjectManagementSystemRepository.Migrations
 
             modelBuilder.Entity("ProjectManagementSystemCore.Models.Comment", b =>
                 {
-                    b.HasOne("ProjectManagementSystemCore.Models.File", "File")
+                    b.HasOne("ProjectManagementSystemCore.Models.Image", "Image")
                         .WithMany()
-                        .HasForeignKey("FileId");
+                        .HasForeignKey("ImageId");
 
                     b.HasOne("ProjectManagementSystemCore.Models.Manager", null)
                         .WithMany("Comments")
@@ -301,14 +304,14 @@ namespace ProjectManagementSystemRepository.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("File");
+                    b.Navigation("Image");
 
                     b.Navigation("Project");
 
                     b.Navigation("UserIdentity");
                 });
 
-            modelBuilder.Entity("ProjectManagementSystemCore.Models.File", b =>
+            modelBuilder.Entity("ProjectManagementSystemCore.Models.Image", b =>
                 {
                     b.HasOne("ProjectManagementSystemCore.Models.UserIdentity", "UserIdentity")
                         .WithMany()
@@ -351,11 +354,11 @@ namespace ProjectManagementSystemRepository.Migrations
 
             modelBuilder.Entity("ProjectManagementSystemCore.Models.Project", b =>
                 {
-                    b.HasOne("ProjectManagementSystemCore.Models.File", "File")
+                    b.HasOne("ProjectManagementSystemCore.Models.Image", "Image")
                         .WithMany()
-                        .HasForeignKey("FileId");
+                        .HasForeignKey("ImageId");
 
-                    b.Navigation("File");
+                    b.Navigation("Image");
                 });
 
             modelBuilder.Entity("ProjectManagementSystemCore.Models.ProjectManager", b =>
