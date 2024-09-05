@@ -112,9 +112,9 @@ namespace ProjectManagementSystemAPI.Controllers
             }
         }
         [HttpGet("Files")]
-        public IActionResult GetFiles(int id)
+        public async Task<IActionResult> GetFiles(int id)
         {
-            return Ok(_fileService.GetFilesOfManager(id));
+            return Ok(await _fileService.GetFilesOfManager(id));
         }
 
 

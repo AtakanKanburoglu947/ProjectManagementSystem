@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO.Compression;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,9 +15,12 @@ namespace ProjectManagementSystemService
     public class FileService
     {
         private readonly AppDbContext _appDbContext;
-        public FileService(AppDbContext appDbContext)
+        private readonly CacheService _cacheService;
+        public FileService(AppDbContext appDbContext, CacheService cacheService)
         {
             _appDbContext = appDbContext;
+            _cacheService = cacheService;
+
         }
         public string GetUploadedFileExtension(string fileName)
         {
@@ -84,13 +88,13 @@ namespace ProjectManagementSystemService
             }
             return true;
         }
-        public List<FileUpload> GetFilesOfUser(Guid id) {
+        public async Task<List<FileUpload>> GetFilesOfUser(Guid id) {
 
-            return _appDbContext.FileUploads.Where(x=>x.UserIdentityId == id).ToList();
+            return await _cacheService.Get("filesofuser", TimeSpan.FromHours(1), TimeSpan.FromMinutes(2), async () => await _appDbContext.FileUploads.Where(x=>x.UserIdentityId == id).ToListAsync());
         }
-        public List<FileUpload> GetFilesOfManager(int id)
+        public async Task<List<FileUpload>> GetFilesOfManager(int id)
         {
-            return _appDbContext.FileUploads.Where(x=>x.ManagerId == id).ToList();
+            return await _cacheService.Get("filesofmanager", TimeSpan.FromHours(1), TimeSpan.FromMinutes(2), async () => await _appDbContext.FileUploads.Where(x => x.ManagerId == id).ToListAsync());
         }
 
 

@@ -18,12 +18,14 @@ namespace ProjectManagementSystemService
         private readonly AppDbContext _appDbContext;
         private readonly DbSet<T> _dbSet;
         private readonly IMemoryCache _memoryCache;
-        public Service(IMapper mapper, AppDbContext appDbContext,IMemoryCache memoryCache)
+        private readonly CacheService _cacheService;
+        public Service(IMapper mapper, AppDbContext appDbContext,IMemoryCache memoryCache, CacheService cacheService)
         {
             _mapper = mapper;
             _appDbContext = appDbContext;
             _dbSet = _appDbContext.Set<T>();
             _memoryCache = memoryCache;
+            _cacheService = cacheService;
         }
         public async Task Add(Dto dto)
         {
@@ -87,17 +89,7 @@ namespace ProjectManagementSystemService
 
         public async Task<List<T>> GetAll(string cacheKey)
         {
-            if (_memoryCache.TryGetValue(cacheKey, out List<T> entities) == false)
-            {
-                entities = await _dbSet.ToListAsync();
-                var cacheEntryOptions = new MemoryCacheEntryOptions() { 
-                    AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(1),
-                    SlidingExpiration = TimeSpan.FromMinutes(2)
-                    
-                }; 
-                _memoryCache.Set(cacheKey, entities,cacheEntryOptions);
-            }
-            return await _dbSet.ToListAsync();
+            return await _cacheService.Get(cacheKey, TimeSpan.FromHours(1), TimeSpan.FromMinutes(2), async () => await _dbSet.ToListAsync());
         }
 
         public async Task Update(T t, Expression<Func<T,bool>> expression)
@@ -209,14 +201,10 @@ namespace ProjectManagementSystemService
             }
         }
 
-        public List<T> Where(Expression<Func<T, bool>> expression)
+        public async Task<List<T>> Where(Expression<Func<T, bool>> expression, string cacheKey)
         {
-            List<T> result = _dbSet.Where(expression).ToList();
-            if (result != null)
-            {
-                return result;
-            }
-            return null;
+            return await _cacheService.Get(cacheKey, TimeSpan.FromHours(1), TimeSpan.FromMinutes(2), async () => await _dbSet.Where(expression).ToListAsync());
+
         }
 
         public async Task Remove(Guid id, Guid guid)

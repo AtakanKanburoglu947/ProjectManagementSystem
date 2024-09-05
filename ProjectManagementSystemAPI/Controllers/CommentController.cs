@@ -59,12 +59,12 @@ namespace ProjectManagementSystemAPI.Controllers
         [HttpGet("GetCommentsOfProject")]
         public IActionResult GetCommentsOfProject(Guid projectId)
         {
-            return Ok(_service.Where(p => p.ProjectId == projectId));
+            return Ok(_service.Where(p => p.ProjectId == projectId,"commentsofproject"));
         }
         [HttpGet("GetCommentsOfUser")]
         public IActionResult GetCommentsOfUser(Guid userIdentityId)
         {
-            return Ok(_service.Where(p => p.UserIdentityId == userIdentityId));
+            return Ok(_service.Where(p => p.UserIdentityId == userIdentityId,"commentsofusers"));
         }
 
     }

@@ -32,6 +32,7 @@ builder.Services.AddMemoryCache();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped(typeof(IService<,,>),typeof(Service<,,>));
 builder.Services.AddScoped<FileService>();
+builder.Services.AddScoped<CacheService>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthentication("CustomScheme")
                         .AddScheme<AuthenticationSchemeOptions, CustomAuthenticationHandler>("CustomScheme", options => { });
