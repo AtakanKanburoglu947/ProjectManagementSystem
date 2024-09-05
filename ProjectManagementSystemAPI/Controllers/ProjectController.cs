@@ -11,21 +11,44 @@ namespace ProjectManagementSystemAPI.Controllers
     public class ProjectController : ControllerBase
     {
         private readonly IService<Project,ProjectDto,ProjectUpdateDto> _projectService;
-        public ProjectController(IService<Project,ProjectDto,ProjectUpdateDto> projectService)
+        private readonly FileService _fileService;
+        public ProjectController(IService<Project,ProjectDto,ProjectUpdateDto> projectService, FileService fileService)
         {
             _projectService = projectService;
+            _fileService = fileService;
         }
         [HttpPost]
-        public async Task<IActionResult> Add(ProjectDto projectDto)
+        public async Task<IActionResult> Add(
+                 IFormFile? file,
+                 string Name,
+                 string Description,
+                 string Version,
+                 string Status,
+                 int ManagerId
+            )
         {
             try
             {
+                ProjectDto projectDto = new ProjectDto()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = Name,
+                    Description = Description,
+                    Version = Version,
+                    Status = Status,
+                    ManagerId = ManagerId
+                };
+                if (file != null)
+                {
+                    Guid fileUploadId = await _fileService.Upload(file, [".txt"], null, null, projectDto.Id, projectDto.ManagerId);
+                    projectDto.FileUploadId = fileUploadId;
+                }
                 await _projectService.Add(projectDto);
                 return Ok("Proje eklendi");
             }
-            catch (Exception exception)
+            catch (Exception)
             {
-                return BadRequest(exception.Message);
+                return BadRequest("Proje eklenemedi");
                 throw ;
             }
         }

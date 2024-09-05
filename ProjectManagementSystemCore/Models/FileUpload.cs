@@ -13,5 +13,7 @@ namespace ProjectManagementSystemCore.Models
         public byte[] Data { get; set; }
         public UserIdentity UserIdentity { get; set; }
         public Guid? UserIdentityId { get; set; }
+        public Manager Manager { get; set; }
+        public int? ManagerId { get; set; }
     }
 }

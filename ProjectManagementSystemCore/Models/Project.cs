@@ -17,6 +17,8 @@ namespace ProjectManagementSystemCore.Models
         public List<ProjectManager> ProjectManagers { get; } = [];
         public List<User> Users { get; } = [];
         public List<ProjectUser> ProjectUsers { get; } = [];
+        public FileUpload? FileUpload { get; set; }
+        public Guid? FileUploadId { get; set; }
 
     }
 }

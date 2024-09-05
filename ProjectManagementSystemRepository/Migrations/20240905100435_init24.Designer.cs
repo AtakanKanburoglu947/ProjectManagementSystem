@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectManagementSystemRepository;
 
@@ -11,9 +12,11 @@ using ProjectManagementSystemRepository;
 namespace ProjectManagementSystemRepository.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240905100435_init24")]
+    partial class init24
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -72,9 +75,6 @@ namespace ProjectManagementSystemRepository.Migrations
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
 
-                    b.Property<int?>("ManagerId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -83,8 +83,6 @@ namespace ProjectManagementSystemRepository.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ManagerId");
 
                     b.HasIndex("UserIdentityId");
 
@@ -315,15 +313,9 @@ namespace ProjectManagementSystemRepository.Migrations
 
             modelBuilder.Entity("ProjectManagementSystemCore.Models.FileUpload", b =>
                 {
-                    b.HasOne("ProjectManagementSystemCore.Models.Manager", "Manager")
-                        .WithMany()
-                        .HasForeignKey("ManagerId");
-
                     b.HasOne("ProjectManagementSystemCore.Models.UserIdentity", "UserIdentity")
                         .WithMany()
                         .HasForeignKey("UserIdentityId");
-
-                    b.Navigation("Manager");
 
                     b.Navigation("UserIdentity");
                 });

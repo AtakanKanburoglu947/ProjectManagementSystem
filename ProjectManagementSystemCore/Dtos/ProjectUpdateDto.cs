@@ -14,5 +14,6 @@ namespace ProjectManagementSystemCore.Dtos
         public string Version { get; set; }
         public string Status { get; set; }
         public int ManagerId { get; set; }
+        public Guid FileUploadId { get; set; }
     }
 }

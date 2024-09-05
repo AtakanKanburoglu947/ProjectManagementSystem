@@ -32,7 +32,7 @@ namespace ProjectManagementSystemService
             return string.Empty;
         }
    
-        public async Task<Guid> Upload(IFormFile file, string[] extensions,Guid userIdentityId,Guid? commentId)
+        public async Task<Guid> Upload(IFormFile file, string[] extensions,Guid? userIdentityId,Guid? commentId, Guid? projectId, int? managerId )
         {
             MemoryStream memoryStream = new MemoryStream();
             if (file == null)
@@ -49,15 +49,16 @@ namespace ProjectManagementSystemService
                     throw new Exception("Yanlış dosya formatı");
                     
                 }
-                if (memoryStream.Length < 2097152)
+                int fileSize = 50 * 1024 * 1024;
+                if (memoryStream.Length < fileSize)
                 {
                     FileUpload fileUpload = new FileUpload()
                     {
                         Id = Guid.NewGuid(),
                         Data = memoryStream.ToArray(),
                         Name = fileName,
-                        UserIdentityId = userIdentityId,
-                    
+                        UserIdentityId = userIdentityId!,
+                        ManagerId = managerId!
                     };
 
                     _appDbContext.FileUploads.Add(fileUpload);
