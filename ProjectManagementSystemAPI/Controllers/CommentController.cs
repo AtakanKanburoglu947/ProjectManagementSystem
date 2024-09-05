@@ -11,9 +11,11 @@ namespace ProjectManagementSystemAPI.Controllers
     public class CommentController : ControllerBase
     {
         private readonly IService<Comment, CommentDto, CommentUpdateDto> _service;
-        public CommentController(IService<Comment,CommentDto,CommentUpdateDto> service)
+        private readonly FileService _fileService;
+        public CommentController(IService<Comment,CommentDto,CommentUpdateDto> service, FileService fileService)
         {
             _service = service;
+            _fileService = fileService;
         }
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll() {
@@ -25,8 +27,27 @@ namespace ProjectManagementSystemAPI.Controllers
             return BadRequest();
         }
         [HttpPost]
-        public async Task Add(CommentDto commentDto)
+        public async Task Add(
+                IFormFile? file,
+                string text,
+                Guid projectId,
+                Guid userIdentityId
+
+            )
         {
+            CommentDto commentDto =  new CommentDto()
+            {
+                Id = Guid.NewGuid(),
+                Text = text,
+                ProjectId = projectId,
+                UserIdentityId = userIdentityId
+            };
+            if (file != null)
+            {
+                Guid fileUpload = await _fileService.Upload(file, [".txt"],userIdentityId,commentDto.Id);
+                commentDto.FileUploadId = fileUpload;
+                
+            }
             await _service.Add(commentDto);
             
         }

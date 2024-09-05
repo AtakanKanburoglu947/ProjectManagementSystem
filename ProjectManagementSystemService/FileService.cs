@@ -31,9 +31,14 @@ namespace ProjectManagementSystemService
             }
             return string.Empty;
         }
-        public async Task Upload(IFormFile file, string[] extensions,Guid UserIdentityId)
+   
+        public async Task<Guid> Upload(IFormFile file, string[] extensions,Guid userIdentityId,Guid? commentId)
         {
             MemoryStream memoryStream = new MemoryStream();
+            if (file == null)
+            {
+                return Guid.Empty;
+            }
             string fileName = file.FileName;
             using (memoryStream)
             {
@@ -48,14 +53,17 @@ namespace ProjectManagementSystemService
                 {
                     FileUpload fileUpload = new FileUpload()
                     {
+                        Id = Guid.NewGuid(),
                         Data = memoryStream.ToArray(),
                         Name = fileName,
-                        UserIdentityId = UserIdentityId
+                        UserIdentityId = userIdentityId,
+                    
                     };
 
-                    _appDbContext.Files.Add(fileUpload);
+                    _appDbContext.FileUploads.Add(fileUpload);
                     await _appDbContext.SaveChangesAsync();
-
+                    return  fileUpload.Id;
+                    
                 }
                 else
                 {

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectManagementSystemRepository;
 
@@ -11,9 +12,11 @@ using ProjectManagementSystemRepository;
 namespace ProjectManagementSystemRepository.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240905081920_init19")]
+    partial class init19
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -26,9 +29,6 @@ namespace ProjectManagementSystemRepository.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("FileUploadId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int?>("ManagerId")
@@ -49,8 +49,6 @@ namespace ProjectManagementSystemRepository.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FileUploadId");
-
                     b.HasIndex("ManagerId");
 
                     b.HasIndex("ProjectId");
@@ -68,6 +66,9 @@ namespace ProjectManagementSystemRepository.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("CommentId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<byte[]>("Data")
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
@@ -76,6 +77,9 @@ namespace ProjectManagementSystemRepository.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("ProjectId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid?>("UserIdentityId")
                         .HasColumnType("uniqueidentifier");
 
@@ -83,7 +87,7 @@ namespace ProjectManagementSystemRepository.Migrations
 
                     b.HasIndex("UserIdentityId");
 
-                    b.ToTable("FileUploads");
+                    b.ToTable("Files");
                 });
 
             modelBuilder.Entity("ProjectManagementSystemCore.Models.Job", b =>
@@ -272,10 +276,6 @@ namespace ProjectManagementSystemRepository.Migrations
 
             modelBuilder.Entity("ProjectManagementSystemCore.Models.Comment", b =>
                 {
-                    b.HasOne("ProjectManagementSystemCore.Models.FileUpload", "FileUpload")
-                        .WithMany()
-                        .HasForeignKey("FileUploadId");
-
                     b.HasOne("ProjectManagementSystemCore.Models.Manager", null)
                         .WithMany("Comments")
                         .HasForeignKey("ManagerId");
@@ -295,8 +295,6 @@ namespace ProjectManagementSystemRepository.Migrations
                         .HasForeignKey("UserIdentityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("FileUpload");
 
                     b.Navigation("Project");
 
