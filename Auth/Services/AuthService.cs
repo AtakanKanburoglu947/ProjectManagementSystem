@@ -92,8 +92,6 @@ namespace Auth.Services
                 {
                     string token = _tokenService.GenerateToken(user.UserName, user.Email, tokenExpiryDate);
                     CookieService.SetCookie("token", token, DateTimeOffset.UtcNow.AddHours(1), _contextAccessor);
-                    Guid? userIdentityId = await GetUserIdentityId();
-                   
                     return new TokenDto() { Token = token, ExpiryDate = tokenExpiryDate };
                 }
 

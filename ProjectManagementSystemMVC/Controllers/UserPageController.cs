@@ -19,5 +19,10 @@ namespace ProjectManagementSystemMVC.Controllers
             var userIdentity = await _authService.GetUserIdentity(Request);
             return View(userIdentity);
         }
+        public IActionResult Logout()
+        {
+            _authService.Logout();
+            return Redirect("/Login");
+        }
     }
 }
