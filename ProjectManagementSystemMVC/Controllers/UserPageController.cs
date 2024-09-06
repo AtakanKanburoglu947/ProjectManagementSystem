@@ -53,7 +53,7 @@ namespace ProjectManagementSystemMVC.Controllers
         public IActionResult Logout()
         {
             _authService.Logout();
-            return Redirect("/Login");
+            return Redirect("/");
         }
     }
 }

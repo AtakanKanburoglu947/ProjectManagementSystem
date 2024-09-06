@@ -4,7 +4,14 @@
 @{
     Layout = null;
 }
-
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kayıt Ol</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/ProjectManagementSystemMVC.styles.css" asp-append-version="true" />
+</head>
 @model ProjectManagementSystemCore.Dtos.LoginDto
 
 <form asp-action="Index" method="post">
@@ -16,14 +23,19 @@
         <label asp-for="Password"></label>
         <input asp-for="Password" class="form-control" , type="password" />
     </div>
-    <button type="submit" class="btn btn-primary">Giriş Yap</button>
+    <br />
+    <button type="submit" class="btn btn-primary" style="width:100%">Giriş Yap</button>
 </form>
 @if (ViewData.ModelState.Values.Any(v => v.Errors.Count > 0))
 {
     <div class="alert alert-danger">
         @foreach (var error in ViewData.ModelState["login"].Errors)
         {
-            <p>@error.ErrorMessage</p>
+            <div class="alert">@error.ErrorMessage</div>
         }
     </div>
 }
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
