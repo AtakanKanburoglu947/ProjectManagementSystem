@@ -33,10 +33,15 @@ namespace ProjectManagementSystemService
             {
                 MemoryCacheEntryOptions memoryCacheEntryOptions = GetMemoryCacheEntryOptions(absoluteExpiration, slidingExpiration);
                 _memoryCache.Set(cacheKey, data, memoryCacheEntryOptions);
+                
                 return data;
             }
             return null;
 
+        }
+        public void Remove(string cacheKey)
+        {
+            _memoryCache.Remove(cacheKey);
         }
     }
 }

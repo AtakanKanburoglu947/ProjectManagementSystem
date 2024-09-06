@@ -24,16 +24,18 @@ namespace Auth.Services
         private readonly AppDbContext _appDbContext;
         private readonly TokenService _tokenService;
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly CacheService _cacheService;
         private readonly IService<User, UserDto, UserUpdateDto> _service;
         private readonly IMapper _mapper;
 
-        public AuthService(AppDbContext appDbContext, TokenService tokenService, IHttpContextAccessor contextAccessor, IService<User,UserDto,UserUpdateDto> service, IMapper mapper)
+        public AuthService(AppDbContext appDbContext, TokenService tokenService, IHttpContextAccessor contextAccessor, IService<User,UserDto,UserUpdateDto> service, IMapper mapper, CacheService cacheService)
         {
             _appDbContext = appDbContext;
             _tokenService = tokenService;
             _contextAccessor = contextAccessor;
             _service = service;
             _mapper = mapper;
+            _cacheService = cacheService;
         }
         public async Task<bool> UserExistsAsync(string email)
         {

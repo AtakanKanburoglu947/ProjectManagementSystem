@@ -32,14 +32,14 @@ namespace ProjectManagementSystemMVC.Controllers
             Guid userIdentityId = await _authService.GetUserIdentityId();
             string? userName = await _authService.GetUserName();
             User? user = await _userService.Get(x=>x.UserIdentityId == userIdentityId);
-            List<ProjectUser>? userProjects = await _projectUserService.Where(x=>x.UserId == user.Id, "usersofproject");
+            List<ProjectUser>? userProjects = _projectUserService.Where(x=>x.UserId == user.Id);
            
             UserDto userDto = new UserDto() { RoleId = user.Id, UserIdentityId = userIdentityId };
             UserPageModel userPageModel = new UserPageModel();
             if (userProjects.Count > 0)
             {
                 List<Guid> projectIds = userProjects.Select(x => x.ProjectId).Distinct().ToList();
-                List<Project>? projects = await _projectService.Where(x=>projectIds.Contains(x.Id),"projects");
+                List<Project>? projects = _projectService.Where(x=>projectIds.Contains(x.Id));
                 userPageModel.UserName = userName;
                 userPageModel.Projects = projects;
 

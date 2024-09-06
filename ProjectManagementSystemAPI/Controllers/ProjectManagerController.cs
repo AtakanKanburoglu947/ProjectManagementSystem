@@ -42,7 +42,7 @@ namespace ProjectManagementSystemAPI.Controllers
         [HttpGet("Where")]
         public  IActionResult Where(Guid projectId)
         {
-            var result = _projectManagerService.Where(x => x.ProjectId == projectId, "managersofproject");
+            var result = _projectManagerService.Where(x => x.ProjectId == projectId);
             if (result != null)
             {
                 return Ok(result);
