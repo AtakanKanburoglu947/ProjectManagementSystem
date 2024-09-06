@@ -32,7 +32,7 @@ namespace ProjectManagementSystemMVC.Controllers
             Guid userIdentityId = await _authService.GetUserIdentityId();
             string? userName = await _authService.GetUserName();
             User? user = await _userService.Get(x=>x.UserIdentityId == userIdentityId);
-            List<ProjectUser>? userProjects = await _projectUserService.Where(x=>x.UserId == user.Id,"projectusers");
+            List<ProjectUser>? userProjects = await _projectUserService.Where(x=>x.UserId == user.Id, "usersofproject");
            
             UserDto userDto = new UserDto() { RoleId = user.Id, UserIdentityId = userIdentityId };
             UserPageModel userPageModel = new UserPageModel();
