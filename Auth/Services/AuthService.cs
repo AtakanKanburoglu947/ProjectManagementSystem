@@ -198,12 +198,27 @@ namespace Auth.Services
                 throw new Exception("Id bulunamadı");
             }
         }
+
         public async Task<Guid> GetUserIdentityId(string email)
         {
             try
             {
                 var userIdentity = await _appDbContext.UserIdentities.FirstOrDefaultAsync(x => x.Email == email);
                 return userIdentity!.Id;
+            }
+            catch (Exception)
+            {
+
+                throw new Exception("Id bulunamadı");
+            }
+        }
+        public async Task<string> GetUserName()
+        {
+            string? email = GetEmailFromCookie() as string;
+            try
+            {
+                var userIdentity = await _appDbContext.UserIdentities.FirstOrDefaultAsync(x => x.Email == email);
+                return userIdentity!.UserName;
             }
             catch (Exception)
             {

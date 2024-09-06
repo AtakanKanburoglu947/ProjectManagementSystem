@@ -4,6 +4,34 @@
 @{
     Layout = "~/Views/Shared/_UserPageLayout.cshtml";
 }
-@model ProjectManagementSystemCore.Models.UserIdentity
+@model UserPageModel
+<style>
+    .userName {
+        text-align: end;
+        width: 100%;
+       
+    }
+</style>
+<div class="userName" text-align="right">Kullanıcı adı: @Model.UserName</div>
+<div class="container mt-5">
+        @if (Model.Projects != null)
+        {
+        <div class="row">
 
-@Model.UserName
+            @foreach (var project in Model.Projects)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card" style="width: 25rem">
+                        <div class="card-body">
+                            <h5 class="card-title">Proje İsmi: @project.Name</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">Proje Durumu: @project.Status</h6>
+                            <p class="card-text">Proje Sürümü: @project.Version</p>
+                            <p class="card-text">Proje Açıklaması: @project.Description</p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+</div>
