@@ -29,8 +29,8 @@ namespace ProjectManagementSystemMVC.Controllers
             }
             try
             {
+                
                 await _authService.Register(registerDto);
-            
                 return Redirect("/login");
             }
             catch (Exception exception)

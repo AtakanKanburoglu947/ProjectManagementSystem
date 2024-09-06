@@ -22,7 +22,8 @@ namespace ProjectManagementSystemMVC.Controllers
         {
             
             return View();
-        }
+        }   
+
         [HttpPost]
         public async Task<IActionResult> Index(LoginDto loginDto)
         {
@@ -35,19 +36,7 @@ namespace ProjectManagementSystemMVC.Controllers
             try
             {
                 await _authService.Login(loginDto);
-                var userIdentityId = await _authService.GetUserIdentityId(Request);
-                var user = await _service.Get(x => x.UserIdentityId == userIdentityId);
-                if (user != null )
-                {
-                     return Redirect("/UserPage");
-
-                }
-                UserDto userDto = new UserDto()
-                {
-                    RoleId = Roles.User.Id,
-                    UserIdentityId = userIdentityId
-                };
-                await _service.Add(userDto);
+  
                 return Redirect("/UserPage");
             }
             catch (Exception exception)

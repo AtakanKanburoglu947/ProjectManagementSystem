@@ -13,6 +13,9 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using Azure.Core;
 using Microsoft.AspNetCore.Authorization;
+using ProjectManagementSystemService;
+using ProjectManagementSystemCore;
+using AutoMapper;
 
 namespace Auth.Services
 {
@@ -21,12 +24,16 @@ namespace Auth.Services
         private readonly AppDbContext _appDbContext;
         private readonly TokenService _tokenService;
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly IService<User, UserDto, UserUpdateDto> _service;
+        private readonly IMapper _mapper;
 
-        public AuthService(AppDbContext appDbContext, TokenService tokenService, IHttpContextAccessor contextAccessor)
+        public AuthService(AppDbContext appDbContext, TokenService tokenService, IHttpContextAccessor contextAccessor, IService<User,UserDto,UserUpdateDto> service, IMapper mapper)
         {
             _appDbContext = appDbContext;
             _tokenService = tokenService;
             _contextAccessor = contextAccessor;
+            _service = service;
+            _mapper = mapper;
         }
         public async Task<bool> UserExistsAsync(string email)
         {
@@ -54,6 +61,8 @@ namespace Auth.Services
             if (!userExists)
             {
                 _appDbContext.UserIdentities.Add(userIdentity);
+                UserDto userDto = new UserDto() { RoleId = Roles.User.Id, UserIdentityId =  userIdentity.Id };
+                _appDbContext.Users.Add(_mapper.Map<User>(userDto));
                 await _appDbContext.SaveChangesAsync();
             }
             else
@@ -83,6 +92,8 @@ namespace Auth.Services
                 {
                     string token = _tokenService.GenerateToken(user.UserName, user.Email, tokenExpiryDate);
                     CookieService.SetCookie("token", token, DateTimeOffset.UtcNow.AddHours(1), _contextAccessor);
+                    Guid? userIdentityId = await GetUserIdentityId();
+                   
                     return new TokenDto() { Token = token, ExpiryDate = tokenExpiryDate };
                 }
 
@@ -175,7 +186,7 @@ namespace Auth.Services
             return null;
         }
 
-        public async Task<Guid> GetUserIdentityId(HttpRequest request)
+        public async Task<Guid> GetUserIdentityId()
         {
             string? email = GetEmailFromCookie() as string;
             try
@@ -189,9 +200,22 @@ namespace Auth.Services
                 throw new Exception("Id bulunamadı");
             }
         }
+        public async Task<Guid> GetUserIdentityId(string email)
+        {
+            try
+            {
+                var userIdentity = await _appDbContext.UserIdentities.FirstOrDefaultAsync(x => x.Email == email);
+                return userIdentity!.Id;
+            }
+            catch (Exception)
+            {
+
+                throw new Exception("Id bulunamadı");
+            }
+        }
         public async Task<UserIdentity> GetUserIdentity(HttpRequest request)
         {
-            var id = await GetUserIdentityId(request);
+            var id = await GetUserIdentityId();
             var userIdentity = _appDbContext.UserIdentities.FirstOrDefault(x => x.Id == id);
             return userIdentity;
         }
