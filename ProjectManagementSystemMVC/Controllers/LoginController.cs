@@ -1,6 +1,9 @@
 ﻿using Auth.Services;
 using Microsoft.AspNetCore.Mvc;
+using ProjectManagementSystemCore;
 using ProjectManagementSystemCore.Dtos;
+using ProjectManagementSystemCore.Models;
+using ProjectManagementSystemService;
 using System;
 
 namespace ProjectManagementSystemMVC.Controllers
@@ -8,9 +11,12 @@ namespace ProjectManagementSystemMVC.Controllers
     public class LoginController : Controller
     {
         private readonly AuthService _authService;
-        public LoginController(AuthService authService)
+        private readonly IService<User, UserDto, UserUpdateDto> _service;
+
+        public LoginController(AuthService authService, IService<User,UserDto,UserUpdateDto> service)
         {
             _authService = authService;
+            _service = service;
         }
         public IActionResult Index()
         {
@@ -29,7 +35,20 @@ namespace ProjectManagementSystemMVC.Controllers
             try
             {
                 await _authService.Login(loginDto);
-                return Redirect("/");
+                var userIdentityId = await _authService.GetUserIdentityId(Request);
+                var user = await _service.Get(x => x.UserIdentityId == userIdentityId);
+                if (user != null )
+                {
+                     return Redirect("/UserPage");
+
+                }
+                UserDto userDto = new UserDto()
+                {
+                    RoleId = Roles.User.Id,
+                    UserIdentityId = userIdentityId
+                };
+                await _service.Add(userDto);
+                return Redirect("/UserPage");
             }
             catch (Exception exception)
             {

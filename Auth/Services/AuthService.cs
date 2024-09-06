@@ -189,7 +189,12 @@ namespace Auth.Services
                 throw new Exception("Id bulunamadı");
             }
         }
-
+        public async Task<UserIdentity> GetUserIdentity(HttpRequest request)
+        {
+            var id = await GetUserIdentityId(request);
+            var userIdentity = _appDbContext.UserIdentities.FirstOrDefault(x => x.Id == id);
+            return userIdentity;
+        }
         public void Logout()
         {
             CookieService.RemoveCookie("token", _contextAccessor);
