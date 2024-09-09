@@ -6,6 +6,7 @@ namespace ProjectManagementSystemMVC.Models
     {
         public string Email { get; set; }
         public string UserName { get; set; }
-        public List<FileUpload> Files { get; set; }
+        public List<FileUpload>? Files { get; set; }
+        public List<CommentDetails>? Comments { get; set; }
     }
 }

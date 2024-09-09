@@ -89,22 +89,22 @@ namespace ProjectManagementSystemService
             }
             return true;
         }
-        public async Task<List<FileUpload>> GetFilesOfUser(Guid id) {
+        public async Task<List<FileUpload>>? GetFilesOfUser(Guid id) {
 
             return await _appDbContext.FileUploads.Where(x => x.UserIdentityId == id).ToListAsync();
         }
-        public async Task<List<FileUpload>> GetFilesOfManager(int id)
+        public async Task<List<FileUpload>>? GetFilesOfManager(int id)
         {
             return await _appDbContext.FileUploads.Where(x => x.ManagerId == id).ToListAsync();
         }
-        public async Task<FileUpload> GetFile(Guid id)
+        public async Task<FileUpload>? GetFile(Guid id)
         {
             FileUpload? file =  await _appDbContext.FileUploads.FindAsync(id);
             if (file != null)
             {
                 return file;
             }
-            throw new Exception("Dosya bulunamadı");
+            return null;
         }
         
 
