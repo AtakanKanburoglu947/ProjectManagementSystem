@@ -10,10 +10,10 @@
             <div class="card-body">
                 <p class="card-title">E-mail: @Model.Email</p>
                 <p class="card-text">Kullanıcı adı: @Model.UserName</p>
-                <a class="btn btn-primary mt-3"> Şifre değiştir </a>
+                <a class="btn btn-primary mt-3" asp-action="Index" asp-controller="Password"> Şifre değiştir </a>
             </div>
         </div>
-        @if (Model.Files != null)
+        @if (Model.Files.Count > 0)
         {
             <div class="card mb-4">
                 <div class="card-header">Yüklenmiş Dosyalar</div>
@@ -36,36 +36,41 @@
                 </div>
             </div>
         }
-        <div class="mt-4">
-            <h6>Yorumlar</h6>
+        @if (Model.Comments.Count > 0)
+        {
+
+
+            <div class="mt-4">
+                <h6>Yorumlar</h6>
                 @foreach (var comment in Model.Comments)
                 {
 
-                <div class="card mb-2">
-                    <div class="card-header">
+                    <div class="card mb-2">
+                        <div class="card-header">
 
-                        <p class="card-subtitle mb-2 text-muted">@comment.ProjectName</p>
-                        <small class="text-muted">Yorum Yapan: @comment.UserName</small>
-                    </div>
-                    <div class="card-body">
-                        <p class="card-text">@comment.Text</p>
-                        @if (comment.FileId != null)
-                        {
-                            <small class="text-muted">Ek Dosya</small>
-                            <div class="col-md-2 mb-2">
-                                <div class="card text-center">
-                                    <div class="card-body">
-                                        <h5 class="card-title">@comment.FileName</h5>
-                                        <a class="btn btn-primary mt-3" asp-action="Download" asp-controller="Account" asp-route-id="@comment.FileId">
-                                            Yükle
-                                        </a>
+                            <p class="card-subtitle mb-2 text-muted">@comment.ProjectName</p>
+                            <small class="text-muted">Yorum Yapan: @comment.UserName</small>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">@comment.Text</p>
+                            @if (comment.FileId != null)
+                            {
+                                <small class="text-muted">Ek Dosya</small>
+                                <div class="col-md-2 mb-2">
+                                    <div class="card text-center">
+                                        <div class="card-body">
+                                            <h5 class="card-title">@comment.FileName</h5>
+                                            <a class="btn btn-primary mt-3" asp-action="Download" asp-controller="Account" asp-route-id="@comment.FileId">
+                                                Yükle
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        }
+                            }
+                        </div>
                     </div>
-                </div>
                 }
-</div>
+            </div>
+        }
 </body>
 

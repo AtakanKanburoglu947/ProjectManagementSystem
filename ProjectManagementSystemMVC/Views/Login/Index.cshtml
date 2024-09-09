@@ -4,6 +4,8 @@
 @{
     Layout = null;
 }
+<!DOCTYPE html>
+<html>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -13,29 +15,59 @@
     <link rel="stylesheet" href="~/ProjectManagementSystemMVC.styles.css" asp-append-version="true" />
 </head>
 @model ProjectManagementSystemCore.Dtos.LoginDto
+<body>
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Proje Yönetim Sistemi</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                <ul class="navbar-nav flex-grow-1">
+               
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Register" asp-action="Index">Kayıt Ol</a>
+                    </li>
 
-<form asp-action="Index" method="post">
-    <div class="form-group">
-        <label asp-for="Email"></label>
-        <input asp-for="Email" class="form-control" />
-    </div>
-    <div class="form-group">
-        <label asp-for="Password"></label>
-        <input asp-for="Password" class="form-control" , type="password" />
-    </div>
-    <br />
-    <button type="submit" class="btn btn-primary" style="width:100%">Giriş Yap</button>
-</form>
-@if (ViewData.ModelState.Values.Any(v => v.Errors.Count > 0))
-{
-    <div class="alert alert-danger">
-        @foreach (var error in ViewData.ModelState["login"].Errors)
-        {
-            <div class="alert">@error.ErrorMessage</div>
-        }
-    </div>
-}
+                </ul>
+            </div>
+        </div>
+    </nav>
+    </header>
+<div class="container">
+
+    <main role="main" class="pb-3">
+
+            <form asp-action="Index" method="post">
+                <div class="form-group">
+                    <label asp-for="Email"></label>
+                    <input asp-for="Email" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label asp-for="Password"></label>
+                    <input asp-for="Password" class="form-control" , type="password" />
+                </div>
+                <br />
+                <button type="submit" class="btn btn-primary" style="width:100%">Giriş Yap</button>
+            </form>
+            @if (ViewData.ModelState.Values.Any(v => v.Errors.Count > 0))
+            {
+                <div class="alert alert-danger">
+                    @foreach (var error in ViewData.ModelState["login"].Errors)
+                    {
+                        <div class="alert">@error.ErrorMessage</div>
+                    }
+                </div>
+            }
+
+    </main>
+
+</div>
+
 
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>
+</body>
+</html>

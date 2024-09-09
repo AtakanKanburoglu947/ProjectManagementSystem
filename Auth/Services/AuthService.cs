@@ -117,7 +117,7 @@ namespace Auth.Services
             }
             else
             {
-                throw new Exception("Eski şifre gerekli");
+                return null;
             }
         } 
         private object GetEmailFromCookie()
@@ -144,12 +144,21 @@ namespace Auth.Services
             UserIdentity? userIdentity = await _appDbContext.UserIdentities.FirstOrDefaultAsync(x=>x.Email == email);
             if (userIdentity != null)
                 {
-                  return await UpdatePasswordHashAndSalt(passwordDto, userIdentity);
+                try
+                {
+                    return await UpdatePasswordHashAndSalt(passwordDto, userIdentity);
                 }
+                catch (Exception exception)
+                {
+                    
+                    throw new Exception("Eski şifre gerekli");
+                }
+
+            }
             else
                 {
                   throw new Exception("Kullanıcı bulunamadı");
-                }      
+                }
         }
   
         public async Task<string> GetUserRole(HttpRequest request)

@@ -42,7 +42,7 @@ namespace ProjectManagementSystemMVC.Controllers
             catch (Exception exception)
             {
                 ModelState.AddModelError("login", exception.Message);
-                return View(loginDto);
+                return View();
             }
         }
     }
