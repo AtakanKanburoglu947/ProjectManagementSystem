@@ -17,16 +17,15 @@
         @if (Model.Projects != null)
         {
         <div class="row">
-
+            <h4>Projeler</h4>
             @foreach (var project in Model.Projects)
             {
                 <div class="col-md-4 mb-4">
                     <div class="card" style="width: 25rem">
                         <div class="card-body">
-                            <h5 class="card-title">Proje İsmi: @project.Name</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">Proje Durumu: @project.Status</h6>
-                            <p class="card-text">Proje Sürümü: @project.Version</p>
-                            <p class="card-text">Proje Açıklaması: @project.Description</p>
+                            <a class="card-title text-decoration-none text-primary" asp-action="Index" asp-controller="Project" asp-route-id="@project.Id">@project.Name</a>
+                            <h6 class="card-subtitle mb-2 text-muted">Durum: @project.Status</h6>
+                            <p class="card-text">Sürüm: @project.Version</p>
                         </div>
                     </div>
                 </div>
