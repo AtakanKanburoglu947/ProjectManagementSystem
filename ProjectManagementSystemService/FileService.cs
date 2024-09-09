@@ -35,6 +35,7 @@ namespace ProjectManagementSystemService
             }
             return string.Empty;
         }
+
    
         public async Task<Guid> Upload(IFormFile file, string[] extensions,Guid? userIdentityId, int? managerId )
         {
@@ -90,12 +91,22 @@ namespace ProjectManagementSystemService
         }
         public async Task<List<FileUpload>> GetFilesOfUser(Guid id) {
 
-            return await _cacheService.Get("filesofuser", TimeSpan.FromHours(1), TimeSpan.FromMinutes(2), async () => await _appDbContext.FileUploads.Where(x=>x.UserIdentityId == id).ToListAsync());
+            return await _appDbContext.FileUploads.Where(x => x.UserIdentityId == id).ToListAsync();
         }
         public async Task<List<FileUpload>> GetFilesOfManager(int id)
         {
-            return await _cacheService.Get("filesofmanager", TimeSpan.FromHours(1), TimeSpan.FromMinutes(2), async () => await _appDbContext.FileUploads.Where(x => x.ManagerId == id).ToListAsync());
+            return await _appDbContext.FileUploads.Where(x => x.ManagerId == id).ToListAsync();
         }
+        public async Task<FileUpload> GetFile(Guid id)
+        {
+            FileUpload? file =  await _appDbContext.FileUploads.FindAsync(id);
+            if (file != null)
+            {
+                return file;
+            }
+            throw new Exception("Dosya bulunamadı");
+        }
+        
 
 
 
