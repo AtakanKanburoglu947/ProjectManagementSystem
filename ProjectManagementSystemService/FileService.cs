@@ -106,7 +106,16 @@ namespace ProjectManagementSystemService
             }
             return null;
         }
-        
+        public async Task RemoveFile(Guid? id)
+        {
+            FileUpload? file = await _appDbContext.FileUploads.FindAsync(id);
+            if (file != null)
+            {
+                _appDbContext.FileUploads.Remove(file);
+                await _appDbContext.SaveChangesAsync();
+            }
+
+        }
         
 
 

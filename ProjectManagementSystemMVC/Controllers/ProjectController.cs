@@ -36,7 +36,7 @@ namespace ProjectManagementSystemMVC.Controllers
         [ServiceFilter(typeof(ProjectAccessFilter))]
         public async Task<IActionResult> Index(Guid id)
         {
-            Project project = await _projectService.Get(id);          
+            Project project = await _projectService.Get(id);      
             List<ProjectUser> projectUsers = _projectUserService.Where(x=> x.ProjectId == project.Id); 
             List<ProjectManager> projectManagers = _projectManagerService.Where(x=>x.ProjectId == project.Id);
             List<int> managerIds = projectManagers.Select(x=>x.ManagerId).Distinct().ToList();
@@ -53,7 +53,7 @@ namespace ProjectManagementSystemMVC.Controllers
             {
                 managerIdentities.Add(await _authService.GetUserById(item));
             }
-         
+
             ProjectPageModel projectPageModel = new ProjectPageModel()
             {
                 Id = project.Id,
@@ -61,7 +61,8 @@ namespace ProjectManagementSystemMVC.Controllers
                 Description = project.Description,
                 Status = project.Status,
                 Version = project.Version,
-                ManagerIdentities = managerIdentities
+                ManagerIdentities = managerIdentities,
+                UserIdentityId = await _authService.GetUserIdentityId()
                 
             };
             if (userIdentityIds.Count > 0)
@@ -87,7 +88,8 @@ namespace ProjectManagementSystemMVC.Controllers
                         ProjectId = project.Id,
                         CommentId = comment.Id,
                         Text = comment.Text,
-                        UserName = _user.UserName
+                        UserName = _user.UserName,
+                        UserIdentityId = _user.Id,
                         
                     };
                     if (comment.FileUploadId != null)
@@ -103,7 +105,7 @@ namespace ProjectManagementSystemMVC.Controllers
             return View(projectPageModel);
         }
         [HttpPost]
-        public async Task<IActionResult> AddComment(Guid projectId, CommentDto newComment, IFormFile file)
+        public async Task<IActionResult> AddComment(Guid projectId, CommentDetails newComment, IFormFile file)
         {
             var commentDto = new CommentDto()
             {
@@ -119,6 +121,16 @@ namespace ProjectManagementSystemMVC.Controllers
             await _commentService.Add(commentDto);
             return Redirect($"/Project/Index/{projectId}");
 
+        }
+        public async Task<IActionResult> RemoveComment(Guid commentId, Guid projectId)
+        {
+            var comment = await _commentService.Get(commentId);
+            if (comment.FileUploadId != null || comment.FileUploadId != Guid.Empty)
+            {
+                await _fileService.RemoveFile(comment.FileUploadId);
+            }
+            await _commentService.Remove(x=>x.Id == commentId);
+            return Redirect($"/Project/Index/{projectId}");
         }
     }
 }

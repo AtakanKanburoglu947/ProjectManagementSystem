@@ -79,28 +79,37 @@
 
                                 <div class="card mb-2">
                                     <div class="card-header">
-
                                         <p class="card-subtitle mb-2 text-muted">@comment.ProjectName</p>
                                         <small class="text-muted">Yorum Yapan: @comment.UserName</small>
                                     </div>
-                                    <div class="card-body">
-                                        <p class="card-text">@comment.Text</p>
-                                        @if (comment.FileId != null)
-                                        {
-                                            <small class="text-muted">Ek Dosya</small>
-                                            <div class="col-md-2 mb-2">
-                                                <div class="card text-center">
-                                                    <div class="card-body">
-                                                        <h5 class="card-title">@comment.FileName</h5>
-                                                        <a class="btn btn-primary mt-3" asp-action="Download" asp-controller="Account" asp-route-id="@comment.FileId">
-                                                            Yükle
-                                                        </a>
+                                    <div class="card-body d-flex align-items-start">
+                                        <div class="flex-grow-1">
+                                            <p class="card-text">@comment.Text</p>
+                                            @if (comment.FileId != null)
+                                            {
+                                                <small class="text-muted">Ek Dosya</small>
+                                                <div class="col-md-2 mb-2">
+                                                    <div class="card text-center">
+                                                        <div class="card-body">
+                                                            <h5 class="card-title">@comment.FileName</h5>
+                                                            <a class="btn btn-primary mt-3" asp-action="Download" asp-controller="Account" asp-route-id="@comment.FileId">
+                                                                Yükle
+                                                            </a>
+                                                        </div>
                                                     </div>
                                                 </div>
+                                            }
+                                        </div>
+                                        @if (Model.UserIdentityId == comment.UserIdentityId)
+                                        {
+                                            <div class="d-flex gap-2">
+                                                <button class="btn btn-primary">Düzenle</button>
+                                                <a class="btn btn-danger" asp-action="RemoveComment" asp-controller="Project" asp-route-commentId="@comment.CommentId" asp-route-projectId="@comment.ProjectId">Sil</a>
                                             </div>
                                         }
                                     </div>
                                 </div>
+
                             }
                         </div>
                     }
