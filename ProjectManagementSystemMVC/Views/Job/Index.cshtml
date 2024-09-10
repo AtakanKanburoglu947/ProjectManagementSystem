@@ -27,6 +27,22 @@
                         <h6 class="card-title">Proje</h6>
                         <p class="card-text">@Model.ProjectName</p>
                     </div>
+                    @if (Model.FileUploadId != null)
+                    {
+                        <div id="fileInfo_@Model.Id">
+                            <small class="text-muted">Ek Dosya</small>
+                            <div class="col-md-2 mb-2">
+                                <div class="card text-center">
+                                    <div class="card-body">
+                                        <h5 class="card-title">@Model.FileName</h5>
+                                        <a class="btn btn-secondary mt-3" asp-action="Download" asp-controller="Job" asp-route-id="@Model.FileUploadId">
+                                            Yükle
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
                     @if (Model.Time.TotalSeconds > 0)
                     {
                         <h6 class="card-title mb-0">Kalan Zaman</h6>

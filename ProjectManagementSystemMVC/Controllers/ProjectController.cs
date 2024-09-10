@@ -107,6 +107,11 @@ namespace ProjectManagementSystemMVC.Controllers
         [HttpPost]
         public async Task<IActionResult> AddComment(Guid projectId, CommentDetails newComment, IFormFile file)
         {
+            if (string.IsNullOrEmpty(newComment.Text))
+            {
+                return Redirect($"/Project/Index/{projectId}");
+
+            }
             var commentDto = new CommentDto()
             {
                 ProjectId = projectId,
@@ -125,11 +130,12 @@ namespace ProjectManagementSystemMVC.Controllers
         public async Task<IActionResult> RemoveComment(Guid commentId, Guid projectId)
         {
             var comment = await _commentService.Get(commentId);
+            await _commentService.Remove(x => x.Id == commentId);
             if (comment.FileUploadId != null || comment.FileUploadId != Guid.Empty)
             {
                 await _fileService.RemoveFile(comment.FileUploadId);
             }
-            await _commentService.Remove(x=>x.Id == commentId);
+
             return Redirect($"/Project/Index/{projectId}");
         }
         [HttpPost]

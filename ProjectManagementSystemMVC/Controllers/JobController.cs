@@ -13,16 +13,20 @@ namespace ProjectManagementSystemMVC.Controllers
     {
         private readonly IService<Job, JobDto, JobUpdateDto> _jobService;
         private readonly IService<Project,ProjectDto, ProjectUpdateDto> _projectService;
+        private readonly FileService _fileService;
         public JobController(IService<Job,JobDto,JobUpdateDto> jobService, 
-            IService<Project,ProjectDto,ProjectUpdateDto> projectService)
+            IService<Project,ProjectDto,ProjectUpdateDto> projectService,
+            FileService fileService)
         {
             _jobService = jobService;
             _projectService = projectService;
+            _fileService = fileService;
         }
         public async Task<IActionResult> Index(Guid id)
         {
             Job job = await _jobService.Get(id);
             Project project = await _projectService.Get(job.ProjectId);
+            FileUpload? file = await _fileService.GetFile((Guid)job.FileUploadId); 
             JobPageModel jobPageModel = new JobPageModel()
             {
                 Id = job.Id,
@@ -34,9 +38,15 @@ namespace ProjectManagementSystemMVC.Controllers
                 UserIdentityId = job.UserIdentityId,
                 FileUploadId = job.FileUploadId,
                 Time = job.DueDate - DateTime.Now,
-                ProjectName = project.Name
+                ProjectName = project.Name,
+                FileName = file.Name
             };
             return View(jobPageModel);
+        }
+        public async Task<IActionResult> Download(Guid id)
+        {
+            FileUpload? file = await _fileService.GetFile(id);
+            return File(file.Data, "application/octet-stream", fileDownloadName: file.Name);
         }
         [HttpPost]
         public async Task<IActionResult> UpdateJobStatus(Guid jobId, string newStatus)

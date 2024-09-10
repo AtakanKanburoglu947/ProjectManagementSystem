@@ -10,7 +10,7 @@
             <div class="card-body">
                 <p class="card-title">E-mail: @Model.Email</p>
                 <p class="card-text">Kullanıcı adı: @Model.UserName</p>
-                <a class="btn btn-primary mt-3" asp-action="Index" asp-controller="Password"> Şifre değiştir </a>
+                <a class="btn btn-secondary mt-3" asp-action="Index" asp-controller="Password"> Şifre değiştir </a>
             </div>
         </div>
         @if (Model.Files.Count > 0)
@@ -25,7 +25,7 @@
                                 <div class="card text-center">
                                     <div class="card-body">
                                         <h5 class="card-title">@item.Name</h5>
-                                        <a class="btn btn-primary mt-3" asp-action="Download" asp-controller="Account" asp-route-id="@item.Id">
+                                        <a class="btn btn-secondary mt-3" asp-action="Download" asp-controller="Account" asp-route-id="@item.Id">
                                             Yükle
                                         </a>
                                     </div>
@@ -60,7 +60,7 @@
                                     <div class="card text-center">
                                         <div class="card-body">
                                             <h5 class="card-title">@comment.FileName</h5>
-                                            <a class="btn btn-primary mt-3" asp-action="Download" asp-controller="Account" asp-route-id="@comment.FileId">
+                                            <a class="btn btn-secondary mt-3" asp-action="Download" asp-controller="Account" asp-route-id="@comment.FileId">
                                                 Yükle
                                             </a>
                                         </div>

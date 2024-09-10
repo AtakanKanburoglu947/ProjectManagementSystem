@@ -64,7 +64,7 @@
                                 <input class="form-control" type="file" id="commentAttachment" name="File" />
                             </div>
 
-                            <button type="submit" class="btn btn-primary">Yorum Ekle</button>
+                            <button type="submit" class="btn btn-secondary">Yorum Ekle</button>
                         </form>
                     </div>
                     @if (Model.CommentDetails !=null)
@@ -92,7 +92,7 @@
                                                         <div class="card text-center">
                                                             <div class="card-body">
                                                                 <h5 class="card-title">@comment.FileName</h5>
-                                                                <a class="btn btn-primary mt-3" asp-action="Download" asp-controller="Account" asp-route-id="@comment.FileId">
+                                                                <a class="btn btn-secondary mt-3" asp-action="Download" asp-controller="Account" asp-route-id="@comment.FileId">
                                                                     Yükle
                                                                 </a>
                                                             </div>
@@ -112,7 +112,7 @@
                                                     <div class="mb-3">
                                                         <textarea name="Text" class="form-control">@comment.Text</textarea>
                                                     </div>
-                                                    <button type="submit" class="btn btn-primary">Kaydet</button>
+                                                    <button type="submit" class="btn btn-secondary">Kaydet</button>
                                                     <button type="button" class="btn btn-secondary" onclick="cancelEdit('@comment.CommentId')">İptal</button>
                                                 </form>
                                             </div>
@@ -121,7 +121,7 @@
                                                 @if (comment.UserIdentityId == Model.UserIdentityId) 
                                                 {
                                                     <div class="d-flex gap-2">
-                                                        <button id="editButton_@comment.CommentId" class="btn btn-primary">Düzenle</button>
+                                                        <button id="editButton_@comment.CommentId" class="btn btn-secondary">Düzenle</button>
                                                         <a class="btn btn-danger" asp-action="RemoveComment" asp-controller="Project" asp-route-commentId="@comment.CommentId" asp-route-projectId="@comment.ProjectId">Sil</a>
                                                     </div>
                                                 }

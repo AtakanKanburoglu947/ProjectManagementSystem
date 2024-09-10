@@ -13,6 +13,7 @@ namespace ProjectManagementSystemMVC.Models
         public Guid ProjectId { get; set; }      
         public string ProjectName { get; set; }
         public Guid? FileUploadId { get; set; }
+        public string? FileName { get; set; }
         public Guid? UserIdentityId { get; set; }
         public List<string> StatusOptions = new List<string>()
         {
