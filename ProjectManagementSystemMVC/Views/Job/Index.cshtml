@@ -16,21 +16,21 @@
                 </div>
                 <div class="card-body">
                     <div class="mb-3">
-                        <h6 class="card-title">İş Açıklaması</h6>
+                        <h6 class="card-text">İş Açıklaması</h6>
                         <p class="card-text">@Model.Description</p>
                     </div>
                     <div class="mb-3">
-                        <h6 class="card-title">İş Durumu</h6>
+                        <h6 class="card-text">İş Durumu</h6>
                         <p class="card-text">@Model.Status</p>
                     </div>
                     <div class="mb-3">
-                        <h6 class="card-title">Proje</h6>
+                        <h6 class="card-text">Proje</h6>
                         <p class="card-text">@Model.ProjectName</p>
                     </div>
                     @if (Model.FileUploadId != null)
                     {
                         <div id="fileInfo_@Model.Id">
-                            <small class="text-muted">Ek Dosya</small>
+                            <h6 class="card-text    ">Ek Dosya</h6>
                             <div class="col-md-2 mb-2">
                                 <div class="card text-center">
                                     <div class="card-body">
