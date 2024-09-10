@@ -132,5 +132,19 @@ namespace ProjectManagementSystemMVC.Controllers
             await _commentService.Remove(x=>x.Id == commentId);
             return Redirect($"/Project/Index/{projectId}");
         }
+        [HttpPost]
+        public async Task<IActionResult> EditComment(CommentDto commentDto,Guid commentId, Guid projectId, Guid userIdentityId)
+        {
+            var comment = await _commentService.Get(commentId);
+            var commentUpdateDto = new CommentUpdateDto() {
+              Id = commentId,
+              ProjectId =  projectId,
+              Text = commentDto.Text,
+              UserIdentityId = userIdentityId
+            };
+            await _commentService.Update(commentUpdateDto,commentId);
+            return Redirect($"/Project/Index/{projectId}");
+
+        }
     }
 }

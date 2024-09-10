@@ -85,19 +85,9 @@ namespace ProjectManagementSystemService
 
         }
 
-        public async Task<List<T>> GetAll(string cacheKey)
+        public async Task<List<T>> GetAll()
         {
-            if (_memoryCache.TryGetValue(cacheKey, out List<T> entities) == false)
-            {
-                entities = await _dbSet.ToListAsync();
-                var cacheEntryOptions = new MemoryCacheEntryOptions()
-                {
-                    AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(1),
-                    SlidingExpiration = TimeSpan.FromMinutes(2)
-
-                };
-                _memoryCache.Set(cacheKey, entities, cacheEntryOptions);
-            }
+           
             return await _dbSet.ToListAsync();
         }
 

@@ -57,7 +57,7 @@
                             <input type="hidden" name="ProjectId" value="@Model.Id" />
 
                             <div class="mb-3">
-                                <textarea class="form-control" id="commentText" name="NewComment.Text" rows="3"></textarea>
+                                <textarea class="form-control" name="NewComment.Text" rows="3"></textarea>
                             </div>
 
                             <div class="mb-3">
@@ -76,7 +76,6 @@
                             <h6>Yorumlar</h6>
                             @foreach (var comment in Model.CommentDetails)
                             {
-
                                 <div class="card mb-2">
                                     <div class="card-header">
                                         <p class="card-subtitle mb-2 text-muted">@comment.ProjectName</p>
@@ -84,32 +83,54 @@
                                     </div>
                                     <div class="card-body d-flex align-items-start">
                                         <div class="flex-grow-1">
-                                            <p class="card-text">@comment.Text</p>
+                                            <p id="commentText_@comment.CommentId" class="card-text">@comment.Text</p>
+
+                                            <!-- Dosya bilgisi -->
                                             @if (comment.FileId != null)
                                             {
-                                                <small class="text-muted">Ek Dosya</small>
-                                                <div class="col-md-2 mb-2">
-                                                    <div class="card text-center">
-                                                        <div class="card-body">
-                                                            <h5 class="card-title">@comment.FileName</h5>
-                                                            <a class="btn btn-primary mt-3" asp-action="Download" asp-controller="Account" asp-route-id="@comment.FileId">
-                                                                Yükle
-                                                            </a>
+                                                <div id="fileInfo_@comment.CommentId">
+                                                    <small class="text-muted">Ek Dosya</small>
+                                                    <div class="col-md-2 mb-2">
+                                                        <div class="card text-center">
+                                                            <div class="card-body">
+                                                                <h5 class="card-title">@comment.FileName</h5>
+                                                                <a class="btn btn-primary mt-3" asp-action="Download" asp-controller="Account" asp-route-id="@comment.FileId">
+                                                                    Yükle
+                                                                </a>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             }
-                                        </div>
-                                        @if (Model.UserIdentityId == comment.UserIdentityId)
-                                        {
-                                            <div class="d-flex gap-2">
-                                                <button class="btn btn-primary">Düzenle</button>
-                                                <a class="btn btn-danger" asp-action="RemoveComment" asp-controller="Project" asp-route-commentId="@comment.CommentId" asp-route-projectId="@comment.ProjectId">Sil</a>
+                                            <div id="editForm_@comment.CommentId" class="d-none">
+                                                <form asp-action="EditComment" method="post">
+                                                    <input type="hidden" name="CommentId" value="@comment.CommentId" />
+                                                    <input type="hidden" name="ProjectId" value="@comment.ProjectId" />
+                                                    <input type="hidden" name="UserIdentityId" value="@comment.UserIdentityId" />
+                                                    @if (comment.FileId != null)
+                                                    {
+                                                        <input type="hidden" name="FileId" value="@comment.FileId" />
+                                                    }
+                                                    <div class="mb-3">
+                                                        <textarea name="Text" class="form-control">@comment.Text</textarea>
+                                                    </div>
+                                                    <button type="submit" class="btn btn-primary">Kaydet</button>
+                                                    <button type="button" class="btn btn-secondary" onclick="cancelEdit('@comment.CommentId')">İptal</button>
+                                                </form>
                                             </div>
-                                        }
+
+                                            <div id="actionButtons_@comment.CommentId">
+                                                @if (comment.UserIdentityId == Model.UserIdentityId) 
+                                                {
+                                                    <div class="d-flex gap-2">
+                                                        <button id="editButton_@comment.CommentId" class="btn btn-primary">Düzenle</button>
+                                                        <a class="btn btn-danger" asp-action="RemoveComment" asp-controller="Project" asp-route-commentId="@comment.CommentId" asp-route-projectId="@comment.ProjectId">Sil</a>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-
                             }
                         </div>
                     }
@@ -118,3 +139,48 @@
         </div>
     </div>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('[id^="editButton_"]').forEach(function (button) {
+            button.addEventListener('click', function () {
+                var commentId = this.id.split('_')[1];
+                var commentText = document.getElementById('commentText_' + commentId);
+                var editForm = document.getElementById('editForm_' + commentId);
+                var actionButtons = document.getElementById('actionButtons_' + commentId);
+                var fileInfo = document.getElementById('fileInfo_' + commentId);
+                if (commentText) {
+                    commentText.classList.add('d-none');
+                }
+                if (fileInfo) {
+                    fileInfo.classList.add('d-none');
+                }
+                if (editForm) {
+                    editForm.classList.remove('d-none');
+                }
+                if (actionButtons) {
+                    actionButtons.classList.add('d-none');
+                }
+            });
+        });
+
+        window.cancelEdit = function (commentId) {
+            var commentText = document.getElementById('commentText_' + commentId);
+            var editForm = document.getElementById('editForm_' + commentId);
+            var actionButtons = document.getElementById('actionButtons_' + commentId);
+            var fileInfo = document.getElementById('fileInfo_' + commentId);
+            if (editForm) {
+                editForm.classList.add('d-none');
+            }
+            if (commentText) {
+                commentText.classList.remove('d-none');
+            }
+
+            if (fileInfo) {
+                fileInfo.classList.remove('d-none');
+            }
+            if (actionButtons) {
+                actionButtons.classList.remove('d-none');
+            }
+        }
+    });
+</script>

@@ -6,31 +6,36 @@
 }
 @model UserPageModel
 <style>
-    .userName {
-        text-align: end;
-        width: 100%;
-       
+    
+
+    .card:hover {
+        opacity: 95%
     }
 </style>
-<div class="userName" text-align="right">Kullanıcı adı: @Model.UserName</div>
 <div class="container mt-5">
-        @if (Model.Projects != null)
-        {
+        
         <div class="row">
             <h4>Projeler</h4>
-            @foreach (var project in Model.Projects)
-            {
-                <div class="col-md-4 mb-4">
-                    <div class="card" style="width: 25rem">
-                        <div class="card-body">
-                            <a class="card-title text-decoration-none text-primary" asp-action="Index" asp-controller="Project" asp-route-id="@project.Id">@project.Name</a>
-                            <h6 class="card-subtitle mb-2 text-muted">Durum: @project.Status</h6>
-                            <p class="card-text">Sürüm: @project.Version</p>
+            <div class="col-md-4 mb-4">
+                <a href="/Projects" class="text-decoration-none">
+                    <div class="card bg-dark text-white d-flex justify-content-center align-items-center" style="height: 10rem;">
+                        <div class="card-body text-center">
+                            <h5 class="card-title mb-0">Projeler</h5>
                         </div>
                     </div>
-                </div>
-            }
+                </a>
+            </div>
+            <div class="col-md-4 mb-4">
+                <a href="/Jobs" class="text-decoration-none">
+                    <div class="card bg-dark text-white d-flex justify-content-center align-items-center" style="height: 10rem;">
+                        <div class="card-body text-center">
+                            <h5 class="card-title mb-0">İşler</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        
         </div>
-    }
+    
 
 </div>

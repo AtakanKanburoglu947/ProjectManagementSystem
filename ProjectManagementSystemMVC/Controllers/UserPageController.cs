@@ -12,42 +12,20 @@ namespace ProjectManagementSystemMVC.Controllers
     public class UserPageController : Controller
     {
         private readonly AuthService _authService;
-        private readonly IService<ProjectUser,ProjectUser,ProjectUser> _projectUserService;
-        private readonly IService<User,UserDto,UserUpdateDto> _userService;
-        private readonly IService<Project, ProjectDto, ProjectUpdateDto> _projectService;
 
-        public UserPageController(AuthService authService, IService<ProjectUser,ProjectUser,ProjectUser> projectUserService,
-                IService<User, UserDto, UserUpdateDto> userService,
-                IService<Project,ProjectDto,ProjectUpdateDto> projectService
-            )
+
+        public UserPageController(AuthService authService)
         {
             _authService = authService;
-            _projectUserService = projectUserService;
-            _userService = userService;
-            _projectService = projectService;
         }
 
         public async Task<IActionResult> Index()
         {
-            Guid userIdentityId = await _authService.GetUserIdentityId();
             string? userName = await _authService.GetUserName();
-            User? user = await _userService.Get(x=>x.UserIdentityId == userIdentityId);
-            List<ProjectUser>? userProjects = _projectUserService.Where(x=>x.UserId == user.Id);
-           
-            UserDto userDto = new UserDto() { RoleId = user.Id, UserIdentityId = userIdentityId };
             UserPageModel userPageModel = new UserPageModel();
-            if (userProjects.Count > 0)
-            {
-                List<Guid> projectIds = userProjects.Select(x => x.ProjectId).Distinct().ToList();
-                List<Project>? projects = _projectService.Where(x=>projectIds.Contains(x.Id));
-                userPageModel.UserName = userName;
-                userPageModel.Projects = projects;
+            userPageModel.UserName = userName;
 
-            }
-            else
-            {
-                userPageModel.UserName = userName;
-            }
+          
             return View(userPageModel);
         }
         public IActionResult Logout()

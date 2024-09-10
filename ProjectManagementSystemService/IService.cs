@@ -21,7 +21,7 @@ namespace ProjectManagementSystemService
         Task Remove(Guid guid, int id);
         Task Remove(int id, Guid guid);
         Task Remove(Guid id, Guid guid);
-        Task<List<T>> GetAll(string cacheKey);
+        Task<List<T>> GetAll();
         Task<T> Get(int id);
         Task<T> Get(Guid id);
         Task<T> Get(int id, Guid guid);

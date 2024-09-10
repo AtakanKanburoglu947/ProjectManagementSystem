@@ -1,0 +1,47 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = "~/Views/Shared/_UserPageLayout.cshtml";
+}
+@model List<JobPageModel>
+<div class="container mt-5">
+
+    <div class="row">
+
+        @foreach (var job in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card border-light shadow-sm">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0">@job.Title</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">Durum: @job.Status</p>
+
+                            <button class="btn btn-secondary">Detaylar</button>
+                        </div>
+                    <div class="card-footer bg-light text-muted">
+                        <div class="d-flex flex-column">
+                          
+                            <div>
+                                <p class="card-text">Proje: @job.ProjectName</p>
+                                <h6 class="card-title mb-0">Kalan Zaman</h6>
+                                <p class="card-text">
+                                    <span class="badge bg-secondary">@job.Time.Days Gün</span>
+                                    <span class="badge bg-secondary">@job.Time.Hours Saat</span>
+                                    <span class="badge bg-secondary">@job.Time.Minutes Dakika</span>
+                                    <span class="badge bg-secondary">@job.Time.Seconds Saniye</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+        }
+    </div>
+</div>
