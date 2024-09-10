@@ -51,7 +51,7 @@ namespace ProjectManagementSystemAPI.Controllers
         {
             try
             {
-                return Ok(await _roleService.GetAll("roles"));
+                return Ok(await _roleService.GetAll());
             }
             catch (Exception exception)
             {

@@ -19,7 +19,7 @@ namespace ProjectManagementSystemAPI.Controllers
         }
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll() {
-            var result = await _service.GetAll("comments");
+            var result = await _service.GetAll();
             if (result != null)
             {
                 return Ok(result);

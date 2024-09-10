@@ -18,7 +18,7 @@ namespace ProjectManagementSystemAPI.Controllers
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll() {
         
-            return Ok(await _service.GetAll("projectusers"));
+            return Ok(await _service.GetAll());
         }
         [HttpPost]
         public async Task Add(ProjectUser projectUser)

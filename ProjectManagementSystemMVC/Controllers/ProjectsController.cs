@@ -1,4 +1,5 @@
 ﻿using Auth.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProjectManagementSystemCore.Dtos;
 using ProjectManagementSystemCore.Models;
@@ -6,6 +7,7 @@ using ProjectManagementSystemService;
 
 namespace ProjectManagementSystemMVC.Controllers
 {
+    [Authorize]
     public class ProjectsController : Controller
     {
         IService<Project, ProjectDto, ProjectUpdateDto> _projectService;

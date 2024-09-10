@@ -14,6 +14,10 @@ namespace ProjectManagementSystemMVC.Models
         public string ProjectName { get; set; }
         public Guid? FileUploadId { get; set; }
         public Guid? UserIdentityId { get; set; }
+        public List<string> StatusOptions = new List<string>()
+        {
+            "Devam ediyor", "Beklemede", "Tamamlandı", "İptal Edildi"
+        };
 
     }
 }

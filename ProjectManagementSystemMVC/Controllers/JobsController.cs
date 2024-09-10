@@ -1,4 +1,5 @@
 ﻿using Auth.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProjectManagementSystemCore.Dtos;
 using ProjectManagementSystemCore.Models;
@@ -7,6 +8,7 @@ using ProjectManagementSystemService;
 
 namespace ProjectManagementSystemMVC.Controllers
 {
+    [Authorize]
     public class JobsController : Controller
     {
         private readonly AuthService _authService;

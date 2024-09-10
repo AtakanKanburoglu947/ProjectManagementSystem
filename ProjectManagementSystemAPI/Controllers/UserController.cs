@@ -55,7 +55,7 @@ namespace ProjectManagementSystemAPI.Controllers
         public async Task<IActionResult> GetAll() {
             try
             {
-                return Ok(await _userService.GetAll("users"));
+                return Ok(await _userService.GetAll());
             }
             catch (Exception exception)
             {

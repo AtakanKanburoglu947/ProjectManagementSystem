@@ -6,7 +6,6 @@
 <div class="container mt-5">
     <div class="row">
         <div class="col-md-12">
-            <!-- Card for Project Details -->
             <div class="card mb-4 shadow-sm">
                 <div class="card-header">
                     <h5 class="mb-0">@Model.Name</h5>
@@ -37,7 +36,7 @@
                         </ul>
                     </div>
                     @if (Model.UserIdentities != null)
-                    {
+                    {   
                         <div class="mt-4">
                             <h6 class="card-title">Proje Üyeleri</h6>
                             <ul class="list-group">
@@ -85,7 +84,6 @@
                                         <div class="flex-grow-1">
                                             <p id="commentText_@comment.CommentId" class="card-text">@comment.Text</p>
 
-                                            <!-- Dosya bilgisi -->
                                             @if (comment.FileId != null)
                                             {
                                                 <div id="fileInfo_@comment.CommentId">

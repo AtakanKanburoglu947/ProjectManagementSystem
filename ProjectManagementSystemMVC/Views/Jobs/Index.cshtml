@@ -19,20 +19,29 @@
                     <div class="card-body">
                         <p class="card-text">Durum: @job.Status</p>
 
-                            <button class="btn btn-secondary">Detaylar</button>
+                            <a class="btn btn-secondary" asp-action="Index" asp-controller="Job" asp-route-id="@job.Id">Detaylar</a>
                         </div>
                     <div class="card-footer bg-light text-muted">
                         <div class="d-flex flex-column">
                           
                             <div>
                                 <p class="card-text">Proje: @job.ProjectName</p>
-                                <h6 class="card-title mb-0">Kalan Zaman</h6>
-                                <p class="card-text">
-                                    <span class="badge bg-secondary">@job.Time.Days Gün</span>
-                                    <span class="badge bg-secondary">@job.Time.Hours Saat</span>
-                                    <span class="badge bg-secondary">@job.Time.Minutes Dakika</span>
-                                    <span class="badge bg-secondary">@job.Time.Seconds Saniye</span>
-                                </p>
+                                @if (job.Time.TotalSeconds > 0)
+                                {
+                                    <h6 class="card-title mb-0">Kalan Zaman</h6>
+                                    <p class="card-text">
+                                        <span class="badge bg-secondary">@job.Time.Days Gün</span>
+                                        <span class="badge bg-secondary">@job.Time.Hours Saat</span>
+                                        <span class="badge bg-secondary">@job.Time.Minutes Dakika</span>
+                                        <span class="badge bg-secondary">@job.Time.Seconds Saniye</span>
+                                    </p>
+                                }
+                                else
+                                {
+                                     <p class="card-text">Süre bitti</p>                                    
+                                }
+
+
                             </div>
                         </div>
                     </div>
