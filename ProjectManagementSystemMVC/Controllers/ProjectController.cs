@@ -33,10 +33,11 @@ namespace ProjectManagementSystemMVC.Controllers
             _commentService = commentService;
             _fileService = fileService;
         }
+        [ServiceFilter(typeof(ProjectAccessFilter))]
         public async Task<IActionResult> Index(Guid id)
         {
-            Project project = await _projectService.Get(id);
-            List<ProjectUser> projectUsers = _projectUserService.Where(x=> x.ProjectId == project.Id);
+            Project project = await _projectService.Get(id);          
+            List<ProjectUser> projectUsers = _projectUserService.Where(x=> x.ProjectId == project.Id); 
             List<ProjectManager> projectManagers = _projectManagerService.Where(x=>x.ProjectId == project.Id);
             List<int> managerIds = projectManagers.Select(x=>x.ManagerId).Distinct().ToList();
             List<int> userIds = projectUsers.Select(x=>x.UserId).Distinct().ToList();
@@ -45,7 +46,9 @@ namespace ProjectManagementSystemMVC.Controllers
             List<Guid> userIdentityIds = users.Select(x=>x.UserIdentityId).Distinct().ToList();
             List<Guid> managerIdentityIds = managers.Select(x => x.UserIdentityId).Distinct().ToList();
             List<UserIdentity> managerIdentities = new List<UserIdentity>();
+
             List<Comment> comments = _commentService.Where(x => x.ProjectId == project.Id);
+
             foreach (var item in managerIdentityIds)
             {
                 managerIdentities.Add(await _authService.GetUserById(item));
@@ -77,14 +80,14 @@ namespace ProjectManagementSystemMVC.Controllers
                 List<CommentDetails> commentDetails = new List<CommentDetails>();
                 foreach (var comment in comments)
                 { 
-                    var user = await _authService.GetUserById(comment.UserIdentityId);
+                    var _user = await _authService.GetUserById(comment.UserIdentityId);
                     var commentDetail = new CommentDetails()
                     {
                         ProjectName = project.Name,
                         ProjectId = project.Id,
                         CommentId = comment.Id,
                         Text = comment.Text,
-                        UserName = user.UserName
+                        UserName = _user.UserName
                         
                     };
                     if (comment.FileUploadId != null)
