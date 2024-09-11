@@ -17,5 +17,7 @@ namespace ProjectManagementSystemCore.Dtos
         public Guid ProjectId { get; set; }
         public Guid? FileUploadId { get; set; }
         public Guid? UserIdentityId { get; set; }
+        public DateTime? AddedAt { get; set; }
+
     }
 }

@@ -15,6 +15,7 @@ namespace ProjectManagementSystemCore.Models
         public Guid? UserIdentityId { get; set; }
         public Manager Manager { get; set; }
         public int? ManagerId { get; set; }
-       
+        public DateTime? AddedAt { get; set; }
+
     }
 }
