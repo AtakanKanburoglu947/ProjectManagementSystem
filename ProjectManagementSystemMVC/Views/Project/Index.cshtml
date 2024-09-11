@@ -24,31 +24,59 @@
                         <p class="card-text">@Model.Version</p>
                     </div>
                     <div class="mt-4">
-                        <h6 class="card-title">Proje Yöneticileri</h6>
-                        <ul class="list-group">
-                            @foreach (var item in Model.ManagerIdentities)
-                            {
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    @item.UserName
-                                    <span class="badge bg-secondary">Yönetici</span>
-                                </li>
-                            }
-                        </ul>
-                    </div>
-                    @if (Model.UserIdentities != null)
-                    {   
-                        <div class="mt-4">
-                            <h6 class="card-title">Proje Üyeleri</h6>
-                            <ul class="list-group">
-                                @foreach (var item in Model.UserIdentities)
-                                {
-                                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        @item.UserName
-                                        <span class="badge bg-secondary">Üye</span>
-                                    </li>
-                                }
-                            </ul>
+                        <div class="accordion" id="accordionManager">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseManager " aria-expanded="true" aria-controls="collapseOne">
+                                        <h6>Proje Yöneticileri</h6>
+                                    </button>
+                                </h2>
+                                <div id="collapseManager" class="accordion-collapse collapse" data-bs-parent="#accordionManager">
+                                    <div class="accordion-body">
+                                        <ul class="list-group">
+                                            @foreach (var item in Model.ManagerIdentities)
+                                            {
+                                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                    @item.UserName
+                                                    <span class="badge bg-secondary">Yönetici</span>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
+
+                    </div>
+                    <br>
+                    @if (Model.UserIdentities != null)
+                    {
+                           <div class="accordion" id="accordionUser">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseUser" aria-expanded="true" aria-controls="collapseOne">
+                                        <h6>Proje üyeleri</h6>
+                                    </button>
+                                </h2>
+                                <div id="collapseUser" class="accordion-collapse collapse" data-bs-parent="#accordionUser">
+                                    <div class="accordion-body">
+                                        <ul>
+                                        @foreach (var item in Model.UserIdentities)
+                                       
+                                        {
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                @item.UserName
+                                                <span class="badge bg-secondary">Üye</span>
+                                            </li>
+                                        }
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+               
                     }
                     <div class="mt-4">
                         <h6>Yorum Ekle</h6>
