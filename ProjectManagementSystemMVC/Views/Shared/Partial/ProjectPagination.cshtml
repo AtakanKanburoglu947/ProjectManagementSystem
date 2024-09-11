@@ -8,10 +8,10 @@
     @if (Model.Count > 5)
     {
         int count = (Model.Count / 5);
-
+        var startIndex = (int)ViewData["startIndex"];
         for (int i = 0; i <= count; i++)
         {
-            if (i == (int)ViewData["startIndex"])
+            if (i == startIndex)
             {
                 <li class="page-item active"><a class="page-link" asp-action="Index" asp-route-startIndex ="@i" 
                     asp-route-projectId="@((Guid)ViewData["projectId"])">@(i + 1)</a></li>

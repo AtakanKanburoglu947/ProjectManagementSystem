@@ -36,6 +36,11 @@ namespace ProjectManagementSystemMVC.Controllers
         }
         public async Task<IActionResult> Index(Guid projectId,int startIndex)
         {
+            if (startIndex > 0)
+            {
+                startIndex *= 5;
+
+            }
             ViewData["startIndex"] = startIndex;
             ViewData["projectId"] = projectId;
             TempData["startIndex"] = startIndex;
@@ -51,6 +56,7 @@ namespace ProjectManagementSystemMVC.Controllers
             List<UserIdentity> managerIdentities = new List<UserIdentity>();
             Guid userIdentityId = await _authService.GetUserIdentityId();
             Expression<Func<Comment, DateTime>> expression = x => (DateTime)x.AddedAt;
+
 
             List<Comment> comments = await _commentService.Filter(startIndex    ,expression,x=>x.ProjectId == projectId);
             int count = _commentService.Count(x => x.ProjectId == projectId);

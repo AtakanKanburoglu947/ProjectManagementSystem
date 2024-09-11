@@ -29,6 +29,10 @@ namespace ProjectManagementSystemMVC.Controllers
         public async Task<IActionResult> Index(int id)
         {
             ViewData["id"] = id;
+            if (id > 0)
+            {
+                id *= 5;
+            }
             Guid userIdentityId = await _authService.GetUserIdentityId();
             int count = _commentService.Count(x=>x.UserIdentityId == userIdentityId);
             Expression<Func<Comment, DateTime>> expression = x => (DateTime)x.AddedAt;
