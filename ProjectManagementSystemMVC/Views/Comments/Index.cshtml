@@ -9,9 +9,9 @@
     {
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h6>Yorumlar</h6>
-            <form asp-action="Remove" asp-controller="Comment" method="post">
-                <button type="submit" class="btn btn-danger">Bütün Yorumları Sil</button>
-            </form>
+            <a asp-action="Remove" class="btn btn-danger">
+                Bütün Yorumları Sil
+            </a>
         </div>
 
         @foreach (var comment in Model.Dataset)

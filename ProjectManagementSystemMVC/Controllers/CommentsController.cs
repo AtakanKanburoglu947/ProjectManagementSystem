@@ -87,7 +87,7 @@ namespace ProjectManagementSystemMVC.Controllers
                     await _commentService.Remove(item.Id);
                 }
             }
-            return RedirectToAction("/");
+            return RedirectToAction("Index");
 
         }
     }
