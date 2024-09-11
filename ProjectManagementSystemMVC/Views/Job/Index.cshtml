@@ -31,11 +31,13 @@
                     {
                         <div id="fileInfo_@Model.Id">
                             <h6 class="card-text    ">Ek Dosya</h6>
-                            <div class="col-md-2 mb-2">
-                                <div class="card text-center">
-                                    <div class="card-body">
-                                        <h5 class="card-title">@Model.FileName</h5>
-                                        <a class="btn btn-secondary mt-3" asp-action="Download" asp-controller="Job" asp-route-id="@Model.FileUploadId">
+                            <div class="col-md-3 col-sm-6">
+                                <div class="card ">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title mb-2">@Model.FileName</h5>
+                                        <hr class="my-2">
+                                        <p class="card-text text-muted mb-2">Tarih: @Model.AddedAt</p>
+                                        <a class="btn btn-secondary mt-3" asp-action="Download" asp-controller="Account" asp-route-id="@Model.Id">
                                             Yükle
                                         </a>
                                     </div>

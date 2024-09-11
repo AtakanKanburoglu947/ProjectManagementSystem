@@ -69,7 +69,8 @@ namespace ProjectManagementSystemMVC.Controllers
                 Status = project.Status,
                 Version = project.Version,
                 ManagerIdentities = managerIdentities,
-                UserIdentityId = await _authService.GetUserIdentityId()
+                UserIdentityId = await _authService.GetUserIdentityId(),
+                AddedAt = project.AddedAt
                 
             };
             if (userIdentityIds.Count > 0)

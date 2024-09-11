@@ -73,5 +73,22 @@ namespace ProjectManagementSystemMVC.Controllers
             }
             return View(paginationModel);
         }
+        public async Task<IActionResult> Remove()
+        {
+            Guid userIdentityId = await _authService.GetUserIdentityId();
+            List<Comment> comments = _commentService.Where(x=>x.UserIdentityId == userIdentityId);
+            if (comments.Any()) {
+                foreach (var item in comments)
+                {
+                    if (item.FileUploadId != null)
+                    {
+                        await _fileService.RemoveFile(item.FileUploadId);
+                    }
+                    await _commentService.Remove(item.Id);
+                }
+            }
+            return RedirectToAction("/");
+
+        }
     }
 }

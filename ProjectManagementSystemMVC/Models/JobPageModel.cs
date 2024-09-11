@@ -19,6 +19,6 @@ namespace ProjectManagementSystemMVC.Models
         {
             "Devam ediyor", "Beklemede", "Tamamlandı", "İptal Edildi"
         };
-
+        public Guid? AddedAt { get; set; }
     }
 }

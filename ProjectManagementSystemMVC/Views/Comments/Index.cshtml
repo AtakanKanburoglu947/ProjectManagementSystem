@@ -1,7 +1,4 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
     Layout = "~/Views/Shared/_UserPageLayout.cshtml";
 }
 
@@ -10,47 +7,44 @@
 
     @if (Model.Pagination.Count > 0)
     {
-
-
-        <div class="mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
             <h6>Yorumlar</h6>
+            <form asp-action="Remove" asp-controller="Comment" method="post">
+                <button type="submit" class="btn btn-danger">Bütün Yorumları Sil</button>
+            </form>
+        </div>
 
-            @foreach (var comment in Model.Dataset)
-            {
-
-                <div class="card mb-2">
-                    <div class="card-header">
-
-                        <p class="card-subtitle mb-2 text-muted">@comment.ProjectName</p>
-                        <small class="text-muted">Tarih: @comment.AddedAt</small>
-                        @if (comment.UpdatedAt != null)
-                        {
-                            <br />
-                            <small class="text-muted">Güncellenme Tarihi: @comment.UpdatedAt</small>
-                        }
-                    </div>
-                    <div class="card-body">
-                        <p class="card-text">@comment.Text</p>
-                        @if (comment.FileId != null)
-                        {
-                            <small class="text-muted">Ek Dosya</small>
-                            <div class="col-md-2 mb-2">
-                                <div class="card text-center">
-                                    <div class="card-body">
-                                        <h5 class="card-title">@comment.FileName</h5>
-                                        <a class="btn btn-secondary mt-3" asp-action="Download" asp-controller="Account" asp-route-id="@comment.FileId">
-                                            Yükle
-                                        </a>
-                                    </div>
+        @foreach (var comment in Model.Dataset)
+        {
+            <div class="card mb-2">
+                <div class="card-header">
+                    <p class="card-subtitle mb-2 text-muted">@comment.ProjectName</p>
+                    <small class="text-muted">Tarih: @comment.AddedAt</small>
+                    @if (comment.UpdatedAt != null)
+                    {
+                        <br />
+                        <small class="text-muted">Güncellenme Tarihi: @comment.UpdatedAt</small>
+                    }
+                </div>
+                <div class="card-body">
+                    <p class="card-text">@comment.Text</p>
+                    @if (comment.FileId != null)
+                    {
+                        <small class="text-muted">Ek Dosya</small>
+                        <div class="col-md-2 mb-2">
+                            <div class="card text-center">
+                                <div class="card-body">
+                                    <h5 class="card-title">@comment.FileName</h5>
+                                    <a class="btn btn-secondary mt-3" asp-action="Download" asp-controller="Account" asp-route-id="@comment.FileId">
+                                        Yükle
+                                    </a>
                                 </div>
                             </div>
-                        }
-                    </div>
+                        </div>
+                    }
                 </div>
-            }
-        </div>
+            </div>
+        }
         @await Html.PartialAsync("Partial/Pagination", Model.Pagination)
-
     }
-        
 </div>

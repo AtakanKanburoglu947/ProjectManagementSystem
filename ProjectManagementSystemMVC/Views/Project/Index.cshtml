@@ -8,6 +8,7 @@
             <div class="card mb-4 shadow-sm">
                 <div class="card-header">
                     <h5 class="mb-0">@Model.Data.Name</h5>
+                    <small class="text-muted">Tarih: @Model.Data.AddedAt</small>
                 </div>
                 <div class="card-body">
                     <div class="mb-3">
@@ -120,17 +121,20 @@
                                             {
                                                 <div id="fileInfo_@comment.CommentId">
                                                     <small class="text-muted">Ek Dosya</small>
-                                                    <div class="col-md-2 mb-2">
-                                                        <div class="card text-center">
-                                                            <div class="card-body">
-                                                                <h5 class="card-title">@comment.FileName</h5>
-                                                                <a class="btn btn-secondary mt-3" asp-action="Download" asp-controller="Account" asp-route-id="@comment.FileId">
+                                                    <div class="col-md-3 col-sm-6">
+                                                        <div class="card ">
+                                                            <div class="card-body text-center">
+                                                                <h5 class="card-title mb-2">@comment.FileName</h5>
+                                                                <hr class="my-2">
+                                                                <p class="card-text text-muted mb-2">Tarih: @comment.AddedAt</p>
+                                                                <a class="btn btn-secondary mt-3" asp-action="Download" asp-controller="Project" asp-route-id="@comment.FileId">
                                                                     Yükle
                                                                 </a>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <br />
                                             }
                                             <div id="editForm_@comment.CommentId" class="d-none">
                                                 <form asp-action="EditComment" method="post">
