@@ -22,10 +22,11 @@ namespace ProjectManagementSystemMVC.Controllers
             _jobService = jobService;
             _projectService = projectService;
         }
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int id)
         {
+           
             Guid userIdentityId = await _authService.GetUserIdentityId();
-            List<Job> jobs = _jobService.Where(x=>x.UserIdentityId == userIdentityId).ToList();
+            List<Job> jobs = await _jobService.Filter(id,x=>x.UserIdentityId == userIdentityId);
             List<JobPageModel> jobPageModels = new List<JobPageModel>();
             foreach (var job in jobs)
             {

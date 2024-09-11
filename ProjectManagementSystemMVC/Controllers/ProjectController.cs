@@ -90,6 +90,7 @@ namespace ProjectManagementSystemMVC.Controllers
                         Text = comment.Text,
                         UserName = _user.UserName,
                         UserIdentityId = _user.Id,
+                        AddedAt = comment.AddedAt
                         
                     };
                     if (comment.FileUploadId != null)
@@ -97,6 +98,10 @@ namespace ProjectManagementSystemMVC.Controllers
                         var commentFile = await _fileService.GetFile((Guid)comment.FileUploadId);
                         commentDetail.FileId = commentFile.Id;
                         commentDetail.FileName = commentFile.Name;
+                    }
+                    if (comment.UpdatedAt != null)
+                    {
+                        commentDetail.UpdatedAt = comment.UpdatedAt;
                     }
                     commentDetails.Add(commentDetail);
                 }
@@ -117,6 +122,7 @@ namespace ProjectManagementSystemMVC.Controllers
                 ProjectId = projectId,
                 Text = newComment.Text,
                 UserIdentityId = await _authService.GetUserIdentityId(),
+                AddedAt = DateTime.Now
 
             };
             if (file != null && file.Length >0) {
@@ -146,7 +152,9 @@ namespace ProjectManagementSystemMVC.Controllers
               Id = commentId,
               ProjectId =  projectId,
               Text = commentDto.Text,
-              UserIdentityId = userIdentityId
+              UserIdentityId = userIdentityId,
+              AddedAt = comment.AddedAt,
+              UpdatedAt = DateTime.Now
             };
             await _commentService.Update(commentUpdateDto,commentId);
             return Redirect($"/Project/Index/{projectId}");

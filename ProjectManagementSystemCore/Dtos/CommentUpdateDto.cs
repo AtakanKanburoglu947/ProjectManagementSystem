@@ -12,5 +12,7 @@ namespace ProjectManagementSystemCore.Dtos
         public string Text { get; set; }
         public Guid ProjectId { get; set; }
         public Guid UserIdentityId { get; set; }
+        public DateTime? AddedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
     }
 }

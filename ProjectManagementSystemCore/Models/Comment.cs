@@ -16,6 +16,9 @@ namespace ProjectManagementSystemCore.Models
         public UserIdentity UserIdentity { get; set; }
         public FileUpload FileUpload { get; set; }
         public Guid? FileUploadId { get; set; }
+        public DateTime? AddedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
+
 
     }
 }

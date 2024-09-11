@@ -10,5 +10,7 @@
         public  Guid UserIdentityId { get; set; }
         public Guid? FileId { get; set; }
         public string? FileName { get; set; }
+        public DateTime? AddedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
     }
 }

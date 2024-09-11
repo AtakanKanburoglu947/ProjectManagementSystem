@@ -77,8 +77,13 @@
                             {
                                 <div class="card mb-2">
                                     <div class="card-header">
-                                        <p class="card-subtitle mb-2 text-muted">@comment.ProjectName</p>
-                                        <small class="text-muted">Yorum Yapan: @comment.UserName</small>
+                                        <small class="text-muted">Yorum Yapan: @comment.UserName</small> <br />
+                                        <small class="text-muted">Tarih: @comment.AddedAt</small>
+                                        @if (comment.UpdatedAt != null)
+                                        {
+                                            <br />  
+                                            <small class="text-muted">Güncellenme Tarihi: @comment.UpdatedAt</small>
+                                        }
                                     </div>
                                     <div class="card-body d-flex align-items-start">
                                         <div class="flex-grow-1">
