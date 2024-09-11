@@ -5,6 +5,7 @@ using ProjectManagementSystemCore.Dtos;
 using ProjectManagementSystemCore.Models;
 using ProjectManagementSystemMVC.Models;
 using ProjectManagementSystemService;
+using System.Linq.Expressions;
 
 namespace ProjectManagementSystemMVC.Controllers
 {
@@ -30,19 +31,18 @@ namespace ProjectManagementSystemMVC.Controllers
             ViewData["id"] = id;
             Guid userIdentityId = await _authService.GetUserIdentityId();
             int count = _commentService.Count(x=>x.UserIdentityId == userIdentityId);
-            if (id > 0)
-            {
-                id = id * 4;
-            }
-            List<Comment>? comments = await _commentService.Filter(id, x => x.UserIdentityId == userIdentityId);
+            Expression<Func<Comment, DateTime>> expression = x => (DateTime)x.AddedAt;
+            List<Comment>? comments = await _commentService.Filter(id,expression, x => x.UserIdentityId == userIdentityId);
             UserIdentity userIdentity = await _authService.GetUserById(userIdentityId);
-            CommentPageModel commentPageModel = new CommentPageModel();
-            commentPageModel.Count = count;
+            PaginationModel<CommentDetails, NoData> paginationModel = new PaginationModel<CommentDetails, NoData>()
+            {
+                Pagination = new PaginationViewModel() { Count = count }
+            };
             List<CommentDetails> commentDetails = new List<CommentDetails>();
 
             if (comments != null)
             {
-                foreach (Comment comment in comments.OrderBy(x=>x.AddedAt))
+                foreach (Comment comment in comments)
                 {
                     Guid projectId = comment.ProjectId;
                     Project project = await _projectService.Get(projectId);
@@ -68,10 +68,10 @@ namespace ProjectManagementSystemMVC.Controllers
                     }
                     commentDetails.Add(commentDetail);
                 }
-                commentPageModel.CommentDetails = commentDetails;   
-
+                paginationModel.Dataset = commentDetails;
+                
             }
-            return View(commentPageModel);
+            return View(paginationModel);
         }
     }
 }

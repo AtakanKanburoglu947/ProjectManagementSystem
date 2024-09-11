@@ -1,0 +1,29 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model PaginationViewModel
+<ul class="pagination">
+    @if (Model.Count > 5)
+    {
+        int count = (Model.Count / 5);
+
+        for (int i = 0; i <= count; i++)
+        {
+            if (i == (int)ViewData["id"])
+            {
+                <li class="page-item active"><a class="page-link" asp-action="Index" asp-route-id="@i">@(i + 1)</a></li>
+
+            }
+            else
+            {
+                <li class="page-item"><a class="page-link" asp-action="Index" asp-route-id="@i">@(i + 1)</a></li>
+
+            }
+
+        }
+    }
+
+
+</ul>

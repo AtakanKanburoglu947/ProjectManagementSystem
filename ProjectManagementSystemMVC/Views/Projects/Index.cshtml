@@ -18,7 +18,7 @@
                     </div>
                     <div class="card-body">
                         <p class="card-text mb-3">Durum: <strong>@project.Status</strong></p>
-                        <a class="btn btn-secondary" asp-action="Index" asp-controller="Project" asp-route-id="@project.Id">Detaylar </a>
+                        <a class="btn btn-secondary" asp-action="Index" asp-controller="Project" asp-route-startIndex=0 asp-route-projectId="@project.Id">Detaylar </a>
                     </div>
                     <div class="card-footer bg-light text-muted">
                         Versiyon: @project.Version

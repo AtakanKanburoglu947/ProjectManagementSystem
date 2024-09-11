@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using ProjectManagementSystemCore;
 using ProjectManagementSystemRepository;
 using ProjectManagementSystemService;
+using ProjectManagementSystemMVC.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 

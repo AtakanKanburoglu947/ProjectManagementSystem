@@ -116,7 +116,24 @@ namespace ProjectManagementSystemService
             }
 
         }
-        
+        public async Task<List<FileUpload>> Filter(int startIndex, Expression<Func<FileUpload, bool>> where)
+        {
+            List<FileUpload> result = await _appDbContext.FileUploads.Where(where).Skip(startIndex).Take(4).ToListAsync();
+            if (result != null)
+            {
+                return result;
+            }
+            return null;
+        }
+        public int Count()
+        {
+            return _appDbContext.FileUploads.Count();
+        }
+
+        public int Count(Expression<Func<FileUpload, bool>> expression)
+        {
+            return _appDbContext.FileUploads.Where(expression).Count();
+        }
 
 
 

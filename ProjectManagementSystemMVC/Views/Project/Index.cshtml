@@ -1,27 +1,26 @@
 ﻿@{
     Layout = "~/Views/Shared/_UserPageLayout.cshtml";
 }
-@model ProjectManagementSystemMVC.Models.ProjectPageModel
-
+@model PaginationModel<CommentDetails,ProjectPageModel>
 <div class="container mt-5">
     <div class="row">
         <div class="col-md-12">
             <div class="card mb-4 shadow-sm">
                 <div class="card-header">
-                    <h5 class="mb-0">@Model.Name</h5>
+                    <h5 class="mb-0">@Model.Data.Name</h5>
                 </div>
                 <div class="card-body">
                     <div class="mb-3">
                         <h6 class="card-title">Proje Açıklaması</h6>
-                        <p class="card-text">@Model.Description</p>
+                        <p class="card-text">@Model.Data.Description</p>
                     </div>
                     <div class="mb-3">
                         <h6 class="card-title">Proje Durumu</h6>
-                        <p class="card-text">@Model.Status</p>
+                        <p class="card-text">@Model.Data.Status</p>
                     </div>
                     <div class="mb-3">
                         <h6 class="card-title">Proje Versiyonu</h6>
-                        <p class="card-text">@Model.Version</p>
+                        <p class="card-text">@Model.Data.Version</p>
                     </div>
                     <div class="mt-4">
                         <div class="accordion" id="accordionManager">
@@ -34,7 +33,7 @@
                                 <div id="collapseManager" class="accordion-collapse collapse" data-bs-parent="#accordionManager">
                                     <div class="accordion-body">
                                         <ul class="list-group">
-                                            @foreach (var item in Model.ManagerIdentities)
+                                            @foreach (var item in Model.Data.ManagerIdentities)
                                             {
                                                 <li class="list-group-item d-flex justify-content-between align-items-center">
                                                     @item.UserName
@@ -50,7 +49,7 @@
 
                     </div>
                     <br>
-                    @if (Model.UserIdentities != null)
+                    @if (Model.Data.UserIdentities != null)
                     {
                            <div class="accordion" id="accordionUser">
                             <div class="accordion-item">
@@ -62,7 +61,7 @@
                                 <div id="collapseUser" class="accordion-collapse collapse" data-bs-parent="#accordionUser">
                                     <div class="accordion-body">
                                         <ul>
-                                        @foreach (var item in Model.UserIdentities)
+                                            @foreach (var item in Model.Data.UserIdentities)
                                        
                                         {
                                             <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -81,7 +80,7 @@
                     <div class="mt-4">
                         <h6>Yorum Ekle</h6>
                         <form asp-action="AddComment" asp-controller="Project" method="post" enctype="multipart/form-data">
-                            <input type="hidden" name="ProjectId" value="@Model.Id" />
+                            <input type="hidden" name="ProjectId" value="@Model.Data.Id" />
 
                             <div class="mb-3">
                                 <textarea class="form-control" name="NewComment.Text" rows="3"></textarea>
@@ -95,13 +94,13 @@
                             <button type="submit" class="btn btn-secondary">Yorum Ekle</button>
                         </form>
                     </div>
-                    @if (Model.CommentDetails !=null)
+                    @if (Model.Dataset !=null)
                     {
 
 
                         <div class="mt-4">
                             <h6>Yorumlar</h6>
-                            @foreach (var comment in Model.CommentDetails)
+                            @foreach (var comment in Model.Dataset)
                             {
                                 <div class="card mb-2">
                                     <div class="card-header">
@@ -151,7 +150,7 @@
                                             </div>
 
                                             <div id="actionButtons_@comment.CommentId">
-                                                @if (comment.UserIdentityId == Model.UserIdentityId) 
+                                                @if (comment.UserIdentityId == Model.Data.UserIdentityId) 
                                                 {
                                                     <div class="d-flex gap-2">
                                                         <button id="editButton_@comment.CommentId" class="btn btn-secondary">Düzenle</button>
@@ -169,6 +168,8 @@
             </div>
         </div>
     </div>
+    @await Html.PartialAsync("Partial/ProjectPagination", Model.Pagination)
+    
 </div>
 <script>
     document.addEventListener('DOMContentLoaded', function () {

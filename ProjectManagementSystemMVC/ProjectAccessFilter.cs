@@ -31,7 +31,7 @@ namespace ProjectManagementSystemService
         }
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            Guid? id = (Guid)context.ActionArguments["id"]!;
+            Guid? id = (Guid)context.ActionArguments["projectId"]!;
             Guid identityId = await _authService.GetUserIdentityId();
             User user = await _userService.Get(x => x.UserIdentityId == identityId);
             List<ProjectUser> projectsofUser = _projectUserService.Where(x => x.UserId == user.Id);

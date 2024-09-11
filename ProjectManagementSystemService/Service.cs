@@ -219,7 +219,15 @@ namespace ProjectManagementSystemService
                 await _appDbContext.SaveChangesAsync();
             }
         }
-
+        public async Task<List<T>> Filter(int startIndex, Expression<Func<T, DateTime>> orderBy, Expression<Func<T, bool>> where)
+        {
+            List<T> result = await _dbSet.OrderByDescending(orderBy).Where(where).Skip(startIndex).Take(5).ToListAsync();
+            if (result != null)
+            {
+                return result;
+            }
+            return null;
+        }
         public async Task<List<T>> Filter(int startIndex, Expression<Func<T,bool>> where)
         {
             List<T> result = await _dbSet.Where(where).Skip(startIndex).Take(5).ToListAsync();
