@@ -14,16 +14,24 @@ namespace ProjectManagementSystemMVC.Controllers
         private readonly IService<Job, JobDto, JobUpdateDto> _jobService;
         private readonly IService<Project,ProjectDto, ProjectUpdateDto> _projectService;
         private readonly FileService _fileService;
+        private readonly AuthService _authService;
+        private readonly NotificationService _notificationService;
+
         public JobController(IService<Job,JobDto,JobUpdateDto> jobService, 
             IService<Project,ProjectDto,ProjectUpdateDto> projectService,
-            FileService fileService)
+            FileService fileService, AuthService authService, NotificationService notificationService)
         {
             _jobService = jobService;
             _projectService = projectService;
             _fileService = fileService;
+            _authService = authService;
+            _notificationService = notificationService;
         }
         public async Task<IActionResult> Index(Guid id)
         {
+            Guid userIdentityId = await _authService.GetUserIdentityId();
+            ViewData["notifications"] = await _notificationService.GetNotifications(userIdentityId);
+
             Job job = await _jobService.Get(id);
             Project project = await _projectService.Get(job.ProjectId);
             FileUpload? file = await _fileService.GetFile((Guid)job.FileUploadId); 

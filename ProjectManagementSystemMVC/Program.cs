@@ -22,6 +22,7 @@ builder.Services.AddMemoryCache();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped(typeof(IService<,,>), typeof(Service<,,>));
 builder.Services.AddScoped<FileService>();
+builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<CacheService>();
 builder.Services.AddScoped<ProjectAccessFilter>();
 builder.Services.AddHttpContextAccessor();

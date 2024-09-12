@@ -14,13 +14,17 @@ namespace ProjectManagementSystemMVC.Controllers
         private readonly AuthService _authService;
         private readonly IService<Job, JobDto, JobUpdateDto> _jobService;
         private readonly IService<Project,ProjectDto, ProjectUpdateDto> _projectService;
+        private readonly NotificationService _notificationService;
+
         public JobsController(AuthService authService,
             IService<Job,JobDto, JobUpdateDto> jobService,
-            IService<Project, ProjectDto, ProjectUpdateDto> projectService)
+            IService<Project, ProjectDto, ProjectUpdateDto> projectService,
+            NotificationService notificationService)
         {
             _authService = authService;
             _jobService = jobService;
             _projectService = projectService;
+            _notificationService = notificationService;
         }
         public async Task<IActionResult> Index(int id)
         {
@@ -30,6 +34,8 @@ namespace ProjectManagementSystemMVC.Controllers
                 id *= 5;
             }
             Guid userIdentityId = await _authService.GetUserIdentityId();
+            ViewData["notifications"] = await _notificationService.GetNotifications(userIdentityId);
+
             List<Job> jobs = await _jobService.Filter(id,x=>(DateTime)x.AddedAt!,x=>x.UserIdentityId == userIdentityId);
             List<JobPageModel> jobPageModels = new List<JobPageModel>();
             PaginationModel<JobPageModel, NoData> paginationModel = new PaginationModel<JobPageModel, NoData>();

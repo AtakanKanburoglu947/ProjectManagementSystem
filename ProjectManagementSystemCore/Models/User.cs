@@ -17,5 +17,6 @@ namespace ProjectManagementSystemCore.Models
         public ICollection<Comment>? Comments { get; set; }
         public List<Project> Projects { get; } = [];
         public List<ProjectUser> ProjectUsers { get; } = [];
+        public int Notifications { get; set; }
     }
 }

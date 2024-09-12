@@ -11,5 +11,6 @@ namespace ProjectManagementSystemCore.Dtos
         public int Id { get; set; }
         public Guid UserIdentityId { get; set; }
         public int RoleId { get; set; }
+        public int Notifications {  get; set; }
     }
 }

@@ -20,10 +20,12 @@ namespace ProjectManagementSystemMVC.Controllers
         private readonly IService<Manager, ManagerDto, ManagerUpdateDto> _managerService;
         private readonly IService<User, UserDto, UserUpdateDto> _userService;
         private readonly IService<Comment,CommentDto, CommentUpdateDto> _commentService;
+        private readonly NotificationService _notificationService;
+
         public ProjectController(AuthService authService,IService<Project, ProjectDto, ProjectUpdateDto> projectService
         , IService<ProjectUser, ProjectUser, ProjectUser> projectUserService, IService<User, UserDto, UserUpdateDto> userService
             , IService<ProjectManager, ProjectManager, ProjectManager> projectManagerService, IService<Manager, ManagerDto, ManagerUpdateDto> managerService, 
-            IService<Comment, CommentDto, CommentUpdateDto> commentService, FileService fileService)
+            IService<Comment, CommentDto, CommentUpdateDto> commentService, FileService fileService, NotificationService notificationService)
         {
             _authService = authService;
             _projectService = projectService;
@@ -33,6 +35,7 @@ namespace ProjectManagementSystemMVC.Controllers
             _managerService = managerService;
             _commentService = commentService;
             _fileService = fileService;
+            _notificationService = notificationService;
         }
         public async Task<IActionResult> Index(Guid projectId,int startIndex)
         {
@@ -56,6 +59,7 @@ namespace ProjectManagementSystemMVC.Controllers
             List<UserIdentity> managerIdentities = new List<UserIdentity>();
             Guid userIdentityId = await _authService.GetUserIdentityId();
             Expression<Func<Comment, DateTime>> expression = x => (DateTime)x.AddedAt;
+            ViewData["notifications"] = await _notificationService.GetNotifications(userIdentityId);
 
 
             List<Comment> comments = await _commentService.Filter(startIndex    ,expression,x=>x.ProjectId == projectId);

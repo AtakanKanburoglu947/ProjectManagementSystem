@@ -1,0 +1,40 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = "~/Views/Shared/_UserPageLayout.cshtml";
+
+}
+@model PaginationModel<MessageDetails, NoData>
+<div class="container mt-5">
+
+    @if (Model.Pagination.Count > 0)
+    {
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h6>Mesajlar</h6>
+            <a asp-action="Index" asp-controller="Message" class="btn btn-secondary">
+                Mesaj Gönder
+            </a>
+        </div>
+        if(Model.Dataset != null)
+        {
+            @foreach (var message in Model.Dataset)
+            {
+                <div class="card mb-2">
+                    <div class="card-header">
+                        <p class="card-subtitle mb-2 text-muted">@message.SenderName</p>
+                        <p class="card-subtitle mb-2 text-muted">@message.Name</p>
+                        <small class="text-muted">Tarih: @message.AddedAt</small>
+
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">@message.Content</p>
+
+                    </div>
+                </div>
+            }
+            @await Html.PartialAsync("Partial/Pagination", Model.Pagination)
+        }
+        }
+     
+</div>

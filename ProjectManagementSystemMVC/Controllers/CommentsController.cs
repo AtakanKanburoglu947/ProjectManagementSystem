@@ -17,14 +17,16 @@ namespace ProjectManagementSystemMVC.Controllers
         private readonly FileService _fileService;
         private readonly IService<Comment, CommentDto, CommentUpdateDto> _commentService;
         private readonly IService<Project, ProjectDto, ProjectUpdateDto> _projectService;
+        private readonly NotificationService _notificationService;
+
         public CommentsController(AuthService authService, FileService fileService, IService<Comment, CommentDto, CommentUpdateDto> commentService,
-            IService<Project, ProjectDto, ProjectUpdateDto> projectService)
+            IService<Project, ProjectDto, ProjectUpdateDto> projectService, NotificationService notificationService)
         {
             _authService = authService;
             _fileService = fileService;
             _commentService = commentService;
             _projectService = projectService;
-
+            _notificationService = notificationService;
         }
         public async Task<IActionResult> Index(int id)
         {
@@ -34,6 +36,8 @@ namespace ProjectManagementSystemMVC.Controllers
                 id *= 5;
             }
             Guid userIdentityId = await _authService.GetUserIdentityId();
+            ViewData["notifications"] = await _notificationService.GetNotifications(userIdentityId);
+
             int count = _commentService.Count(x=>x.UserIdentityId == userIdentityId);
             Expression<Func<Comment, DateTime>> expression = x => (DateTime)x.AddedAt;
             List<Comment>? comments = await _commentService.Filter(id,expression, x => x.UserIdentityId == userIdentityId);

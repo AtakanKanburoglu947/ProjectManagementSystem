@@ -13,38 +13,41 @@
                 Bütün Yorumları Sil
             </a>
         </div>
-
-        @foreach (var comment in Model.Dataset)
+        if (Model.Dataset != null)
         {
-            <div class="card mb-2">
-                <div class="card-header">
-                    <p class="card-subtitle mb-2 text-muted">@comment.ProjectName</p>
-                    <small class="text-muted">Tarih: @comment.AddedAt</small>
-                    @if (comment.UpdatedAt != null)
-                    {
-                        <br />
-                        <small class="text-muted">Güncellenme Tarihi: @comment.UpdatedAt</small>
-                    }
-                </div>
-                <div class="card-body">
-                    <p class="card-text">@comment.Text</p>
-                    @if (comment.FileId != null)
-                    {
-                        <small class="text-muted">Ek Dosya</small>
-                        <div class="col-md-2 mb-2">
-                            <div class="card text-center">
-                                <div class="card-body">
-                                    <h5 class="card-title">@comment.FileName</h5>
-                                    <a class="btn btn-secondary mt-3" asp-action="Download" asp-controller="Account" asp-route-id="@comment.FileId">
-                                        Yükle
-                                    </a>
+            @foreach (var comment in Model.Dataset)
+            {
+                <div class="card mb-2">
+                    <div class="card-header">
+                        <p class="card-subtitle mb-2 text-muted">@comment.ProjectName</p>
+                        <small class="text-muted">Tarih: @comment.AddedAt</small>
+                        @if (comment.UpdatedAt != null)
+                        {
+                            <br />
+                            <small class="text-muted">Güncellenme Tarihi: @comment.UpdatedAt</small>
+                        }
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">@comment.Text</p>
+                        @if (comment.FileId != null)
+                        {
+                            <small class="text-muted">Ek Dosya</small>
+                            <div class="col-md-2 mb-2">
+                                <div class="card text-center">
+                                    <div class="card-body">
+                                        <h5 class="card-title">@comment.FileName</h5>
+                                        <a class="btn btn-secondary mt-3" asp-action="Download" asp-controller="Account" asp-route-id="@comment.FileId">
+                                            Yükle
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    }
+                        }
+                    </div>
                 </div>
-            </div>
+            }
+            @await Html.PartialAsync("Partial/Pagination", Model.Pagination)
         }
-        @await Html.PartialAsync("Partial/Pagination", Model.Pagination)
     }
+
 </div>

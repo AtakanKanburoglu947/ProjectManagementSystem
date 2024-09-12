@@ -7,6 +7,16 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/ProjectManagementSystemMVC.styles.css" asp-append-version="true" />
+    <style>
+        .message{
+            text-align: center;
+            background-color: red;
+            color: white;
+            width: 20px;
+            height: 20%;
+            border-radius: 25%
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -18,7 +28,18 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+
                     <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-route-id ="0" asp-controller="Messages" asp-action="Index">Mesajlar
+                            </a> 
+        
+                        </li>
+                        @if ((int)ViewData["notifications"]! > 0)
+                        {
+                            <li class="nav-item message">@((int)(ViewData["notifications"]!))</li>
+
+                        }
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Index">Hesap Bilgileri</a>
                         </li>

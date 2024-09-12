@@ -252,6 +252,5 @@ namespace Auth.Services
         {
             return CookieService.GetCookie("token", _contextAccessor);
         }
-
     }
 }

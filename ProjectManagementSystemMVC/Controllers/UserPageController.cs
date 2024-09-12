@@ -12,20 +12,21 @@ namespace ProjectManagementSystemMVC.Controllers
     public class UserPageController : Controller
     {
         private readonly AuthService _authService;
-
-
-        public UserPageController(AuthService authService)
+        private readonly NotificationService _notificationService;
+        public UserPageController(AuthService authService, NotificationService notificationService)
         {
             _authService = authService;
+            _notificationService = notificationService;
+
         }
 
         public async Task<IActionResult> Index()
         {
             string? userName = await _authService.GetUserName();
+            var id = await _authService.GetUserIdentityId();
             UserPageModel userPageModel = new UserPageModel();
+            ViewData["notifications"] = await _notificationService.GetNotifications(id);
             userPageModel.UserName = userName;
-
-          
             return View(userPageModel);
         }
         public IActionResult Logout()

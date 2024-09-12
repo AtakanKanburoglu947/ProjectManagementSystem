@@ -15,14 +15,17 @@ namespace ProjectManagementSystemMVC.Controllers
         private readonly AuthService _authService;
         private readonly IService<ProjectUser, ProjectUser, ProjectUser> _projectUserService;
         private readonly IService<User, UserDto, UserUpdateDto> _userService;
+        private readonly NotificationService _notificationService;
+
 
         public ProjectsController(IService<Project, ProjectDto, ProjectUpdateDto> projectService, IService<ProjectUser, ProjectUser, ProjectUser> projectUserService
-    , AuthService authService, IService<User, UserDto, UserUpdateDto> userService)
+    , AuthService authService, IService<User, UserDto, UserUpdateDto> userService, NotificationService notificationService)
         {
             _projectService = projectService;
             _projectUserService = projectUserService;
             _authService = authService;
             _userService = userService;
+            _notificationService = notificationService;
 
         }
         public async Task<IActionResult> Index(int id)
@@ -33,6 +36,8 @@ namespace ProjectManagementSystemMVC.Controllers
                 id *= 5;
             }
             Guid userIdentityId = await _authService.GetUserIdentityId();
+            ViewData["notifications"] = await _notificationService.GetNotifications(userIdentityId);
+
             User? user = await _userService.Get(x => x.UserIdentityId == userIdentityId);
             List<ProjectUser>? userProjects = await _projectUserService.Filter(id, x => x.UserId == user.Id);
             List<Project>? projects = new List<Project>();

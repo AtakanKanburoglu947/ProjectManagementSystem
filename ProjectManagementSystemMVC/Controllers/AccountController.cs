@@ -12,15 +12,18 @@ namespace ProjectManagementSystemMVC.Controllers
     public class AccountController : Controller
     {
         private readonly AuthService _authService;
-        public AccountController(AuthService authService)
+        private readonly NotificationService _notificationService;
+
+        public AccountController(AuthService authService, NotificationService notificationService)
         {
             _authService = authService;
-
-
+            _notificationService = notificationService;
         }
         public async Task<IActionResult> Index()
         {
             Guid userIdentityId = await _authService.GetUserIdentityId();
+            ViewData["notifications"] = await _notificationService.GetNotifications(userIdentityId);
+
             UserIdentity userIdentity = await _authService.GetUserById(userIdentityId);
             AccountPageModel accountPageModel = new AccountPageModel()
             {
