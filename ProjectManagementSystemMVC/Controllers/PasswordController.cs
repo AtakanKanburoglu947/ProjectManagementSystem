@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProjectManagementSystemCore.Dtos;
+using ProjectManagementSystemService;
 using System;
 
 namespace ProjectManagementSystemMVC.Controllers
@@ -10,12 +11,16 @@ namespace ProjectManagementSystemMVC.Controllers
     public class PasswordController : Controller
     {
         private readonly AuthService _authService;
-        public PasswordController(AuthService authService)
+        private readonly NotificationService _notificationService;
+        public PasswordController(AuthService authService, NotificationService notificationService)
         {
             _authService = authService;
+            _notificationService = notificationService;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            Guid id = await _authService.GetUserIdentityId();
+            ViewData["notifications"] = _notificationService.GetNotifications(id);
             return View();
         }
         [HttpPost]

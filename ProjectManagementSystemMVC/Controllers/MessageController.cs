@@ -28,7 +28,7 @@ namespace ProjectManagementSystemMVC.Controllers
             return View();
         }
         [HttpPost]
-        public async Task SendMessage(string name,string email, string content, IFormFile messageAttachment)
+        public async Task<IActionResult> SendMessage(string name,string email, string content)
         {
             var senderId = await _authService.GetUserIdentityId();
             var receiverId = await _authService.GetUserIdentityId(email);
@@ -45,7 +45,12 @@ namespace ProjectManagementSystemMVC.Controllers
                 };
                 await _messageService.Add(messageDto);
                 await _notificationService.Notify(receiverId);
+                TempData["Message"] = "Mesaj gönderildi";
+                return Redirect("/Message");
+
             }
+            TempData["Message"] = "Mesaj gönderilemedi";
+            return Redirect("/Message");
         }
     }
 }

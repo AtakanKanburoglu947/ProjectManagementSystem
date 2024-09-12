@@ -212,16 +212,13 @@ namespace Auth.Services
 
         public async Task<Guid> GetUserIdentityId(string email)
         {
-            try
+            var userIdentity = await _appDbContext.UserIdentities.FirstOrDefaultAsync(x => x.Email == email);
+            if (userIdentity != null)
             {
-                var userIdentity = await _appDbContext.UserIdentities.FirstOrDefaultAsync(x => x.Email == email);
                 return userIdentity!.Id;
             }
-            catch (Exception)
-            {
-
-                throw new Exception("Id bulunamadı");
-            }
+            return Guid.Empty;
+         
         }
         public async Task<string> GetUserName()
         {

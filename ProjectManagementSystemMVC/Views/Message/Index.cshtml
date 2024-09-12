@@ -14,11 +14,13 @@
             <textarea class="form-control" name="content" placeholder="Mesaj" rows="3"></textarea>
         </div>
 
-        <div class="mb-3">
-            <label for="messageAttachment" class="form-label">Ek Dosya</label>
-            <input class="form-control" type="file" id="messageAttachment" name="File" />
-        </div>
-
+   
         <button type="submit" class="btn btn-secondary">Gönder</button>
     </form>
 </div>
+@if (TempData["Message"] != null)
+{
+    <script>
+        alert('@Html.Raw(TempData["Message"])');
+    </script>
+}
