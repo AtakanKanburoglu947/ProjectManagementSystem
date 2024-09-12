@@ -36,12 +36,12 @@ namespace ProjectManagementSystemMVC.Controllers
         }
         public async Task<IActionResult> Index(Guid projectId,int startIndex)
         {
+            ViewData["startIndex"] = startIndex;
             if (startIndex > 0)
             {
                 startIndex *= 5;
 
             }
-            ViewData["startIndex"] = startIndex;
             ViewData["projectId"] = projectId;
             TempData["startIndex"] = startIndex;
             Project project = await _projectService.Get(projectId);      

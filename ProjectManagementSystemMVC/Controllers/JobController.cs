@@ -39,7 +39,8 @@ namespace ProjectManagementSystemMVC.Controllers
                 FileUploadId = job.FileUploadId,
                 Time = job.DueDate - DateTime.Now,
                 ProjectName = project.Name,
-                FileName = file.Name
+                FileName = file.Name,
+                AddedAt = job.AddedAt
             };
             return View(jobPageModel);
         }

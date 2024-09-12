@@ -4,53 +4,60 @@
 @{
     Layout = "~/Views/Shared/_UserPageLayout.cshtml";
 }
-@model List<JobPageModel>
+@model PaginationModel<JobPageModel, NoData>
 <div class="container mt-5">
 
     <div class="row">
-
-        @foreach (var job in Model)
+        @if (Model.Dataset != null)
         {
-            <div class="col-md-4 mb-4">
-                <div class="card border-light shadow-sm">
-                    <div class="card-header bg-dark text-white">
-                        <h5 class="mb-0">@job.Title</h5>
-                    </div>
-                    <div class="card-body">
-                        <p class="card-text">Durum: @job.Status</p>
+            @foreach (var job in Model.Dataset)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card border-light shadow-sm">
+                        <div class="card-header bg-dark text-white">
+                            <h5 class="mb-0">@job.Title</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">Durum: @job.Status</p>
 
                             <a class="btn btn-secondary" asp-action="Index" asp-controller="Job" asp-route-id="@job.Id">Detaylar</a>
-                        </div>
-                    <div class="card-footer bg-light text-muted">
-                        <div class="d-flex flex-column">
-                          
-                            <div>
-                                <p class="card-text">Proje: @job.ProjectName</p>
-                                @if (job.Time.TotalSeconds > 0)
-                                {
-                                    <h6 class="card-title mb-0">Kalan Zaman</h6>
-                                    <p class="card-text">
-                                        <span class="badge bg-secondary">@job.Time.Days Gün</span>
-                                        <span class="badge bg-secondary">@job.Time.Hours Saat</span>
-                                        <span class="badge bg-secondary">@job.Time.Minutes Dakika</span>
-                                        <span class="badge bg-secondary">@job.Time.Seconds Saniye</span>
-                                    </p>
-                                }
-                                else
-                                {
-                                     <p class="card-text">Süre bitti</p>                                    
-                                }
+                        </div>  
+                        <div class="card-footer bg-light text-muted">
+                            <div class="d-flex flex-column">
+
+                                <div>
+                                    <p class="card-text">Proje: @job.ProjectName</p>
+                                    <small class="text-muted">Tarih: @job.AddedAt</small>
+
+                                    @if (job.Time.TotalSeconds > 0)
+                                    {
+                                        <h6 class="card-title mb-0">Kalan Zaman</h6>
+                                        <p class="card-text">
+                                            <span class="badge bg-secondary">@job.Time.Days Gün</span>
+                                            <span class="badge bg-secondary">@job.Time.Hours Saat</span>
+                                            <span class="badge bg-secondary">@job.Time.Minutes Dakika</span>
+                                            <span class="badge bg-secondary">@job.Time.Seconds Saniye</span>
+                                        </p>
+                                    }
+                                    else
+                                    {
+                                        <p class="card-text">Süre bitti</p>
+                                    }
 
 
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
 
 
+
+            }
+            @await Html.PartialAsync("Partial/Pagination", Model.Pagination)
 
         }
+
     </div>
 </div>

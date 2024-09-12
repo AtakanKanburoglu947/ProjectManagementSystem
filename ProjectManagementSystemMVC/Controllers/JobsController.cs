@@ -24,30 +24,42 @@ namespace ProjectManagementSystemMVC.Controllers
         }
         public async Task<IActionResult> Index(int id)
         {
-           
-            Guid userIdentityId = await _authService.GetUserIdentityId();
-            List<Job> jobs = await _jobService.Filter(id,x=>x.UserIdentityId == userIdentityId);
-            List<JobPageModel> jobPageModels = new List<JobPageModel>();
-            foreach (var job in jobs)
+            ViewData["id"] = id;
+            if (id > 0)
             {
-                var project = await  _projectService.Get(x => x.Id == job.ProjectId);
-                JobPageModel jobPageModel = new JobPageModel()
-                {
-                    Id = job.Id,
-                    ProjectId = job.ProjectId,
-                    Title = job.Title,
-                    Description = job.Description,
-                    Status = job.Status,
-                    ProjectName =  project.Name,
-                    UserId = job.UserId,
-                    UserIdentityId = userIdentityId,
-                    FileUploadId = job.FileUploadId,
-                    Time = job.DueDate - DateTime.Now
-                };
-                jobPageModels.Add(jobPageModel);
-
+                id *= 5;
             }
-            return View(jobPageModels);
+            Guid userIdentityId = await _authService.GetUserIdentityId();
+            List<Job> jobs = await _jobService.Filter(id,x=>(DateTime)x.AddedAt!,x=>x.UserIdentityId == userIdentityId);
+            List<JobPageModel> jobPageModels = new List<JobPageModel>();
+            PaginationModel<JobPageModel, NoData> paginationModel = new PaginationModel<JobPageModel, NoData>();
+            if (jobs != null)
+            {
+                int count = _jobService.Count(x=>x.UserIdentityId == userIdentityId);
+                foreach (var job in jobs)
+                {
+                    var project = await _projectService.Get(x => x.Id == job.ProjectId);
+                    JobPageModel jobPageModel = new JobPageModel()
+                    {
+                        Id = job.Id,
+                        ProjectId = job.ProjectId,
+                        Title = job.Title,
+                        Description = job.Description,
+                        Status = job.Status,
+                        ProjectName = project.Name,
+                        UserId = job.UserId,
+                        UserIdentityId = userIdentityId,
+                        FileUploadId = job.FileUploadId,
+                        Time = job.DueDate - DateTime.Now,
+                        AddedAt = job.AddedAt
+                    };
+                    jobPageModels.Add(jobPageModel);
+
+                }
+                paginationModel = Pagination<JobPageModel, NoData>.Model(id, userIdentityId, null, jobPageModels, count);
+            }
+
+            return View(paginationModel);
         }
     }
 }

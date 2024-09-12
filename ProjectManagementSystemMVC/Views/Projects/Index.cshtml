@@ -4,27 +4,34 @@
 @{
     Layout = "~/Views/Shared/_UserPageLayout.cshtml";
 }
-@model List<ProjectManagementSystemCore.Models.Project>
+@model PaginationModel<ProjectManagementSystemCore.Models.Project,NoData>
 <div class="container mt-5">
 
     <div class="row">
-
-        @foreach (var project in Model)
+        @if (Model.Dataset != null)
         {
-            <div class="col-md-4 mb-4">
-                <div class="card border-light shadow-sm">
-                    <div class="card-header bg-dark text-white">
-                        <h5 class="mb-0">@project.Name</h5>
-                    </div>
-                    <div class="card-body">
-                        <p class="card-text mb-3">Durum: <strong>@project.Status</strong></p>
-                        <a class="btn btn-secondary" asp-action="Index" asp-controller="Project" asp-route-startIndex=0 asp-route-projectId="@project.Id">Detaylar </a>
-                    </div>
-                    <div class="card-footer bg-light text-muted">
-                        Versiyon: @project.Version
+            @foreach (var project in Model.Dataset)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card border-light shadow-sm">
+                        <div class="card-header bg-dark text-white">
+                            <h5 class="mb-0">@project.Name</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text mb-3">Durum: <strong>@project.Status</strong></p>
+                            <a class="btn btn-secondary" asp-action="Index" asp-controller="Project" asp-route-startIndex=0 asp-route-projectId="@project.Id">Detaylar </a>
+                        </div>
+                        <div class="card-footer bg-light text-muted">
+                            Versiyon: @project.Version <br />
+                            <small class="text-muted">Tarih: @project.AddedAt</small>
+                        </div>
                     </div>
                 </div>
-            </div>
+            }
+            @await Html.PartialAsync("Partial/Pagination", Model.Pagination)
+
         }
+
     </div>
+
 </div>

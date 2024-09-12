@@ -29,6 +29,7 @@ namespace ProjectManagementSystemService
         Task<T> Get(Guid id, Guid guid);
         Task<T> Get(Expression<Func<T, bool>> expression);
         List<T> Where(Expression<Func<T, bool>> expression);
+        List<T> Where(Expression<Func<T, DateTime>> orderBy, Expression<Func<T, bool>> expression);
         Task <List<T>> Filter(int startIndex, Expression<Func<T, bool>> where);
         Task<List<T>> Filter(int startIndex, Expression<Func<T, DateTime>> orderBy, Expression<Func<T, bool>> where);
         int Count();

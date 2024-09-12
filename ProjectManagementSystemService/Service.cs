@@ -209,6 +209,15 @@ namespace ProjectManagementSystemService
             }
             return null;
         }
+        public List<T> Where(Expression<Func<T, DateTime>> orderBy, Expression<Func<T, bool>> expression)
+        {
+            List<T> result = _dbSet.OrderByDescending(orderBy).Where(expression).ToList();
+            if (result != null)
+            {
+                return result;
+            }
+            return null;
+        }
 
         public async Task Remove(Guid id, Guid guid)
         {
