@@ -183,6 +183,20 @@ namespace Auth.Services
                 }
 
             }
+            Manager? manager = await _appDbContext.Managers.FirstOrDefaultAsync(x=>x.UserIdentityId == userIdentity.Id);
+            if (manager != null)
+            {
+                Role? userRole = await _appDbContext.Roles.FirstOrDefaultAsync(x => x.Id == manager.RoleId);
+                if (userRole != null)
+                {
+                    return userRole!.Title;
+                }
+                else
+                {
+                    throw new Exception("Kullanıcı rolü bulunamadı");
+
+                }
+            }
             throw new Exception("Kullanıcı bulunamadı");
         }
         public async Task<UserIdentity> GetUserById(Guid id)
@@ -193,6 +207,15 @@ namespace Auth.Services
                 return userIdentity;
             }
             return null;
+        }
+        public async Task<UserIdentity?> GetUserByEmail(string email)
+        {
+            var userIdentity = await _appDbContext.UserIdentities.FirstOrDefaultAsync(x => x.Email == email);
+            if (userIdentity != null)
+            {
+                return userIdentity;
+            }
+            return null!;
         }
 
         public async Task<Guid> GetUserIdentityId()

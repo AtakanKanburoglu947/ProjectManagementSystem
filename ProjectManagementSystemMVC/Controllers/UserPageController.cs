@@ -13,11 +13,12 @@ namespace ProjectManagementSystemMVC.Controllers
     {
         private readonly AuthService _authService;
         private readonly NotificationService _notificationService;
-        public UserPageController(AuthService authService, NotificationService notificationService)
+        private readonly IService<Manager, ManagerDto, ManagerUpdateDto> _managerService;
+        public UserPageController(AuthService authService, NotificationService notificationService, IService<Manager, ManagerDto, ManagerUpdateDto> managerService)
         {
             _authService = authService;
             _notificationService = notificationService;
-
+            _managerService = managerService;
         }
 
         public async Task<IActionResult> Index()
@@ -25,7 +26,12 @@ namespace ProjectManagementSystemMVC.Controllers
             string? userName = await _authService.GetUserName();
             var id = await _authService.GetUserIdentityId();
             UserPageModel userPageModel = new UserPageModel();
+            bool managerExists = await _managerService.Get(x=>x.UserIdentityId == id) != null;
             ViewData["notifications"] = await _notificationService.GetNotifications(id);
+            if (managerExists)
+            {
+                Console.WriteLine(id);
+            }
             userPageModel.UserName = userName;
             return View(userPageModel);
         }

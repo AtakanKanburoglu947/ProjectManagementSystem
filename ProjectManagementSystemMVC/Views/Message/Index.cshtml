@@ -4,6 +4,7 @@
 @{
     Layout = "~/Views/Shared/_UserPageLayout.cshtml";
 }
+@model ProjectPageModel
 <div class="mt-4">
     <h6>Mesaj Gönder</h6>
     <form asp-action="SendMessage" asp-controller="Message" method="post" enctype="multipart/form-data">

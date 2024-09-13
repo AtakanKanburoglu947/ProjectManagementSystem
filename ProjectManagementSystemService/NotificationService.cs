@@ -11,9 +11,11 @@ namespace ProjectManagementSystemService
     public class NotificationService
     {
         private readonly IService<User, UserDto, UserUpdateDto> _userService;
-        public NotificationService(IService<User,UserDto,UserUpdateDto> userService)
+        private readonly IService<Manager, ManagerDto, ManagerUpdateDto> _managerService;
+        public NotificationService(IService<User,UserDto,UserUpdateDto> userService, IService<Manager,ManagerDto,ManagerUpdateDto> managerService)
         {
             _userService = userService;
+            _managerService = managerService;
         }
         public async Task Notify(Guid userIdentityId)
         {
@@ -24,19 +26,52 @@ namespace ProjectManagementSystemService
         }
         public async Task Clear(Guid userIdentityId)
         {
-            User user = await GetUser(userIdentityId);
             int notifications = 0;
-            await UpdateUser(user, userIdentityId, notifications);
+            User? user = await GetUser(userIdentityId)!;
+            if (user !=null)
+            {
+                await UpdateUser(user, userIdentityId, notifications);
+                
+            }
+            Manager? manager  = await GetManager(userIdentityId)!;
+            if (manager != null)
+            {
+                await UpdateManager(manager, userIdentityId, notifications);
+            }
 
         }
         public async Task<int> GetNotifications(Guid userIdentityId)
         {
-            User user = await GetUser(userIdentityId);
-            return user.Notifications;
+            User? user = await GetUser(userIdentityId)!;
+            if (user != null)
+            {
+                return user.Notifications;
+            
+            }
+            Manager? manager = await GetManager(userIdentityId)!;
+            if (manager != null)
+            {
+                return manager.Notifications;
+            }
+            return 0;
         }
-        private async Task<User> GetUser(Guid userIdentityId)
+        private async Task<User>? GetUser(Guid userIdentityId)
         {
-            return await _userService.Get(x => x.UserIdentityId == userIdentityId); ;
+            User user = await _userService.Get(x => x.UserIdentityId == userIdentityId);
+            if (user != null)
+            {
+                return user;
+            }
+            return null!;
+        }
+        private async Task<Manager>? GetManager(Guid userIdentityId)
+        {
+            Manager manager = await _managerService.Get(x=>x.UserIdentityId==userIdentityId);
+            if (manager != null)
+            {
+                return manager;
+            }
+            return null!;
         }
         private async Task UpdateUser(User user,Guid userIdentityId, int notifications)
         {
@@ -48,6 +83,17 @@ namespace ProjectManagementSystemService
                 RoleId = user.RoleId,
             };
             await _userService.Update(userUpdateDto, user.Id);
+        }
+        private async Task UpdateManager(Manager manager,Guid userIdentityId, int notifications)
+        {
+            ManagerUpdateDto managerUpdateDto = new ManagerUpdateDto()
+            {
+                Id = manager.Id,
+                UserIdentityId=userIdentityId,
+                RoleId= manager.RoleId,
+                Notifications=notifications,
+            };
+            await _managerService.Update(managerUpdateDto,manager.Id);
         }
 
     }

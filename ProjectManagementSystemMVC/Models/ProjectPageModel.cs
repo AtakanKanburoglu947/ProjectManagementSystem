@@ -14,8 +14,10 @@ namespace ProjectManagementSystemMVC.Models
         public List<UserIdentity> ManagerIdentities { get; set; }
         public List<CommentDetails>? CommentDetails { get; set; }
         public CommentDto NewComment { get; set; }
-        public Guid UserIdentityId { get; set; }
+        public Guid? UserIdentityId { get; set; }
         public DateTime? AddedAt { get; set; }
+        public string ManagerName { get; set; }
+        public string UserName { get; set; }
 
     }
 }

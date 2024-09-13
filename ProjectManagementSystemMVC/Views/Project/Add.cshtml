@@ -1,0 +1,88 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = "~/Views/Shared/_UserPageLayout.cshtml";
+}
+@model ProjectPageModel
+<div class="mt-4">
+    <h6>Proje Ekle</h6>
+    <form method="post" enctype="multipart/form-data" asp-controller="Project" asp-action="AddProject" >
+        <label>Proje İsmi</label>
+         <input asp-for="Name" type="text"  class="form-control" /> <br />
+        <label>Proje Açıklaması</label>
+
+         <textarea type="text" class="form-control" asp-for="Description"> </textarea>
+         <label>Proje Durumu</label>
+        <input type="text" class="form-control" asp-for="Status" /> <br />
+        <label>Proje Versiyonu</label>
+        <input type="text" class="form-control" asp-for="Version"  /> <br />
+        <label>Yönetici ekle</label>
+        <button type="submit" class="btn btn-secondary" asp-action="AddManager">Ekle</button>
+        <input type="text" class="form-control" asp-for="ManagerName" /> <br />
+        @if (Model.ManagerIdentities.Count > 0)
+        {
+            <div class="accordion" id="accordionManager">
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseManager" aria-expanded="true" aria-controls="collapseOne">
+                            <h6>Proje Yöneticileri</h6>
+                        </button>
+                    </h2>
+                    <div id="collapseManager" class="accordion-collapse collapse" data-bs-parent="#accordionManager">
+                        <div class="accordion-body">
+                            <ul>
+                                @foreach (var item in Model.ManagerIdentities)
+
+                                {
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        @item.Email
+                                        <span class="badge bg-secondary">Yönetici</span>
+                                    </li>
+                                }
+                            </ul>
+                            <button class="btn btn-danger" asp-action="RemoveManager" type="submit">Sil</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        }
+        <label>Kullanıcı ekle</label>        <button type="submit" class="btn btn-secondary" asp-action="AddUser">Ekle</button>
+
+        <input type="text" asp-for=UserName class="form-control" /> <br />
+
+        @if (Model.UserIdentities.Count > 0)
+        {
+            <div class="accordion" id="accordionUser">
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseUser" aria-expanded="true" aria-controls="collapseOne">
+                            <h6>Proje üyeleri</h6>
+                        </button>
+                    </h2>
+                    <div id="collapseUser" class="accordion-collapse collapse" data-bs-parent="#accordionUser">
+                        <div class="accordion-body">
+                            <ul>
+                                @foreach (var item in Model.UserIdentities)
+
+                                {
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        @item.Email
+                                        <span class="badge bg-secondary">Üye</span>
+                                    </li>
+                                }
+                            </ul>
+                            <button class="btn btn-danger" asp-action="RemoveUser" type="submit">Sil</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        }
+        <button type="submit" class="btn btn-secondary">Ekle</button>
+
+    </form>
+</div>

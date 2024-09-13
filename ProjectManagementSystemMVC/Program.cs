@@ -25,6 +25,12 @@ builder.Services.AddScoped<FileService>();
 builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<CacheService>();
 builder.Services.AddScoped<ProjectAccessFilter>();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); 
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true; 
+});
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthentication("CustomScheme")
                         .AddScheme<AuthenticationSchemeOptions, CustomAuthenticationHandler>("CustomScheme", options => { });
@@ -44,7 +50,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
-
+app.UseSession();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

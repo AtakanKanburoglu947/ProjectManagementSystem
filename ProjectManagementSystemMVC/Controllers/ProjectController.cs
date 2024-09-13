@@ -1,11 +1,15 @@
-﻿using Auth.Services;
+﻿using Auth;
+using Auth.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ProjectManagementSystemCore;
 using ProjectManagementSystemCore.Dtos;
 using ProjectManagementSystemCore.Models;
 using ProjectManagementSystemMVC.Models;
 using ProjectManagementSystemService;
 using System.Linq.Expressions;
+using System.Text.Json;
 
 namespace ProjectManagementSystemMVC.Controllers
 {
@@ -182,6 +186,149 @@ namespace ProjectManagementSystemMVC.Controllers
             var startIndex = TempData["startIndex"];
 
             return Redirect($"Index?startIndex={startIndex}&projectId={projectId}");
+        }
+        [RoleAuthorize(["Manager"])]
+        [HttpPost]
+        public async Task<IActionResult> AddManager(ProjectPageModel projectPageModel)
+        {
+            UserIdentity? managerIdentity = await _authService.GetUserByEmail(projectPageModel.ManagerName);
+            bool managerExists = await _managerService.Get(x => x.UserIdentityId == managerIdentity.Id) != null;
+
+            if (managerExists)
+            {
+                var managerIdentities = GetString<UserIdentity>("ManagerIdentities");
+
+                managerIdentities.Add(managerIdentity);
+
+                SetString("ManagerIdentities", managerIdentities);
+
+
+            }
+            else
+            {
+                TempData["error"] = "Yönetici bulunamadı";
+            }
+
+            return RedirectToAction("Add", projectPageModel);
+        }
+        [HttpPost]
+        [RoleAuthorize(["Manager"])]
+        public async Task<IActionResult> AddUser(ProjectPageModel projectPageModel)
+        {
+            UserIdentity? userIdentity = await _authService.GetUserByEmail(projectPageModel.UserName);
+            if (userIdentity != null)
+            {
+
+                var userIdentities = GetString<UserIdentity>("UserIdentities");
+                userIdentities.Add(userIdentity);
+                SetString("UserIdentities", userIdentities);
+
+
+            }
+            return RedirectToAction("Add", projectPageModel);
+
+
+
+        }
+        [RoleAuthorize(["Manager"])]
+        [HttpPost]
+        public IActionResult RemoveManager(ProjectPageModel projectPageModel)
+        {
+            var managerIdentities = GetString<UserIdentity>("ManagerIdentities");
+
+            var manager = managerIdentities!.Last();
+            managerIdentities.Remove(manager);
+            HttpContext.Session.SetString("ManagerIdentities", JsonSerializer.Serialize(managerIdentities));
+            return RedirectToAction("Add",projectPageModel);
+
+        }
+        [RoleAuthorize(["Manager"])]
+        [HttpPost]
+        public IActionResult RemoveUser(ProjectPageModel projectPageModel)
+        {
+            var userIdentities = GetString<UserIdentity>("UserIdentities");
+
+            var user = userIdentities!.Last();
+            userIdentities.Remove(user);
+            SetString("UserIdentities",userIdentities);
+            return RedirectToAction("Add", projectPageModel);
+
+        }
+
+        [RoleAuthorize(["Manager"])]
+        public async Task<IActionResult> Add(ProjectPageModel projectPageModel)
+        {
+            Guid userIdentityId = await _authService.GetUserIdentityId();
+            ViewData["notifications"] = await _notificationService.GetNotifications(userIdentityId);
+
+            var managerIdentities = GetString<UserIdentity>("ManagerIdentities");
+            var userIdentities = GetString<UserIdentity>("UserIdentities");
+            projectPageModel.ManagerIdentities = managerIdentities;
+            projectPageModel.UserIdentities = userIdentities;
+
+            return View(projectPageModel);
+        }
+        [RoleAuthorize(["Manager"])]
+        [HttpPost]
+        public async Task<IActionResult> AddProject(ProjectPageModel projectPageModel)
+        
+       {
+            var managerIdentityId = await _authService.GetUserIdentityId();
+            var managerIdentity = await _managerService.Get(x => x.UserIdentityId == managerIdentityId);
+
+            var managerIdentities = GetString<UserIdentity>("ManagerIdentities");
+            var userIdentities = GetString<UserIdentity>("UserIdentities");
+
+            List<Guid>? managerIds = managerIdentities.Select(x => x.Id).Distinct().ToList();
+            List<Manager> managers = _managerService.Where(x => managerIds.Contains(x.UserIdentityId));
+            List<Guid> userIds = userIdentities.Select(x => x.Id).Distinct().ToList();
+            List<User> users = _userService.Where(x => userIds.Contains(x.UserIdentityId));
+            Guid projectId = Guid.NewGuid();
+            ProjectDto projectDto = new ProjectDto()
+            {
+                Id = projectId,
+                AddedAt = DateTime.Now,
+                Description = projectPageModel.Description,
+                Name = projectPageModel.Name,
+                Status = projectPageModel.Status,
+                Version = projectPageModel.Version,
+                ManagerId = managerIdentity.Id
+            };
+           
+            await _projectService.Add(projectDto);
+            foreach (var manager in managers)
+            {
+                ProjectManager projectManager = new ProjectManager()
+                {
+                    ManagerId = manager.Id,
+                    ProjectId = projectId,
+                };
+               await _projectManagerService.Add(projectManager);
+            }
+            foreach (var user in users)
+            {
+                ProjectUser projectUser = new ProjectUser()
+                {
+                    UserId = user.Id,
+                    ProjectId = projectId,
+                };
+                await _projectUserService.Add(projectUser);
+            }
+            
+
+            return Redirect("/Project/Add");
+
+        }
+        private void SetString<T>(string key, List<T> value) where T : class
+        {
+            HttpContext.Session.SetString(key, JsonSerializer.Serialize(value));
+
+        }
+        private List<T> GetString<T>(string key) where T: class
+        {
+            var json = HttpContext.Session.GetString(key);
+            var list = string.IsNullOrEmpty(json) ? new List<T>() : JsonSerializer.Deserialize<List<T>>(json);
+            return list;
         }
     }
 }
