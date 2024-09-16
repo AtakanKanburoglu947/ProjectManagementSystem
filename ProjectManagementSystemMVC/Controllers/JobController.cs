@@ -85,21 +85,11 @@ namespace ProjectManagementSystemMVC.Controllers
                UserId= job.UserId,
                FileUploadId= job.FileUploadId,
                ProjectId= job.ProjectId,
-               UserIdentityId= job.UserIdentityId
+               UserIdentityId= job.UserIdentityId,
+               ManagerId = manager.Id
             };
-            string url = $"/Job/Index/{job.Id}/";
-            MessageDto messageDto = new MessageDto
-            {
-                AddedAt = DateTime.Now,
-                Content = $" {userIdentity.UserName}, {job.Title} adlı işin durumunu {newStatus} olarak güncelledi.  <a href = \"{url}\"> Tıkla </a>",
-                Name = "Yeni İş",
-                ReceiverId = user.UserIdentityId,
-                SenderId = manager.UserIdentityId
-            };
+            
 
-            await _messageService.Add(messageDto);
-            manager.Notifications = manager.Notifications + 1;
-            await _notificationService.NotifyManager(manager.UserIdentityId, manager.Notifications);
             await _jobService.Update(jobUpdateDto, jobId);
             return Redirect($"/Job/Index/{jobId}");
         }

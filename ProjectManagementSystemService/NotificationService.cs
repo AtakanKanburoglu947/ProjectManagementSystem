@@ -23,8 +23,22 @@ namespace ProjectManagementSystemService
         public async Task Notify(Guid userIdentityId)
         {
             User user = await GetUser(userIdentityId);
-            user.Notifications = user.Notifications + 1;
-            await UpdateUser(user,userIdentityId,user.Notifications);
+            if (user != null)
+            {
+                user.Notifications = user.Notifications + 1;
+                await UpdateUser(user,userIdentityId,user.Notifications);
+                
+            }
+            else
+            {
+                Manager manager = await GetManager(userIdentityId);
+                if (manager != null)
+                {
+                    manager.Notifications = manager.Notifications + 1;
+                    await NotifyManager(userIdentityId,manager.Notifications);
+                }
+            }
+            
         }
 
         public async Task Clear(Guid userIdentityId)
@@ -76,7 +90,7 @@ namespace ProjectManagementSystemService
             }
             return null!;
         }
-        private async Task UpdateUser(User user,Guid userIdentityId, int notifications)
+        public async Task UpdateUser(User user,Guid userIdentityId, int notifications)
         {
             UserUpdateDto userUpdateDto = new UserUpdateDto()
             {
@@ -89,7 +103,7 @@ namespace ProjectManagementSystemService
         }
         public async Task NotifyManager(Guid managerId, int notifications)
         {
-             var manager = await GetManager(managerId)!;
+             var manager = await GetManager(managerId);
              manager.Notifications = notifications;
             await _appDbContext.SaveChangesAsync();
         }
