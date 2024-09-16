@@ -12,6 +12,7 @@ namespace ProjectManagementSystemRepository
             modelBuilder.Entity<Project>().HasMany(x => x.Users).WithMany(x => x.Projects).UsingEntity<ProjectUser>();
             modelBuilder.Entity<Message>().HasOne(x => x.Sender).WithMany().HasForeignKey(x => x.SenderId).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Message>().HasOne(x => x.Receiver).WithMany().HasForeignKey(x => x.ReceiverId).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Job>().HasOne(x=>x.Manager).WithMany().HasForeignKey(x=>x.ManagerId).OnDelete(DeleteBehavior.Restrict);
         }
         public DbSet<User> Users { get; set; }
         public DbSet<Job> Jobs { get; set; }

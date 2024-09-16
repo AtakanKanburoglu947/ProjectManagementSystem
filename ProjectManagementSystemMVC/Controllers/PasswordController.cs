@@ -20,12 +20,16 @@ namespace ProjectManagementSystemMVC.Controllers
         public async Task<IActionResult> Index()
         {
             Guid id = await _authService.GetUserIdentityId();
-            ViewData["notifications"] = _notificationService.GetNotifications(id);
+            ViewData["notifications"] = await _notificationService.GetNotifications(id);
             return View();
         }
         [HttpPost]
         public async Task<IActionResult> Index(PasswordDto passwordDto)
+
         {
+            Guid id = await _authService.GetUserIdentityId();
+
+            ViewData["notifications"] = await _notificationService.GetNotifications(id);
             ViewData["Message"] = string.Empty;
             if (passwordDto.NewPassword == null || passwordDto.OldPassword == null)
             {

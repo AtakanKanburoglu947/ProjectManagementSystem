@@ -18,15 +18,18 @@ namespace ProjectManagementSystemMVC.Controllers
         private readonly IService<Comment, CommentDto, CommentUpdateDto> _commentService;
         private readonly IService<Project, ProjectDto, ProjectUpdateDto> _projectService;
         private readonly NotificationService _notificationService;
+        private readonly CacheService _cacheService;
 
         public CommentsController(AuthService authService, FileService fileService, IService<Comment, CommentDto, CommentUpdateDto> commentService,
-            IService<Project, ProjectDto, ProjectUpdateDto> projectService, NotificationService notificationService)
+            IService<Project, ProjectDto, ProjectUpdateDto> projectService, NotificationService notificationService, CacheService cacheService)
         {
             _authService = authService;
             _fileService = fileService;
             _commentService = commentService;
             _projectService = projectService;
             _notificationService = notificationService;
+            _cacheService = cacheService;
+
         }
         public async Task<IActionResult> Index(int id)
         {
@@ -70,7 +73,8 @@ namespace ProjectManagementSystemMVC.Controllers
                     }
                     if (comment.FileUploadId != null)
                     {
-                        var commentFile = await _fileService.GetFile((Guid)comment.FileUploadId);
+                        var commentFile = await _cacheService.Get($"{comment.FileUploadId}", TimeSpan.FromHours(1), TimeSpan.FromMinutes(20), 
+                             () =>  _fileService.GetFile((Guid)comment.FileUploadId));
                         commentDetail.FileId = commentFile.Id;
                         commentDetail.FileName = commentFile.Name;
                     }
@@ -91,6 +95,8 @@ namespace ProjectManagementSystemMVC.Controllers
                     if (item.FileUploadId != null)
                     {
                         await _fileService.RemoveFile(item.FileUploadId);
+                        _cacheService.Remove("files");
+                        _cacheService.Remove("filesCount");
                     }
                     await _commentService.Remove(item.Id);
                 }

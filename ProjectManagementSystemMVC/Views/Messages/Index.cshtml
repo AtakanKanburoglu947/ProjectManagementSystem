@@ -7,15 +7,15 @@
 }
 @model PaginationModel<MessageDetails, NoData>
 <div class="container mt-5">
-
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h6>Mesajlar</h6>
+        <a asp-action="Index" asp-controller="Message" class="btn btn-secondary">
+            Mesaj Gönder
+        </a>
+    </div>
     @if (Model.Pagination.Count > 0)
     {
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h6>Mesajlar</h6>
-            <a asp-action="Index" asp-controller="Message" class="btn btn-secondary">
-                Mesaj Gönder
-            </a>
-        </div>
+
         if(Model.Dataset != null)
         {
             @foreach (var message in Model.Dataset)
@@ -28,7 +28,7 @@
 
                     </div>
                     <div class="card-body">
-                        <p class="card-text">@message.Content</p>
+                        <p class="card-text">@Html.Raw(message.Content)</p>
 
                     </div>
                 </div>

@@ -9,7 +9,9 @@ namespace ProjectManagementSystemMVC.Models
         public string Description { get; set; }
         public string Status { get; set; }
         public TimeSpan Time {  get; set; }
-        public int UserId { get; set; }
+        public int? UserId { get; set; }
+        public UserIdentity UserIdentity { get; set; }
+        public int? ManagerId { get; set; }
         public Guid ProjectId { get; set; }      
         public string ProjectName { get; set; }
         public Guid? FileUploadId { get; set; }
@@ -20,5 +22,7 @@ namespace ProjectManagementSystemMVC.Models
             "Devam ediyor", "Beklemede", "Tamamlandı", "İptal Edildi"
         };
         public DateTime? AddedAt { get; set; }
+        public DateTime DueDate { get; set; }
+        public string UserName { get; set; }
     }
 }

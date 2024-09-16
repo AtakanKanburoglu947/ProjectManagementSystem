@@ -25,11 +25,13 @@ namespace ProjectManagementSystemMVC.Controllers
         private readonly IService<User, UserDto, UserUpdateDto> _userService;
         private readonly IService<Comment,CommentDto, CommentUpdateDto> _commentService;
         private readonly NotificationService _notificationService;
+        private readonly CacheService _cacheService;
 
         public ProjectController(AuthService authService,IService<Project, ProjectDto, ProjectUpdateDto> projectService
         , IService<ProjectUser, ProjectUser, ProjectUser> projectUserService, IService<User, UserDto, UserUpdateDto> userService
             , IService<ProjectManager, ProjectManager, ProjectManager> projectManagerService, IService<Manager, ManagerDto, ManagerUpdateDto> managerService, 
-            IService<Comment, CommentDto, CommentUpdateDto> commentService, FileService fileService, NotificationService notificationService)
+            IService<Comment, CommentDto, CommentUpdateDto> commentService, FileService fileService, NotificationService notificationService, CacheService cacheService
+            )
         {
             _authService = authService;
             _projectService = projectService;
@@ -40,6 +42,7 @@ namespace ProjectManagementSystemMVC.Controllers
             _commentService = commentService;
             _fileService = fileService;
             _notificationService = notificationService;
+            _cacheService = cacheService;
         }
         public async Task<IActionResult> Index(Guid projectId,int startIndex)
         {
@@ -141,11 +144,14 @@ namespace ProjectManagementSystemMVC.Controllers
                 return Redirect($"/Project/Index/{projectId}");
 
             }
+            Guid userIdentityId = await _authService.GetUserIdentityId();
+            UserIdentity userIdentity = await _authService.GetUserById(userIdentityId);
+            Project project = await _projectService.Get(projectId);
             var commentDto = new CommentDto()
             {
                 ProjectId = projectId,
                 Text = newComment.Text,
-                UserIdentityId = await _authService.GetUserIdentityId(),
+                UserIdentityId = userIdentityId,
                 AddedAt = DateTime.Now
 
             };
@@ -154,6 +160,11 @@ namespace ProjectManagementSystemMVC.Controllers
                 commentDto.FileUploadId = fileUploadId;
             }
             await _commentService.Add(commentDto);
+            
+            TimeSpan absoluteExpiration = TimeSpan.FromHours(1);
+            TimeSpan slidingExpiration = TimeSpan.FromMinutes(20);
+            _cacheService.SetClass("files", await _fileService.GetFilesOfUser(userIdentityId), absoluteExpiration, slidingExpiration);
+            _cacheService.SetStruct("filesCount", _fileService.Count(x=>x.UserIdentityId == userIdentityId), absoluteExpiration, slidingExpiration);
             var startIndex = TempData["startIndex"];
             return Redirect($"Index?startIndex={startIndex}&projectId={projectId}");
 
@@ -161,10 +172,15 @@ namespace ProjectManagementSystemMVC.Controllers
         public async Task<IActionResult> RemoveComment(Guid commentId, Guid projectId)
         {
             var comment = await _commentService.Get(commentId);
+            Guid userIdentityId = await _authService.GetUserIdentityId();
             await _commentService.Remove(x => x.Id == commentId);
             if (comment.FileUploadId != null || comment.FileUploadId != Guid.Empty)
             {
                 await _fileService.RemoveFile(comment.FileUploadId);
+                TimeSpan absoluteExpiration = TimeSpan.FromHours(1);
+                TimeSpan slidingExpiration = TimeSpan.FromMinutes(20);
+                _cacheService.SetClass("files", await _fileService.GetFilesOfUser(userIdentityId), absoluteExpiration, slidingExpiration);
+                _cacheService.SetStruct("filesCount", _fileService.Count(x => x.UserIdentityId == userIdentityId), absoluteExpiration, slidingExpiration);
             }
             var startIndex = TempData["startIndex"];
 
@@ -305,6 +321,7 @@ namespace ProjectManagementSystemMVC.Controllers
                 };
                await _projectManagerService.Add(projectManager);
             }
+            string url = $"/Project/Index/{projectId}";
             foreach (var user in users)
             {
                 ProjectUser projectUser = new ProjectUser()
@@ -312,6 +329,9 @@ namespace ProjectManagementSystemMVC.Controllers
                     UserId = user.Id,
                     ProjectId = projectId,
                 };
+
+               
+                await _notificationService.Notify(user.UserIdentityId);
                 await _projectUserService.Add(projectUser);
             }
             

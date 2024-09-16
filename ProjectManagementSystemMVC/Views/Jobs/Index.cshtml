@@ -5,8 +5,12 @@
     Layout = "~/Views/Shared/_UserPageLayout.cshtml";
 }
 @model PaginationModel<JobPageModel, NoData>
-<div class="container mt-5">
 
+<div class="container mt-5">
+    @if ((bool?)ViewData["manager"] != null && (bool?)ViewData["manager"] == true)
+    {
+        <a class="btn btn-secondary" style="margin-bottom:10px" href="/Job/Add">İş Ekle</a>
+    }
     <div class="row">
         @if (Model.Dataset != null)
         {

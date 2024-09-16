@@ -69,7 +69,7 @@ namespace ProjectManagementSystemMVC.Controllers
                     projects = _projectService.Where(x => (DateTime)x.AddedAt, x => projectIds.Contains(x.Id));
                     paginationModel = Pagination<Project, NoData>.Model(id, userIdentityId, null, projects, count);
 
-                }
+                }   
             }
             return View(paginationModel);
         }

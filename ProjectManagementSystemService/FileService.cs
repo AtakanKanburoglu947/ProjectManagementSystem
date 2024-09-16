@@ -63,7 +63,8 @@ namespace ProjectManagementSystemService
                         Data = memoryStream.ToArray(),
                         Name = fileName,
                         UserIdentityId = userIdentityId!,
-                        ManagerId = managerId!
+                        ManagerId = managerId!,
+                        AddedAt = DateTime.Now
                     };
 
                     _appDbContext.FileUploads.Add(fileUpload);

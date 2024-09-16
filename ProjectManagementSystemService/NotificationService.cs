@@ -1,5 +1,6 @@
 ﻿using ProjectManagementSystemCore.Dtos;
 using ProjectManagementSystemCore.Models;
+using ProjectManagementSystemRepository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,18 +13,20 @@ namespace ProjectManagementSystemService
     {
         private readonly IService<User, UserDto, UserUpdateDto> _userService;
         private readonly IService<Manager, ManagerDto, ManagerUpdateDto> _managerService;
-        public NotificationService(IService<User,UserDto,UserUpdateDto> userService, IService<Manager,ManagerDto,ManagerUpdateDto> managerService)
+        private readonly AppDbContext _appDbContext;
+        public NotificationService(IService<User,UserDto,UserUpdateDto> userService, IService<Manager,ManagerDto,ManagerUpdateDto> managerService, AppDbContext appDbContext)
         {
             _userService = userService;
             _managerService = managerService;
+            _appDbContext = appDbContext;
         }
         public async Task Notify(Guid userIdentityId)
         {
             User user = await GetUser(userIdentityId);
             user.Notifications = user.Notifications + 1;
-            int notifications = user.Notifications;
-            await UpdateUser(user,userIdentityId,notifications);
+            await UpdateUser(user,userIdentityId,user.Notifications);
         }
+
         public async Task Clear(Guid userIdentityId)
         {
             int notifications = 0;
@@ -36,7 +39,7 @@ namespace ProjectManagementSystemService
             Manager? manager  = await GetManager(userIdentityId)!;
             if (manager != null)
             {
-                await UpdateManager(manager, userIdentityId, notifications);
+                await NotifyManager(manager.UserIdentityId, notifications);
             }
 
         }
@@ -84,16 +87,11 @@ namespace ProjectManagementSystemService
             };
             await _userService.Update(userUpdateDto, user.Id);
         }
-        private async Task UpdateManager(Manager manager,Guid userIdentityId, int notifications)
+        public async Task NotifyManager(Guid managerId, int notifications)
         {
-            ManagerUpdateDto managerUpdateDto = new ManagerUpdateDto()
-            {
-                Id = manager.Id,
-                UserIdentityId=userIdentityId,
-                RoleId= manager.RoleId,
-                Notifications=notifications,
-            };
-            await _managerService.Update(managerUpdateDto,manager.Id);
+             var manager = await GetManager(managerId)!;
+             manager.Notifications = notifications;
+            await _appDbContext.SaveChangesAsync();
         }
 
     }
