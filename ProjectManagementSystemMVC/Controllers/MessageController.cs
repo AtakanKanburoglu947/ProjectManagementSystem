@@ -13,11 +13,13 @@ namespace ProjectManagementSystemMVC.Controllers
         private readonly AuthService _authService;
         private readonly IService<Message,MessageDto,MessageDto> _messageService;
         private readonly NotificationService _notificationService;
-        public MessageController(AuthService authService, IService<Message,MessageDto,MessageDto> messageService, NotificationService notificationService)
+        private readonly CacheService _cacheService;
+        public MessageController(AuthService authService, IService<Message,MessageDto,MessageDto> messageService, NotificationService notificationService, CacheService cacheService)
         {
             _authService = authService;
             _messageService = messageService;
             _notificationService = notificationService;
+            _cacheService = cacheService;
         }
         public async Task<IActionResult> Index()
         {
@@ -44,6 +46,7 @@ namespace ProjectManagementSystemMVC.Controllers
                     SenderId = senderId,
                 };
                 await _messageService.Add(messageDto);
+                _cacheService.SetClass("messages",receiverId, async () => await _messageService.Filter(0, x => (DateTime)x.AddedAt!, x => x.ReceiverId == receiverId), TimeSpan.FromHours(1),TimeSpan.FromMinutes(20));
                 await _notificationService.Notify(receiverId);
                 TempData["Message"] = "Mesaj gönderildi";
                 return Redirect("/Message");

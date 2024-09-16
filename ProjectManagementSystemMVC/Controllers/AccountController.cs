@@ -24,7 +24,7 @@ namespace ProjectManagementSystemMVC.Controllers
         {
             Guid userIdentityId = await _authService.GetUserIdentityId();
             ViewData["notifications"] = await _notificationService.GetNotifications(userIdentityId);
-            UserIdentity cache = await _cacheService.Get("account",TimeSpan.FromHours(1),TimeSpan.FromMinutes(3), 
+            UserIdentity cache = await _cacheService.Get("account",userIdentityId,TimeSpan.FromHours(1),TimeSpan.FromMinutes(3), 
                 async () => await _authService.GetUserById(await _authService.GetUserIdentityId()));
             
             AccountPageModel accountPageModel = new AccountPageModel()

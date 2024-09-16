@@ -23,14 +23,16 @@ namespace ProjectManagementSystemMVC.Controllers
         private readonly IService<ProjectManager, ProjectManager, ProjectManager> _projectManagerService;
         private readonly IService<Manager, ManagerDto, ManagerUpdateDto> _managerService;
         private readonly IService<User, UserDto, UserUpdateDto> _userService;
+        private readonly IService<Message, MessageDto, MessageDto> _messageService;
         private readonly IService<Comment,CommentDto, CommentUpdateDto> _commentService;
         private readonly NotificationService _notificationService;
         private readonly CacheService _cacheService;
 
-        public ProjectController(AuthService authService,IService<Project, ProjectDto, ProjectUpdateDto> projectService
+        public ProjectController(AuthService authService, IService<Project, ProjectDto, ProjectUpdateDto> projectService
         , IService<ProjectUser, ProjectUser, ProjectUser> projectUserService, IService<User, UserDto, UserUpdateDto> userService
-            , IService<ProjectManager, ProjectManager, ProjectManager> projectManagerService, IService<Manager, ManagerDto, ManagerUpdateDto> managerService, 
-            IService<Comment, CommentDto, CommentUpdateDto> commentService, FileService fileService, NotificationService notificationService, CacheService cacheService
+            , IService<ProjectManager, ProjectManager, ProjectManager> projectManagerService, IService<Manager, ManagerDto, ManagerUpdateDto> managerService,
+            IService<Comment, CommentDto, CommentUpdateDto> commentService, FileService fileService, NotificationService notificationService, CacheService cacheService,
+            IService<Message, MessageDto, MessageDto> messageService
             )
         {
             _authService = authService;
@@ -43,6 +45,7 @@ namespace ProjectManagementSystemMVC.Controllers
             _fileService = fileService;
             _notificationService = notificationService;
             _cacheService = cacheService;
+            _messageService  = messageService;
         }
         public async Task<IActionResult> Index(Guid projectId,int startIndex)
         {
@@ -163,8 +166,8 @@ namespace ProjectManagementSystemMVC.Controllers
             
             TimeSpan absoluteExpiration = TimeSpan.FromHours(1);
             TimeSpan slidingExpiration = TimeSpan.FromMinutes(20);
-            _cacheService.SetClass("files", await _fileService.GetFilesOfUser(userIdentityId), absoluteExpiration, slidingExpiration);
-            _cacheService.SetStruct("filesCount", _fileService.Count(x=>x.UserIdentityId == userIdentityId), absoluteExpiration, slidingExpiration);
+            _cacheService.SetClass("files",commentDto.UserIdentityId, await _fileService.GetFilesOfUser(userIdentityId), absoluteExpiration, slidingExpiration);
+            _cacheService.SetStruct("filesCount",commentDto.UserIdentityId, _fileService.Count(x=>x.UserIdentityId == userIdentityId), absoluteExpiration, slidingExpiration);
             var startIndex = TempData["startIndex"];
             return Redirect($"Index?startIndex={startIndex}&projectId={projectId}");
 
@@ -179,8 +182,8 @@ namespace ProjectManagementSystemMVC.Controllers
                 await _fileService.RemoveFile(comment.FileUploadId);
                 TimeSpan absoluteExpiration = TimeSpan.FromHours(1);
                 TimeSpan slidingExpiration = TimeSpan.FromMinutes(20);
-                _cacheService.SetClass("files", await _fileService.GetFilesOfUser(userIdentityId), absoluteExpiration, slidingExpiration);
-                _cacheService.SetStruct("filesCount", _fileService.Count(x => x.UserIdentityId == userIdentityId), absoluteExpiration, slidingExpiration);
+                _cacheService.SetClass("files",userIdentityId, await _fileService.GetFilesOfUser(userIdentityId), absoluteExpiration, slidingExpiration);
+                _cacheService.SetStruct("filesCount",userIdentityId, _fileService.Count(x => x.UserIdentityId == userIdentityId), absoluteExpiration, slidingExpiration);
             }
             var startIndex = TempData["startIndex"];
 
@@ -330,7 +333,8 @@ namespace ProjectManagementSystemMVC.Controllers
                     ProjectId = projectId,
                 };
 
-               
+                _cacheService.SetClass("messages", user.UserIdentityId, async () => await _messageService.Filter(0, x => (DateTime)x.AddedAt, x => x.ReceiverId == user.UserIdentityId), TimeSpan.FromHours(1), TimeSpan.FromMinutes(20));
+
                 await _notificationService.Notify(user.UserIdentityId);
                 await _projectUserService.Add(projectUser);
             }

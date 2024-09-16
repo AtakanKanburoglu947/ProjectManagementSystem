@@ -26,8 +26,8 @@ namespace ProjectManagementSystemMVC.Controllers
             ViewData["id"] = id;
             Guid userIdentityId = await _authService.GetUserIdentityId();
             ViewData["notifications"] = await _notificationService.GetNotifications(userIdentityId);
-            List<FileUpload> files = await _cacheService.Get("files", TimeSpan.FromHours(1), TimeSpan.FromMinutes(20), async () => await _fileService.Filter(id, x => x.UserIdentityId == userIdentityId));
-            int? count =  _cacheService.Get("filesCount", TimeSpan.FromHours(1), TimeSpan.FromMinutes(20),()=> _fileService.Count(x=>x.UserIdentityId == userIdentityId) );
+            List<FileUpload> files = await _cacheService.Get("files",userIdentityId, TimeSpan.FromHours(1), TimeSpan.FromMinutes(20), async () => await _fileService.Filter(id, x => x.UserIdentityId == userIdentityId));
+            int? count =  _cacheService.Get("filesCount",userIdentityId, TimeSpan.FromHours(1), TimeSpan.FromMinutes(20),()=> _fileService.Count(x=>x.UserIdentityId == userIdentityId) );
             PaginationModel<FileUpload,NoData> paginationModel = Pagination<FileUpload,NoData>.Model(id,userIdentityId,null,files, (int)count!);
             return View(paginationModel);
         }

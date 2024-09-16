@@ -19,10 +19,12 @@ namespace ProjectManagementSystemMVC.Controllers
         private readonly FileService _fileService;
         private readonly AuthService _authService;
         private readonly NotificationService _notificationService;
+        private readonly CacheService _cacheService;
         public JobController(IService<Job,JobDto,JobUpdateDto> jobService, 
             IService<Project,ProjectDto,ProjectUpdateDto> projectService,
             FileService fileService, AuthService authService, NotificationService notificationService, 
-            IService<Manager,ManagerDto,ManagerUpdateDto> managerService, IService<User,UserDto,UserUpdateDto> userService, IService<Message,MessageDto,MessageDto> messageService)
+            IService<Manager,ManagerDto,ManagerUpdateDto> managerService, IService<User,UserDto,UserUpdateDto> userService, IService<Message,MessageDto,MessageDto> messageService
+            , CacheService cacheService)
         {
             _jobService = jobService;
             _projectService = projectService;
@@ -32,6 +34,7 @@ namespace ProjectManagementSystemMVC.Controllers
             _managerService = managerService;
             _userService = userService;
             _messageService = messageService;
+            _cacheService = cacheService;
         }
         public async Task<IActionResult> Index(Guid id)
         {
@@ -135,6 +138,7 @@ namespace ProjectManagementSystemMVC.Controllers
                 SenderId = manager.UserIdentityId
             };
             await  _messageService.Add(messageDto);
+            _cacheService.SetClass("messages", user.UserIdentityId, async () => await _messageService.Filter(0,x=>(DateTime)x.AddedAt,x=>x.ReceiverId == user.UserIdentityId), TimeSpan.FromHours(1), TimeSpan.FromMinutes(20));
             await _notificationService.Notify(user.UserIdentityId);
             return RedirectToAction("Add","Job",jobPageModel);
         }

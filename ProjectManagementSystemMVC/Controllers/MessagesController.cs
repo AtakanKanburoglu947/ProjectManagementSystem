@@ -14,12 +14,14 @@ namespace ProjectManagementSystemMVC.Controllers
         private readonly AuthService _authService;
         private readonly IService<Message,MessageDto,MessageDto> _messageService;
         private readonly NotificationService _notificationService;
+        private readonly CacheService _cacheService;
         
-        public MessagesController(AuthService authService, IService<Message,MessageDto,MessageDto> messageService, NotificationService notificationService)
+        public MessagesController(AuthService authService, IService<Message,MessageDto,MessageDto> messageService, NotificationService notificationService,CacheService cacheService)
         {
             _authService = authService;
             _messageService = messageService;
             _notificationService = notificationService;
+            _cacheService = cacheService;
         }
       
         public async Task<IActionResult> Index(int id)
@@ -32,8 +34,9 @@ namespace ProjectManagementSystemMVC.Controllers
             Guid userIdentityId = await _authService.GetUserIdentityId();
             await _notificationService.Clear(userIdentityId);
             ViewData["notifications"] = await _notificationService.GetNotifications(userIdentityId);
-
-            List<Message> messages = await _messageService.Filter(id, x => (DateTime)x.AddedAt!, x => x.ReceiverId == userIdentityId);
+            TimeSpan absoluteExpiration = TimeSpan.FromHours(1);
+            TimeSpan slidingExpiration = TimeSpan.FromMinutes(20);
+            List<Message> messages = await _cacheService.Get("messages",userIdentityId,absoluteExpiration,slidingExpiration, () => _messageService.Filter(id, x => (DateTime)x.AddedAt!, x => x.ReceiverId == userIdentityId));
             PaginationModel<MessageDetails, NoData> paginationModel = new PaginationModel<MessageDetails, NoData>();
             if (messages != null)
             {
@@ -43,10 +46,6 @@ namespace ProjectManagementSystemMVC.Controllers
                 
                 foreach (var message in messages)
                 {
-                    if (message.AddedAt < DateTime.Now)
-                    {
-                        Console.WriteLine("test");
-                    }
                     var sender = await _authService.GetUserById((Guid)message.SenderId);
                     MessageDetails messageDetails = new MessageDetails()
                     {

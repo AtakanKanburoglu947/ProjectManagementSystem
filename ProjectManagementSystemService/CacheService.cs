@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
+using ProjectManagementSystemCore.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,25 +23,25 @@ namespace ProjectManagementSystemService
                 SlidingExpiration = slidingExpiration
             };
         }
-        public async Task<T> Get<T>(string cacheKey, TimeSpan absoluteExpiration, TimeSpan slidingExpiration, Func<Task<T>> GetData) where T : class
+        public async Task<T> Get<T>(string cacheKey,Guid userId, TimeSpan absoluteExpiration, TimeSpan slidingExpiration, Func<Task<T>> GetData) where T : class
         {
-            if (_memoryCache.TryGetValue(cacheKey, out T? cachedData))
+            if (_memoryCache.TryGetValue($"{cacheKey}_{userId}", out T? cachedData))
             {
                 return cachedData!;
             }
             T data = await GetData();
             if (data != null)
             {
-                SetClass(cacheKey, data,absoluteExpiration,slidingExpiration);
+                SetClass(cacheKey,userId, data,absoluteExpiration,slidingExpiration);
                 
                 return data;
             }
             return null;
 
         }
-        public async Task<T> Get<T>(string cacheKey, Func<Task<T>> GetData) where T : class
+        public async Task<T> Get<T>(string cacheKey,Guid userId, Func<Task<T>> GetData) where T : class
         {
-            if (_memoryCache.TryGetValue(cacheKey, out T? cachedData))
+            if (_memoryCache.TryGetValue($"{cacheKey}_{userId}", out T? cachedData))
             {
                 return cachedData!;
             }
@@ -51,9 +52,9 @@ namespace ProjectManagementSystemService
             }
             return null;
         }
-        public T? Get<T>(string cacheKey, TimeSpan absoluteExpiration, TimeSpan slidingExpiration, Func<T> GetData) where T : struct
+        public T? Get<T>(string cacheKey,Guid userId, TimeSpan absoluteExpiration, TimeSpan slidingExpiration, Func<T> GetData) where T : struct
         {
-            if (_memoryCache.TryGetValue(cacheKey, out T? cachedData))
+            if (_memoryCache.TryGetValue($"{cacheKey}_{userId}", out T? cachedData))
             {
                 return cachedData!;
             }
@@ -61,15 +62,15 @@ namespace ProjectManagementSystemService
             if (data != null)
             {
                 
-                SetStruct(cacheKey, (T)data, absoluteExpiration, slidingExpiration);
+                SetStruct(cacheKey,userId, (T)data, absoluteExpiration, slidingExpiration);
                 return data;
             }
             return null;
 
         }
-        public T Get<T>(string cacheKey, T data) where T : class
+        public T Get<T>(string cacheKey,Guid userId, T data) where T : class
         {
-            if (_memoryCache.TryGetValue(cacheKey, out T cachedData))
+            if (_memoryCache.TryGetValue($"{cacheKey}_{userId}", out T cachedData))
             {
                 return cachedData;
             }
@@ -81,19 +82,19 @@ namespace ProjectManagementSystemService
             return null;
 
         }
-        public void Remove(string cacheKey)
+        public void Remove(string cacheKey,Guid userId)
         {
-            _memoryCache.Remove(cacheKey);
+            _memoryCache.Remove($"{cacheKey}_{userId}");
         }
-        public void SetClass<T>(string cacheKey, T data, TimeSpan absoluteExpiration, TimeSpan slidingExpiration) where T : class
+        public void SetClass<T>(string cacheKey,Guid userId, T data, TimeSpan absoluteExpiration, TimeSpan slidingExpiration) where T : class
         {
             MemoryCacheEntryOptions memoryCacheEntryOptions = GetMemoryCacheEntryOptions(absoluteExpiration, slidingExpiration);
-            _memoryCache.Set(cacheKey, data, memoryCacheEntryOptions);
+            _memoryCache.Set($"{cacheKey}_{userId}", data, memoryCacheEntryOptions);
         }
-        public void SetStruct<T>(string cacheKey, T data, TimeSpan absoluteExpiration, TimeSpan slidingExpiration) where T : struct
+        public void SetStruct<T>(string cacheKey,Guid userId, T data, TimeSpan absoluteExpiration, TimeSpan slidingExpiration) where T : struct
         {
             MemoryCacheEntryOptions memoryCacheEntryOptions = GetMemoryCacheEntryOptions(absoluteExpiration, slidingExpiration);
-            _memoryCache.Set(cacheKey, data, memoryCacheEntryOptions);
+            _memoryCache.Set($"{cacheKey}_{userId}", data, memoryCacheEntryOptions);
         }
     }
 }

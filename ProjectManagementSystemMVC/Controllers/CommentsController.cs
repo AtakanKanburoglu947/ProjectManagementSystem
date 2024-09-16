@@ -73,7 +73,7 @@ namespace ProjectManagementSystemMVC.Controllers
                     }
                     if (comment.FileUploadId != null)
                     {
-                        var commentFile = await _cacheService.Get($"{comment.FileUploadId}", TimeSpan.FromHours(1), TimeSpan.FromMinutes(20), 
+                        var commentFile = await _cacheService.Get($"{comment.FileUploadId}",comment.UserIdentityId, TimeSpan.FromHours(1), TimeSpan.FromMinutes(20), 
                              () =>  _fileService.GetFile((Guid)comment.FileUploadId));
                         commentDetail.FileId = commentFile.Id;
                         commentDetail.FileName = commentFile.Name;
@@ -95,8 +95,8 @@ namespace ProjectManagementSystemMVC.Controllers
                     if (item.FileUploadId != null)
                     {
                         await _fileService.RemoveFile(item.FileUploadId);
-                        _cacheService.Remove("files");
-                        _cacheService.Remove("filesCount");
+                        _cacheService.Remove("files",userIdentityId);
+                        _cacheService.Remove("filesCount", userIdentityId);
                     }
                     await _commentService.Remove(item.Id);
                 }
