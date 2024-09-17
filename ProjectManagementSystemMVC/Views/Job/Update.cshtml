@@ -1,0 +1,35 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = "~/Views/Shared/_UserPageLayout.cshtml";
+
+}
+@model JobPageModel
+
+
+<div class="mt-4">
+    <h6>İş Ekle</h6>
+    <form method="post" enctype="multipart/form-data" asp-controller="Job" asp-action="UpdateJob"
+          data-ajax="true" data-ajax-method="POST" enctype="multipart/form-data"
+          data-ajax-success="OnSuccessForm" id="InsertProjeYonetimiForm">
+
+        <input type="hidden" asp-for="@Model.Id" />
+
+       
+
+        <div class="form-group">
+            <label>İş Açıklaması <span asp-validation-for="Description"> </span></label>
+            <textarea asp-for="Description" class="form-control"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Bitiş Tarihi <span asp-validation-for="DueDate"> </span> </label>
+            <input asp-for="DueDate" type="datetime-local" value="@DateTime.Now" class="form-control" />
+        </div>
+
+        <br />
+        <button class="btn btn-secondary" type="submit">Güncelle</button>
+    </form>
+</div>
+

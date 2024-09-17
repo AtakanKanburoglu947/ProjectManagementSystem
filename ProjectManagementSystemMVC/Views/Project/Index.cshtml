@@ -1,14 +1,18 @@
 ﻿@{
     Layout = "~/Views/Shared/_UserPageLayout.cshtml";
 }
-@model PaginationModel<CommentDetails,ProjectPageModel>
+@model PaginationModel<CommentDetails, ProjectPageModel>
+
 <div class="container mt-5">
     <div class="row">
         <div class="col-md-12">
             <div class="card mb-4 shadow-sm">
-                <div class="card-header">
+                <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">@Model.Data.Name</h5>
-                    <small class="text-muted">Tarih: @Model.Data.AddedAt</small>
+                    @if ((bool?)ViewData["manager"] != null ||(bool?)ViewData["manager"] == false)
+                    {
+                        <a class="btn btn-secondary" asp-action="Update" asp-route-id="@Model.Data.Id">Düzenle</a>
+                    }
                 </div>
                 <div class="card-body">
                     <div class="mb-3">
@@ -27,7 +31,7 @@
                         <div class="accordion" id="accordionManager">
                             <div class="accordion-item">
                                 <h2 class="accordion-header">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseManager " aria-expanded="true" aria-controls="collapseOne">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseManager" aria-expanded="true" aria-controls="collapseManager">
                                         <h6>Proje Yöneticileri</h6>
                                     </button>
                                 </h2>
@@ -45,39 +49,37 @@
                                     </div>
                                 </div>
                             </div>
-
                         </div>
-
                     </div>
-                    <br>
+
                     @if (Model.Data.UserIdentities != null)
                     {
-                           <div class="accordion" id="accordionUser">
-                            <div class="accordion-item">
-                                <h2 class="accordion-header">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseUser" aria-expanded="true" aria-controls="collapseOne">
-                                        <h6>Proje üyeleri</h6>
-                                    </button>
-                                </h2>
-                                <div id="collapseUser" class="accordion-collapse collapse" data-bs-parent="#accordionUser">
-                                    <div class="accordion-body">
-                                        <ul>
-                                            @foreach (var item in Model.Data.UserIdentities)
-                                       
-                                        {
-                                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                                @item.UserName
-                                                <span class="badge bg-secondary">Üye</span>
-                                            </li>
-                                        }
-                                        </ul>
+                        <div class="mt-4">
+                            <div class="accordion" id="accordionUser">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseUser" aria-expanded="true" aria-controls="collapseUser">
+                                            <h6>Proje Üyeleri</h6>
+                                        </button>
+                                    </h2>
+                                    <div id="collapseUser" class="accordion-collapse collapse" data-bs-parent="#accordionUser">
+                                        <div class="accordion-body">
+                                            <ul>
+                                                @foreach (var item in Model.Data.UserIdentities)
+                                                {
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                        @item.UserName
+                                                        <span class="badge bg-secondary">Üye</span>
+                                                    </li>
+                                                }
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-
                         </div>
-               
                     }
+
                     <div class="mt-4">
                         <h6>Yorum Ekle</h6>
                         <form asp-action="AddComment" asp-controller="Project" method="post" enctype="multipart/form-data">
@@ -95,10 +97,9 @@
                             <button type="submit" class="btn btn-secondary">Yorum Ekle</button>
                         </form>
                     </div>
-                    @if (Model.Dataset !=null)
+
+                    @if (Model.Dataset != null)
                     {
-
-
                         <div class="mt-4">
                             <h6>Yorumlar</h6>
                             @foreach (var comment in Model.Dataset)
@@ -109,7 +110,7 @@
                                         <small class="text-muted">Tarih: @comment.AddedAt</small>
                                         @if (comment.UpdatedAt != null)
                                         {
-                                            <br />  
+                                            <br />
                                             <small class="text-muted">Güncellenme Tarihi: @comment.UpdatedAt</small>
                                         }
                                     </div>
@@ -122,12 +123,12 @@
                                                 <div id="fileInfo_@comment.CommentId">
                                                     <small class="text-muted">Ek Dosya</small>
                                                     <div class="col-md-3 col-sm-6">
-                                                        <div class="card ">
+                                                        <div class="card">
                                                             <div class="card-body text-center">
                                                                 <h5 class="card-title mb-2">@comment.FileName</h5>
                                                                 <hr class="my-2">
                                                                 <p class="card-text text-muted mb-2">Tarih: @comment.AddedAt</p>
-                                                                <a class="btn btn-secondary mt-3" asp-action="Download" asp-controller="Project" asp-route-id="@comment.FileId">
+                                                                <a class="btn btn-secondary mt-3" asp-action="Download" asp-controller="Account" asp-route-id="@comment.FileId">
                                                                     Yükle
                                                                 </a>
                                                             </div>
@@ -154,7 +155,7 @@
                                             </div>
 
                                             <div id="actionButtons_@comment.CommentId">
-                                                @if (comment.UserIdentityId == Model.Data.UserIdentityId) 
+                                                @if (comment.UserIdentityId == Model.Data.UserIdentityId)
                                                 {
                                                     <div class="d-flex gap-2">
                                                         <button id="editButton_@comment.CommentId" class="btn btn-secondary">Düzenle</button>
@@ -173,8 +174,8 @@
         </div>
     </div>
     @await Html.PartialAsync("Partial/ProjectPagination", Model.Pagination)
-    
 </div>
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('[id^="editButton_"]').forEach(function (button) {
@@ -202,21 +203,4 @@
         window.cancelEdit = function (commentId) {
             var commentText = document.getElementById('commentText_' + commentId);
             var editForm = document.getElementById('editForm_' + commentId);
-            var actionButtons = document.getElementById('actionButtons_' + commentId);
-            var fileInfo = document.getElementById('fileInfo_' + commentId);
-            if (editForm) {
-                editForm.classList.add('d-none');
-            }
-            if (commentText) {
-                commentText.classList.remove('d-none');
-            }
-
-            if (fileInfo) {
-                fileInfo.classList.remove('d-none');
-            }
-            if (actionButtons) {
-                actionButtons.classList.remove('d-none');
-            }
-        }
-    });
-</script>
+            var actionButtons = document.getElementById('actionButtons_' + comment

@@ -14,11 +14,13 @@ namespace ProjectManagementSystemMVC.Controllers
         private readonly AuthService _authService;
         private readonly NotificationService _notificationService;
         private readonly CacheService _cacheService;
-        public AccountController(AuthService authService, NotificationService notificationService, CacheService cacheService)
+        private readonly FileService _fileService;
+        public AccountController(AuthService authService, NotificationService notificationService, CacheService cacheService,FileService fileService)
         {
             _authService = authService;
             _notificationService = notificationService;
             _cacheService = cacheService;
+            _fileService = fileService;
         }
         public async Task<IActionResult> Index()
         {
@@ -36,6 +38,10 @@ namespace ProjectManagementSystemMVC.Controllers
           
             return View(accountPageModel);
         }
-
+        public async Task<IActionResult> Download(Guid id)
+        {
+            FileUpload? file = await _fileService.GetFile(id);
+            return File(file.Data, "application/octet-stream", fileDownloadName: file.Name);
+        }
     }
 }

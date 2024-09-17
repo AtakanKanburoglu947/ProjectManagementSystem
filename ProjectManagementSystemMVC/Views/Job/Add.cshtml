@@ -1,25 +1,44 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿
 @{
     Layout = "~/Views/Shared/_UserPageLayout.cshtml";
 }
 @model JobPageModel
+
 <div class="mt-4">
     <h6>İş Ekle</h6>
-    <form method="post" enctype="multipart/form-data"
-        asp-controller="Job" asp-action="AddJob"
-    >
-        <label>Proje İsmi</label>
-        <input asp-for="ProjectName" type="text" class="form-control" /> <br />
-        <label>İş İsmi</label>
-        <textarea type="text" class="form-control" asp-for="Title"> </textarea>
-        <label>İş Açıklaması</label>
-        <textarea type="text" class="form-control" asp-for="Description"> </textarea>
-        <label>Bitiş Tarihi</label>
-        <input type="datetime-local" value="@DateTime.Now" class="form-control" asp-for="DueDate" />
-        <label>Kullanıcı ekle</label>
-        <input type="text" class="form-control" asp-for="UserName" /> <br />
+    <form method="post" enctype="multipart/form-data" asp-controller="Job" asp-action="AddJob"
+          data-ajax="true" data-ajax-method="POST" enctype="multipart/form-data"
+          data-ajax-success="OnSuccessForm" id="InsertProjeYonetimiForm">
+        
+
+        <div class="form-group">
+            <label>
+                Proje İsmi             <span asp-validation-for="ProjectName"> </span>
+            </label>
+            <input asp-for="ProjectName" type="text" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            <label>İş İsmi <span asp-validation-for="Title"> </span> </label>
+            <textarea asp-for="Title" class="form-control"></textarea>
+            
+        </div>
+
+        <div class="form-group">
+            <label>İş Açıklaması <span asp-validation-for="Description"> </span></label>
+            <textarea asp-for="Description" class="form-control"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Bitiş Tarihi <span asp-validation-for="DueDate"> </span> </label>
+            <input asp-for="DueDate" type="datetime-local" value="@DateTime.Now" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            <label>Kullanıcı ekle<span asp-validation-for="UserName"> </span> </label>
+            <input asp-for="UserName" type="text" class="form-control" /> 
+        </div>
+
         <button class="btn btn-secondary" type="submit">Ekle</button>
-</form>
+    </form>
 </div>

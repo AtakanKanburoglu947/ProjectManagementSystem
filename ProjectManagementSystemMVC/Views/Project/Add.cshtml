@@ -8,18 +8,35 @@
 <div class="mt-4">
     <h6>Proje Ekle</h6>
     <form method="post" enctype="multipart/form-data" asp-controller="Project" asp-action="AddProject" >
-        <label>Proje İsmi</label>
+        <label>Proje İsmi <span asp-validation-for="Name"></span> </label>
          <input asp-for="Name" type="text"  class="form-control" /> <br />
-        <label>Proje Açıklaması</label>
-
+        <label>Proje Açıklaması <span asp-validation-for="Description"></span></label>
+         
          <textarea type="text" class="form-control" asp-for="Description"> </textarea>
-         <label>Proje Durumu</label>
-        <input type="text" class="form-control" asp-for="Status" /> <br />
-        <label>Proje Versiyonu</label>
+        <div class="mb-3">
+            <label for="status" class="form-label">İş Durumunu Güncelle</label>
+            <select id="status" name="newStatus" class="form-select">
+                @foreach (var status in Model.StatusOptions)
+                {
+                    <option value="@status">@status</option>
+                }
+            </select>
+        </div>
+        <label>Proje Versiyonu <span asp-validation-for="Version"></span></label>
         <input type="text" class="form-control" asp-for="Version"  /> <br />
-        <label>Yönetici ekle</label>
-        <button type="submit" class="btn btn-secondary" asp-action="AddManager">Ekle</button>
-        <input type="text" class="form-control" asp-for="ManagerName" /> <br />
+        <div class="mb-3">
+            <label>
+                Yönetici ekle <span asp-validation-for="ManagerName"></span>
+                @if (!string.IsNullOrEmpty(Model.ManagerError))
+                {
+                    @Model.ManagerError
+                }
+            </label>
+            <div class="d-flex">
+                <input type="text" class="form-control" asp-for="ManagerName" />
+                <button type="submit" class="btn btn-secondary ms-2" asp-action="AddManager">Ekle</button>
+            </div>
+        </div>
         @if (Model.ManagerIdentities.Count > 0)
         {
             <div class="accordion" id="accordionManager">
@@ -49,9 +66,21 @@
             </div>
 
         }
-        <label>Kullanıcı ekle</label>        <button type="submit" class="btn btn-secondary" asp-action="AddUser">Ekle</button>
 
-        <input type="text" asp-for=UserName class="form-control" /> <br />
+
+        <div class="mb-3">
+            <label>
+                Kullanıcı ekle <span asp-validation-for="UserName"></span>
+                @if (!string.IsNullOrEmpty(Model.UserError))
+                {
+                    @Model.UserError
+                }
+            </label>
+            <div class="d-flex">
+                <input type="text" class="form-control" asp-for="UserName" />
+                <button type="submit" class="btn btn-secondary ms-2" asp-action="AddUser">Ekle</button>
+            </div>
+        </div>
 
         @if (Model.UserIdentities.Count > 0)
         {
@@ -80,9 +109,11 @@
                 </div>
 
             </div>
-
+            <br />
         }
-        <button type="submit" class="btn btn-secondary">Ekle</button>
+
+        
+        <button type="submit" class="btn btn-secondary">Proje Ekle</button>
 
     </form>
 </div>

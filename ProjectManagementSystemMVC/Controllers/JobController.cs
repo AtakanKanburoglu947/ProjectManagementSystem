@@ -1,9 +1,11 @@
-﻿using Auth.Services;
+﻿using Auth;
+using Auth.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProjectManagementSystemCore.Dtos;
 using ProjectManagementSystemCore.Models;
 using ProjectManagementSystemMVC.Models;
+using ProjectManagementSystemRepository;
 using ProjectManagementSystemService;
 
 namespace ProjectManagementSystemMVC.Controllers
@@ -20,11 +22,12 @@ namespace ProjectManagementSystemMVC.Controllers
         private readonly AuthService _authService;
         private readonly NotificationService _notificationService;
         private readonly CacheService _cacheService;
+        private readonly AppDbContext _appDbContext;
         public JobController(IService<Job,JobDto,JobUpdateDto> jobService, 
             IService<Project,ProjectDto,ProjectUpdateDto> projectService,
             FileService fileService, AuthService authService, NotificationService notificationService, 
             IService<Manager,ManagerDto,ManagerUpdateDto> managerService, IService<User,UserDto,UserUpdateDto> userService, IService<Message,MessageDto,MessageDto> messageService
-            , CacheService cacheService)
+            , CacheService cacheService, AppDbContext appDbContext)
         {
             _jobService = jobService;
             _projectService = projectService;
@@ -35,12 +38,17 @@ namespace ProjectManagementSystemMVC.Controllers
             _userService = userService;
             _messageService = messageService;
             _cacheService = cacheService;
+            _appDbContext = appDbContext;
         }
         public async Task<IActionResult> Index(Guid id)
         {
             Guid userIdentityId = await _authService.GetUserIdentityId();
+            Manager manager = await _managerService.Get(x => x.UserIdentityId == userIdentityId);
             ViewData["notifications"] = await _notificationService.GetNotifications(userIdentityId);
-
+            if (manager != null)
+            {
+                ViewData["manager"] = true;
+            }
             Job job = await _jobService.Get(id);
             Project project = await _projectService.Get(job.ProjectId);
             JobPageModel jobPageModel = new JobPageModel()
@@ -105,42 +113,108 @@ namespace ProjectManagementSystemMVC.Controllers
         }
         [HttpPost]
         public async Task<IActionResult> AddJob(JobPageModel jobPageModel)
+        
+            {
+            ViewData["notifications"] = await _notificationService.GetNotifications(await _authService.GetUserIdentityId());
+            if (ModelState.IsValid)
+            {
+                if (_projectService.FirstOrDefault(x => x.Name == jobPageModel.ProjectName) == null)
+                {
+                    ModelState.AddModelError(jobPageModel.ProjectName,"Proje adı geçerli değil");
+
+                }
+                if (_authService.FirstOrDefault(x => x.Email == jobPageModel.UserName) == null)
+                {
+                    ModelState.AddModelError(jobPageModel.UserName, "Kullanıcı adı geçerli değil");
+
+                }
+                Guid managerIdentityId = await _authService.GetUserIdentityId();
+                UserIdentity managerIdentity = await _authService.GetUserById(managerIdentityId);
+                Manager manager = await _managerService.Get(x => x.UserIdentityId == managerIdentityId);
+                Guid userIdentityId = await _authService.GetUserIdentityId(jobPageModel.UserName);
+                User user = await _userService.Get(x => x.UserIdentityId == userIdentityId);
+                Project project = await _projectService.Get(x => x.Name == jobPageModel.ProjectName);
+
+                JobDto jobDto = new JobDto();
+
+                jobDto.AddedAt = DateTime.Now;
+                jobDto.Status = jobPageModel.StatusOptions[0];
+                    jobDto.ManagerId = manager.Id;
+                jobDto.Description = jobPageModel.Description;
+                jobDto.DueDate = jobPageModel.DueDate;
+                jobDto.Title = jobPageModel.Title;
+                jobDto.UserId = user.Id;
+                jobDto.UserIdentityId = userIdentityId;
+                jobDto.ProjectId = project.Id;
+                
+
+
+                await _jobService.Add(jobDto);
+                Job job = await _jobService.Get(x => x.Title == jobDto.Title);
+                string url = $"/Job/Index/{job.Id}/";
+                MessageDto messageDto = new MessageDto()
+                {
+                    AddedAt = DateTime.Now,
+                    Content = $" {managerIdentity.UserName} sana yeni bir iş verdi.  <a href = \"{url}\"> Tıkla </a>",
+                    Name = "Yeni İş",
+                    ReceiverId = user.UserIdentityId,
+                    SenderId = manager.UserIdentityId
+                };
+                await _messageService.Add(messageDto);
+                _cacheService.SetClass("messages", user.UserIdentityId, async () => await _messageService.Filter(0, x => (DateTime)x.AddedAt, x => x.ReceiverId == user.UserIdentityId), TimeSpan.FromHours(1), TimeSpan.FromMinutes(20));
+                await _notificationService.Notify(user.UserIdentityId);
+                return View("Add", jobPageModel);
+            }
+            else 
+            {
+                return View("Add", jobPageModel);
+
+            }
+
+        }
+        [RoleAuthorize(["Manager"])]
+        public async Task<IActionResult> Update(Guid id)
         {
-            Guid managerIdentityId = await _authService.GetUserIdentityId();
-            UserIdentity managerIdentity = await _authService.GetUserById(managerIdentityId);
-            Manager manager = await _managerService.Get(x=>x.UserIdentityId == managerIdentityId);
-            Guid userIdentityId = await _authService.GetUserIdentityId(jobPageModel.UserName);
-            User user = await _userService.Get(x=>x.UserIdentityId == userIdentityId);
-            Project project = await _projectService.Get(x => x.Name == jobPageModel.ProjectName);
-            JobDto jobDto = new JobDto
-            {
-                AddedAt = DateTime.Now,
-                Status = jobPageModel.StatusOptions[0],
-                ManagerId = manager.Id,
-                Description = jobPageModel.Description,
-                DueDate = jobPageModel.DueDate,
-                Title = jobPageModel.Title,
-                UserId = user.Id,
-                UserIdentityId = userIdentityId,
-                ProjectId = project.Id
-            };
+            var job = await _jobService.Get(id);
+            Guid userIdentityId = await _authService.GetUserIdentityId();
 
+            ViewData["notifications"] = await _notificationService.GetNotifications(userIdentityId);
 
-            await _jobService.Add(jobDto);
-            Job job = await _jobService.Get(x => x.Title == jobDto.Title);
-            string url = $"/Job/Index/{job.Id}/";
-            MessageDto messageDto = new MessageDto()
+            JobPageModel jobPageModel = new JobPageModel()
             {
-                AddedAt = DateTime.Now,
-                Content = $" {managerIdentity.UserName} sana yeni bir iş verdi.  <a href = \"{url}\"> Tıkla </a>",
-                Name = "Yeni İş",
-                ReceiverId = user.UserIdentityId,
-                SenderId = manager.UserIdentityId
+                AddedAt= job.AddedAt,
+                Description = job.Description,
+                DueDate = job.DueDate,
+                FileUploadId = job.FileUploadId,
+                Id = id,
+                ManagerId = job.ManagerId,
+                ProjectId = job.ProjectId,
+                Status = job.Status,
+                Title = job.Title,
+                UserIdentityId = job.UserIdentityId,
+                UserId = job.UserId,
+                
             };
-            await  _messageService.Add(messageDto);
-            _cacheService.SetClass("messages", user.UserIdentityId, async () => await _messageService.Filter(0,x=>(DateTime)x.AddedAt,x=>x.ReceiverId == user.UserIdentityId), TimeSpan.FromHours(1), TimeSpan.FromMinutes(20));
-            await _notificationService.Notify(user.UserIdentityId);
-            return RedirectToAction("Add","Job",jobPageModel);
+            return View(jobPageModel);
+        }
+        [RoleAuthorize(["Manager"])]
+        public async Task<IActionResult> UpdateJob(JobPageModel jobPageModel)
+        {
+            bool descriptionIsEmpty = string.IsNullOrEmpty(jobPageModel.Description);
+            if (!descriptionIsEmpty)
+            {
+                var job = await _jobService.Get(jobPageModel.Id);
+                job.Description = jobPageModel.Description;
+                job.DueDate = jobPageModel.DueDate;
+                await _appDbContext.SaveChangesAsync();
+                return RedirectToAction("Index", new { id = jobPageModel.Id });
+
+            }
+            else
+            {
+                return RedirectToAction("Update", new { id = jobPageModel.Id });
+
+            }
         }
     }
 }

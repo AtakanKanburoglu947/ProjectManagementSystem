@@ -112,6 +112,11 @@ namespace ProjectManagementSystemService
             }
             return null;
         }
+        public T FirstOrDefault(Expression<Func<T, bool>> expression)
+        {
+            return _dbSet.FirstOrDefault(expression);
+
+        }
 
         public async Task Remove(int id)
         {

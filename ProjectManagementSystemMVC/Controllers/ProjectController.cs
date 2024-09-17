@@ -7,6 +7,7 @@ using ProjectManagementSystemCore;
 using ProjectManagementSystemCore.Dtos;
 using ProjectManagementSystemCore.Models;
 using ProjectManagementSystemMVC.Models;
+using ProjectManagementSystemRepository;
 using ProjectManagementSystemService;
 using System.Linq.Expressions;
 using System.Text.Json;
@@ -27,12 +28,13 @@ namespace ProjectManagementSystemMVC.Controllers
         private readonly IService<Comment,CommentDto, CommentUpdateDto> _commentService;
         private readonly NotificationService _notificationService;
         private readonly CacheService _cacheService;
+        private readonly AppDbContext _appDbContext;
 
         public ProjectController(AuthService authService, IService<Project, ProjectDto, ProjectUpdateDto> projectService
         , IService<ProjectUser, ProjectUser, ProjectUser> projectUserService, IService<User, UserDto, UserUpdateDto> userService
             , IService<ProjectManager, ProjectManager, ProjectManager> projectManagerService, IService<Manager, ManagerDto, ManagerUpdateDto> managerService,
             IService<Comment, CommentDto, CommentUpdateDto> commentService, FileService fileService, NotificationService notificationService, CacheService cacheService,
-            IService<Message, MessageDto, MessageDto> messageService
+            IService<Message, MessageDto, MessageDto> messageService, AppDbContext appDbContext
             )
         {
             _authService = authService;
@@ -46,6 +48,7 @@ namespace ProjectManagementSystemMVC.Controllers
             _notificationService = notificationService;
             _cacheService = cacheService;
             _messageService  = messageService;
+            _appDbContext = appDbContext;
         }
         public async Task<IActionResult> Index(Guid projectId,int startIndex)
         {
@@ -70,7 +73,11 @@ namespace ProjectManagementSystemMVC.Controllers
             Guid userIdentityId = await _authService.GetUserIdentityId();
             Expression<Func<Comment, DateTime>> expression = x => (DateTime)x.AddedAt;
             ViewData["notifications"] = await _notificationService.GetNotifications(userIdentityId);
-
+            Manager manager = await _managerService.Get(x => x.UserIdentityId == userIdentityId);
+            if (manager != null)
+            {
+                ViewData["manager"] = true;
+            }
 
             List<Comment> comments = await _commentService.Filter(startIndex    ,expression,x=>x.ProjectId == projectId);
             int count = _commentService.Count(x => x.ProjectId == projectId);
@@ -93,6 +100,7 @@ namespace ProjectManagementSystemMVC.Controllers
                 AddedAt = project.AddedAt
                 
             };
+           
             if (userIdentityIds.Count > 0)
             {
                 List<UserIdentity> userIdentities = new List<UserIdentity>();
@@ -210,24 +218,33 @@ namespace ProjectManagementSystemMVC.Controllers
         [HttpPost]
         public async Task<IActionResult> AddManager(ProjectPageModel projectPageModel)
         {
-            UserIdentity? managerIdentity = await _authService.GetUserByEmail(projectPageModel.ManagerName);
-            bool managerExists = await _managerService.Get(x => x.UserIdentityId == managerIdentity.Id) != null;
+            UserIdentity managerIdentity = await _authService.GetUserByEmail(projectPageModel.ManagerName);
 
-            if (managerExists)
+            if (managerIdentity != null)
             {
-                var managerIdentities = GetString<UserIdentity>("ManagerIdentities");
+              
+                
+                   var managerIdentities = GetString<UserIdentity>("ManagerIdentities");
 
-                managerIdentities.Add(managerIdentity);
+                    managerIdentities.Add(managerIdentity);
 
-                SetString("ManagerIdentities", managerIdentities);
+                    SetString("ManagerIdentities", managerIdentities);
+
+                
 
 
             }
             else
             {
-                TempData["error"] = "Yönetici bulunamadı";
+                 SetString("ManagerError","Yönetici bulunamadı");
+                 var error = GetString("ManagerError");
+                 projectPageModel.ManagerError = error;
             }
+            if (projectPageModel.Id != null || projectPageModel.Id == Guid.Empty)
+            {
+                return RedirectToAction("Update", projectPageModel);
 
+            }
             return RedirectToAction("Add", projectPageModel);
         }
         [HttpPost]
@@ -243,6 +260,11 @@ namespace ProjectManagementSystemMVC.Controllers
                 SetString("UserIdentities", userIdentities);
 
 
+            }
+            else
+            {
+                SetString("UserError", "(Kullanıcı bulunamadı)");
+                var error = GetString("UserError");
             }
             return RedirectToAction("Add", projectPageModel);
 
@@ -292,61 +314,132 @@ namespace ProjectManagementSystemMVC.Controllers
         public async Task<IActionResult> AddProject(ProjectPageModel projectPageModel)
         
        {
-            var managerIdentityId = await _authService.GetUserIdentityId();
-            var managerIdentity = await _managerService.Get(x => x.UserIdentityId == managerIdentityId);
-
-            var managerIdentities = GetString<UserIdentity>("ManagerIdentities");
-            var userIdentities = GetString<UserIdentity>("UserIdentities");
-
-            List<Guid>? managerIds = managerIdentities.Select(x => x.Id).Distinct().ToList();
-            List<Manager> managers = _managerService.Where(x => managerIds.Contains(x.UserIdentityId));
-            List<Guid> userIds = userIdentities.Select(x => x.Id).Distinct().ToList();
-            List<User> users = _userService.Where(x => userIds.Contains(x.UserIdentityId));
-            Guid projectId = Guid.NewGuid();
-            ProjectDto projectDto = new ProjectDto()
+            if (ModelState.IsValid)
             {
-                Id = projectId,
-                AddedAt = DateTime.Now,
-                Description = projectPageModel.Description,
-                Name = projectPageModel.Name,
-                Status = projectPageModel.Status,
-                Version = projectPageModel.Version,
-                ManagerId = managerIdentity.Id
+                var managerIdentityId = await _authService.GetUserIdentityId();
+                var managerIdentity = await _managerService.Get(x => x.UserIdentityId == managerIdentityId);
+                var managerOfProject = await _managerService.Get(x => x.UserIdentityId == managerIdentityId);
+                var managerIdentities = GetString<UserIdentity>("ManagerIdentities");
+                var userIdentities = GetString<UserIdentity>("UserIdentities");
+
+                List<Guid>? managerIds = managerIdentities.Select(x => x.Id).Distinct().ToList();
+                List<Manager> managers = _managerService.Where(x => managerIds.Contains(x.UserIdentityId));
+                List<Guid> userIds = userIdentities.Select(x => x.Id).Distinct().ToList();
+                List<User> users = _userService.Where(x => userIds.Contains(x.UserIdentityId));
+                Guid projectId = Guid.NewGuid();
+                ProjectDto projectDto = new ProjectDto()
+                {
+                    Id = projectId,
+                    AddedAt = DateTime.Now,
+                    Description = projectPageModel.Description,
+                    Name = projectPageModel.Name,
+                    Status = projectPageModel.Status,
+                    Version = projectPageModel.Version,
+                    ManagerId = managerIdentity.Id
+                };
+
+                await _projectService.Add(projectDto);
+                foreach (var manager in managers)
+                {
+                    ProjectManager projectManager = new ProjectManager()
+                    {
+                        ManagerId = manager.Id,
+                        ProjectId = projectId,
+                    };
+                    await _projectManagerService.Add(projectManager);
+                }
+               
+                string url = $"/Project/Index/{projectId}";
+                foreach (var user in users)
+                {
+                    ProjectUser projectUser = new ProjectUser()
+                    {
+                        UserId = user.Id,
+                        ProjectId = projectId,
+                    };
+
+                    _cacheService.SetClass("messages", user.UserIdentityId, async () => await _messageService.Filter(0, x => (DateTime)x.AddedAt, x => x.ReceiverId == user.UserIdentityId), TimeSpan.FromHours(1), TimeSpan.FromMinutes(20));
+
+                    await _notificationService.Notify(user.UserIdentityId);
+                    await _projectUserService.Add(projectUser);
+                }
+
+
+                return Redirect("/Project/Add");
+            }
+            else
+            {
+                return Redirect("/Project/Add");
+            }
+
+
+        }
+        [RoleAuthorize(["Manager"])]
+        public async Task<IActionResult> Update(Guid id)
+        {
+            Guid userIdentityId = await _authService.GetUserIdentityId();
+            ViewData["notifications"] = await _notificationService.GetNotifications(userIdentityId);
+            Project project = await _projectService.Get(id);
+            var projectManagers = _projectManagerService.Where(x => x.ProjectId == id).ToList();
+            var managerIds = projectManagers.Select(x => x.ManagerId).Distinct().ToList();
+            List<Manager> managers = _managerService.Where(x => managerIds.Contains(x.Id));
+            List<Guid> managerIdentityIds = managers.Select(x => x.UserIdentityId).Distinct().ToList();
+            List<UserIdentity> managerIdentities = _authService.Where(x => managerIdentityIds.Contains(x.Id));
+            var projectUsers = _projectUserService.Where(x => x.ProjectId == id).ToList();
+            var userIds = projectUsers.Select(x => x.UserId).Distinct().ToList();
+            List<User> users = _userService.Where(x => userIds.Contains(x.Id));
+            List<Guid> userIdentityIds = users.Select(x => x.UserIdentityId).Distinct().ToList();
+            List<UserIdentity> userIdentities = _authService.Where(x => userIdentityIds.Contains(x.Id));
+
+              ProjectPageModel projectPageModel = new ProjectPageModel()
+            {
+                Id = id,
+                AddedAt = project.AddedAt,
+                Description = project.Description,
+                Name = project.Name,
+                Status = project.Status,
+                Version = project.Version,
+                ManagerIdentities = managerIdentities,
+                UserIdentities = userIdentities
             };
-           
-            await _projectService.Add(projectDto);
-            foreach (var manager in managers)
+
+            return View(projectPageModel);
+        }
+        [RoleAuthorize(["Manager"])]
+        [HttpPost]
+        public async Task<IActionResult> UpdateProject(ProjectPageModel projectPageModel)
+        {
+            var project = await _projectService.Get(x=>x.Id == projectPageModel.Id);
+            bool descriptionIsEmpty = string.IsNullOrEmpty(projectPageModel.Description);
+            bool statusIsEmpty = string.IsNullOrEmpty(projectPageModel.Status);
+            bool versionIsEmpty = string.IsNullOrEmpty(projectPageModel.Version);
+            if (!string.IsNullOrEmpty(projectPageModel.Description)  && !string.IsNullOrEmpty(projectPageModel.Status)  &&
+                 !string.IsNullOrEmpty(projectPageModel.Version))
             {
-                ProjectManager projectManager = new ProjectManager()
-                {
-                    ManagerId = manager.Id,
-                    ProjectId = projectId,
-                };
-               await _projectManagerService.Add(projectManager);
+                project.Description = projectPageModel.Description;
+                project.Status = projectPageModel.Status;
+                project.Version = projectPageModel.Version;
+                await _appDbContext.SaveChangesAsync();
+                return RedirectToAction("Index", new { projectId = projectPageModel.Id, startIndex = 0 });
             }
-            string url = $"/Project/Index/{projectId}";
-            foreach (var user in users)
+            else
             {
-                ProjectUser projectUser = new ProjectUser()
-                {
-                    UserId = user.Id,
-                    ProjectId = projectId,
-                };
-
-                _cacheService.SetClass("messages", user.UserIdentityId, async () => await _messageService.Filter(0, x => (DateTime)x.AddedAt, x => x.ReceiverId == user.UserIdentityId), TimeSpan.FromHours(1), TimeSpan.FromMinutes(20));
-
-                await _notificationService.Notify(user.UserIdentityId);
-                await _projectUserService.Add(projectUser);
+                return RedirectToAction("Update", new { id = projectPageModel.Id });
             }
-            
-
-            return Redirect("/Project/Add");
 
         }
         private void SetString<T>(string key, List<T> value) where T : class
         {
             HttpContext.Session.SetString(key, JsonSerializer.Serialize(value));
 
+        }
+        private void SetString(string key, string value)
+        {
+            HttpContext.Session.SetString(key,value);
+        }
+        private string GetString(string key)
+        {
+            return HttpContext.Session.GetString(key);
         }
         private List<T> GetString<T>(string key) where T: class
         {

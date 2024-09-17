@@ -54,7 +54,16 @@ namespace ProjectManagementSystemMVC.Controllers
             PaginationModel<JobPageModel, NoData> paginationModel = new PaginationModel<JobPageModel, NoData>();
             if (jobs != null)
             {
-                int count = _jobService.Count(x=>x.UserIdentityId == userIdentityId);
+                int count = 0;
+                if (manager != null)
+                {
+                    
+                    count = _jobService.Count(x=>x.ManagerId == manager.Id);
+                }
+                else
+                {
+                    count = _jobService.Count(x=>x.UserIdentityId == userIdentityId);
+                }
                 foreach (var job in jobs)
                 {
                     var project = await _projectService.Get(x => x.Id == job.ProjectId);
@@ -64,7 +73,6 @@ namespace ProjectManagementSystemMVC.Controllers
                         ProjectId = job.ProjectId,
                         Title = job.Title,
                         Description = job.Description,
-                        Status = job.Status,
                         ProjectName = project.Name,
                         UserId = job.UserId,
                         UserIdentityId = userIdentityId,

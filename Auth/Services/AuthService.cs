@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Authorization;
 using ProjectManagementSystemService;
 using ProjectManagementSystemCore;
 using AutoMapper;
+using System.Linq.Expressions;
 
 namespace Auth.Services
 {
@@ -136,7 +137,16 @@ namespace Auth.Services
             
         }
 
-  
+        public UserIdentity FirstOrDefault(Expression<Func<UserIdentity, bool>> expression)
+        {
+            UserIdentity userIdentity = _appDbContext.UserIdentities.FirstOrDefault(expression);
+            if (userIdentity != null)
+            {
+                return userIdentity;
+            }
+            return null;
+        }
+
         public async Task<string> UpdatePassword(PasswordDto passwordDto)
         {
 
@@ -208,14 +218,14 @@ namespace Auth.Services
             }
             return null;
         }
-        public async Task<UserIdentity?> GetUserByEmail(string email)
+        public async Task<UserIdentity> GetUserByEmail(string email)
         {
             var userIdentity = await _appDbContext.UserIdentities.FirstOrDefaultAsync(x => x.Email == email);
             if (userIdentity != null)
             {
                 return userIdentity;
             }
-            return null!;
+            return null;
         }
 
         public async Task<Guid> GetUserIdentityId()
@@ -262,6 +272,15 @@ namespace Auth.Services
             var id = await GetUserIdentityId();
             var userIdentity = _appDbContext.UserIdentities.FirstOrDefault(x => x.Id == id);
             return userIdentity;
+        }
+        public List<UserIdentity> Where(Expression<Func<UserIdentity, bool>> expression)
+        {
+            List<UserIdentity> result = _appDbContext.UserIdentities.Where(expression).ToList();
+            if (result != null)
+            {
+                return result;
+            }
+            return null;
         }
         public void Logout()
         {

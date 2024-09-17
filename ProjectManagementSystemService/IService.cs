@@ -32,6 +32,7 @@ namespace ProjectManagementSystemService
         List<T> Where(Expression<Func<T, DateTime>> orderBy, Expression<Func<T, bool>> expression);
         Task <List<T>> Filter(int startIndex, Expression<Func<T, bool>> where);
         Task<List<T>> Filter(int startIndex, Expression<Func<T, DateTime>> orderBy, Expression<Func<T, bool>> where);
+        T FirstOrDefault(Expression<Func<T, bool>> expression);
         int Count();
         int Count(Expression<Func<T,bool>> expression);
     }
